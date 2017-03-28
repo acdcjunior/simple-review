@@ -1,13 +1,6 @@
 <?php
-$host = gethostname();
-$db = new mysqli("mysql.hostinger.com.br", "u910267182_user", "Y=w95aHm8j12pAsW:2", 'u910267182_quali');
 
-if (mysqli_connect_errno()) {
-    die("Connect failed: ". mysqli_connect_error());
-}
-
-
-function rest($method, $url, $data = false)
+function rest($method, $url, $token, $data = false)
 {
     $curl = curl_init();
 
@@ -35,7 +28,7 @@ function rest($method, $url, $data = false)
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
     curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-        'PRIVATE-TOKEN: zZKohysiaQwizBySUF2N'
+        "PRIVATE-TOKEN: $token"
     ));
 
     $result = curl_exec($curl);
