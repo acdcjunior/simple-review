@@ -1,0 +1,22 @@
+version: '2'
+services:
+  php:
+    build: .
+    ports:
+     - "80:80"
+    volumes:
+     - ..:/var/www/html/
+  mysql.hostinger.com.br:
+    image: "mariadb:10.0.25"
+    environment:
+        MYSQL_ROOT_PASSWORD: pass
+    volumes:
+        - ./ddl:/docker-entrypoint-initdb.d
+    networks:
+        default:
+            aliases:
+                - db
+  phpmyadmin:
+    image: "phpmyadmin/phpmyadmin"
+    ports:
+     - "81:80"

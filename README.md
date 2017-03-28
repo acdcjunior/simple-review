@@ -1,1 +1,1 @@
-# simple-code-review
+# wikicfp-qualis
