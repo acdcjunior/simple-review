@@ -6,17 +6,22 @@ services:
      - "80:80"
     volumes:
      - ..:/var/www/html/
-  mysql.hostinger.com.br:
-    image: "mariadb:10.0.25"
+  couchdb:
+    image: "couchdb"
     environment:
-        MYSQL_ROOT_PASSWORD: pass
+      - COUCHDB_USER=root
+      - COUCHDB_PASSWORD=pass
     volumes:
-        - ./ddl:/docker-entrypoint-initdb.d
-    networks:
-        default:
-            aliases:
-                - db
-  phpmyadmin:
-    image: "phpmyadmin/phpmyadmin"
+        - ./couchdb-dados:/usr/local/var/lib/couchdb
     ports:
-     - "81:80"
+     - "5984:5984"
+  fauxton:
+    image: 3apaxicom/fauxton
+    ports:
+      - 8984:8000
+    links:
+      - couchdb:db
+    command:
+      - sh
+      - "-c"
+      - "fauxton -c http://db:5984"
