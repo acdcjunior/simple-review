@@ -3,12 +3,22 @@ import Router from 'vue-router'
 import App from './App'
 import CommitList from './components/CommitList'
 import CommitView from './components/CommitView'
+import Login from './components/Login.vue'
+import VueCookie from 'vue-cookie'
+// Tell Vue to use the plugin
 
 Vue.use(Router)
+Vue.use(VueCookie)
+
+require('bootstrap')
 
 const router = new Router()
 
 router.map({
+  '/login': {
+    component: Login
+  },
+
   '/commits': {
     component: CommitList
   },

@@ -38,13 +38,13 @@ store.create = data => {
   return db.post(data)
 }
 
-store.find = () => {
+store.findAllOfAllTypes = () => {
   return db.allDocs({include_docs: true})
 }
 
-store.findCommits = () => {
+store.findAllOfType = (tipo) => {
   function map (doc, emit) {
-    if (doc.type === 'commit') {
+    if (doc.type === tipo) {
       emit(doc.createdAt)
     }
   }
@@ -53,7 +53,7 @@ store.findCommits = () => {
   )
 }
 
-store.findCommitById = (id) => {
+store.findById = (id) => {
   return db.get(id)
 }
 
@@ -68,13 +68,15 @@ store.findCommentsByCommitId = (commitId) => {
   )
 }
 
-store.reloadCommits = (obj, prop, exibirSomenteCommitsAtribuidosA, exibirSomenteCommitsEfetuadosPor, exibirSomenteCommitsNaoRevisados) => {
-  store.findCommits().then(commits => {
+store.reloadCommits = (obj, prop, exibirSomenteCommitsEfetuadosPor, exibirSomenteCommitsEmQueSouRevisor, meuEmail, exibirSomenteCommitsNaoRevisados) => {
+  store.findAllOfType('commit').then(commits => {
     let commitsTrazidos = _.map(commits, (commit) => commit)
     commitsTrazidos = commitsTrazidos.filter(commitTrazido => {
-      return ((exibirSomenteCommitsAtribuidosA === store.todos.email || commitTrazido.revisor === exibirSomenteCommitsAtribuidosA) &&
-             (exibirSomenteCommitsEfetuadosPor === store.todos.email || commitTrazido.autor === exibirSomenteCommitsEfetuadosPor) &&
-             (commitTrazido.revisado !== exibirSomenteCommitsNaoRevisados))
+      return (
+             (!exibirSomenteCommitsEmQueSouRevisor || commitTrazido.revisor_email === meuEmail) &&
+             (exibirSomenteCommitsEfetuadosPor === store.todos.email || commitTrazido.author_email === exibirSomenteCommitsEfetuadosPor) &&
+             (!exibirSomenteCommitsNaoRevisados || !commitTrazido.revisado)
+      )
     })
     obj[prop] = commitsTrazidos
   })

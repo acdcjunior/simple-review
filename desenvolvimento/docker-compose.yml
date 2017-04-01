@@ -3,7 +3,7 @@ services:
   php:
     build: .
     ports:
-     - "80:80"
+     - "8888:80"
     volumes:
      - ..:/var/www/html/
   couchdb:
@@ -25,3 +25,7 @@ services:
       - sh
       - "-c"
       - "fauxton -c http://db:5984"
+  gitlab:
+    image: gitlab/gitlab-ce
+    ports:
+      - 8090:80

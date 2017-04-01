@@ -2,25 +2,44 @@
   <div class="col-md-12">
     <div class="panel panel-default">
       <div class="panel-body">
-        <h3>{{ commit.title }}</h3>
-        <p>{{ commit.author_email }} {{ dateAgo() }}</p>
-        <a class="btn btn-default" :href="'#/commit/' + commit._id">Revisar</a>
+        <a href="{{ gitlabLink() }}" target="diff"><h3>{{ commit.title }}</h3></a>
+        <committer :committer-email="committer().email"></committer>
+        <button class="btn btn-default" style="float: right" v-on:click="abrirRevisao">Revisar</button>
+        <p style="margin: 10px 5px 0 0">{{ timeAgoCommittado() }}.</p>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import committers from '../committers'
+import utils from '../utils'
+import Committer from './Committer'
+
 export default {
   name: 'Commit',
+
+  components: {
+    Committer
+  },
 
   props: {
     commit: Object
   },
 
   methods: {
-    dateAgo () {
-      return window.jQuery.timeago(Date.parse('2017-03-17T09:24:17Z'))
+    committer () {
+      return committers.get(this.commit.author_email)
+    },
+    timeAgoCommittado () {
+      return utils.timeagoMaiusculo(this.commit.created_at)
+    },
+    gitlabLink () {
+      return utils.gitlabLink(this.commit.sha)
+    },
+    abrirRevisao () {
+      utils.atualizarDiff(this.commit.sha)
+      this.$router.go('/commit/' + this.commit.sha)
     }
   }
 }

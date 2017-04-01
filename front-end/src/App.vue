@@ -8,7 +8,9 @@
                   transition-mode="out-in">
             </router-view>
         </div>
-        <div class="layout-col_right">Second Column</div>
+        <div class="layout-col_right">
+            <iframe id="diff" name="diff" width="100%" height="99.635%" frameborder="0" marginheight="0" marginwidth="0" scrolling="yes" src=""></iframe>
+        </div>
     </div>
 </template>
 
@@ -27,7 +29,7 @@
 }
 .layout-col_left {
     background-color: #f4f4f4;
-    width:417px;
+    width:21.5%;
     position:absolute;
     left:0;top:0;
     bottom:0;
@@ -36,7 +38,8 @@
     overflow-y: scroll;
 }
 .layout-col_right {
-    margin-left:417px;
+    margin-left:21.5%;
+    height: 100%;
 }
 
 .glyphicon {
