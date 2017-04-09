@@ -1,6 +1,6 @@
 <?php
 
-require_once "../infra/couch/CouchSimple.php";
+require_once  __DIR__ . "/../infra/couch/CouchSimple.php";
 
 class Sesol2Repository
 {
@@ -13,17 +13,24 @@ class Sesol2Repository
         $this->couch = new CouchSimple();
     }
 
-    public function insertIfNotExists($commit)
+    public function insert($key, $document)
     {
-        return $this->insert($commit);
+        return $this->couch->send("PUT", self::NOME_DATABASE . "/" . $key, json_encode($document));
     }
 
-    public function insert($commit)
+    public function insertIfNotExists($key, $document)
     {
-        $post_data = json_encode($commit);
-        echo "INserindo: $post_data";
+        if (!$this->exists($key)) {
+            echo "Not exists.\n";
+            return $this->insert($key, $document);
+        }
+        echo "Exists.\n";
+        return null;
+    }
 
-        return $this->couch->send("POST", self::NOME_DATABASE, $post_data);
+    public function exists($key)
+    {
+        return property_exists(json_decode($this->couch->send("GET", self::NOME_DATABASE . "/" . $key)), "_id");
     }
 
 }

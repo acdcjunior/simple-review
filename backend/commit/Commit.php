@@ -15,6 +15,7 @@ class Commit
 
     public function __construct($sha, $title, $message, $author_email, $created_at)
     {
+        $this->_id = $sha;
         $this->type = 'commit';
 
         $this->sha = $sha;
