@@ -1,7 +1,7 @@
 <template>
   <div>
     <img class="avatar" v-bind:src="committer.avatar_url">
-    {{ committer.nome }}
+    {{ committer.name }}
   </div>
 </template>
 

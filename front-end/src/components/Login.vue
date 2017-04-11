@@ -14,7 +14,7 @@
             Selecione na lista abaixo:
             <select v-model="committerSelecionado" class="form-control">
             <option v-for="committer in committers" v-bind:value="committer">
-              {{ committer.nome }}
+              {{ committer.name }}
             </option>
               </select>
           </label>

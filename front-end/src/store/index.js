@@ -6,7 +6,7 @@ const remotedb = new PouchDB('http://127.0.0.1:5984/sesol2')
 
 const store = {
   listeners: {},
-  todos: {nome: 'Todos', email: 'nao@existe.com'}
+  todos: {name: 'Todos', email: 'nao@existe.com'}
 }
 
 db.sync(remotedb, {

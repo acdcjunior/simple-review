@@ -31,7 +31,7 @@
         Exibir somente commits do(a) autor(a):
         <select v-model="exibirSomenteCommitsEfetuadosPor" v-on:change="carregarCommits" class="form-control" style="display: inline-block; width: 85%">
         <option v-for="committer in committers" v-bind:value="committer.email">
-          {{ committer.nome }}
+          {{ committer.name }}
         </option>
       </select>
       <button title="Voltar a exibir commits de 'Todos'" class="btn btn-default" :disabled="exibirSomenteCommitsEfetuadosPor === emailTodos()" v-on:click="restaurarCommitsEfetuadosPor"><span class="glyphicon glyphicon-erase"></span></button>
