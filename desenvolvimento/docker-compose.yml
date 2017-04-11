@@ -1,5 +1,15 @@
 version: '2'
 services:
+  node:
+    build: .
+    ports:
+     - "80:3000"
+    environment:
+      - CODE_REVIEW_HOST=git
+      - CODE_REVIEW_PROJECT_ID=123
+      - CODE_REVIEW_PRIVATE_TOKEN=EsspXz7kinZN9RayS8sG
+    volumes:
+     - ../back-end-node:/projeto
   php:
     build: .
     ports:
@@ -18,7 +28,7 @@ services:
   fauxton:
     image: 3apaxicom/fauxton
     ports:
-      - 8984:8000
+      - "8984:8000"
     links:
       - couchdb:db
     command:
@@ -28,4 +38,4 @@ services:
   gitlab:
     image: gitlab/gitlab-ce
     ports:
-      - 8090:80
+      - "8090:80"
