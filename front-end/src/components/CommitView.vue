@@ -55,7 +55,7 @@
     </div>
 
     <button class="btn btn-danger" v-if="0" v-on:click="limparRevisor"><span class="glyphicon glyphicon-user"></span> Tirar</button>
-    <div style="display: none;">
+    <div v-if="0">
       <div class="col-md-12">
         <h3 class="page-header">Comments ({{ comments.length }})</h3>
       </div>
