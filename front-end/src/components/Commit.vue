@@ -2,10 +2,19 @@
   <div class="col-md-12">
     <div class="panel panel-default">
       <div class="panel-body">
-        <a href="{{ gitlabLink() }}" target="diff"><h3>{{ commit.title }}</h3></a>
+        <a v-if="!commit.revisado" href="{{ gitlabLink() }}" target="diff"><h3>{{ commit.title }}</h3></a>
+        <a v-if="commit.revisado" href="{{ gitlabLink() }}" target="diff" class="text-muted"><h3>{{ commit.title }}</h3></a>
         <committer :committer-email="committer().email"></committer>
-        <button class="btn btn-default" style="float: right" v-on:click="abrirRevisao">Revisar</button>
-        <p style="margin: 10px 5px 0 0">{{ timeAgoCommittado() }}.</p>
+        <button v-if="!commit.revisado" class="btn btn-info" style="float: right" v-on:click="abrirRevisao">Revisar</button>
+        <button v-if="commit.revisado" class="btn btn-default" style="float: right" v-on:click="abrirRevisao">Ver</button>
+        <p style="margin: 10px 5px 0 0">
+          Criado {{ timeAgo(commit.created_at) }}.
+          <span v-if="!commit.revisado">Ainda não revisado.</span>
+          <strongx>
+          <span v-if="commit.revisado && commit.revisado.indexOf('par') === -1" class="text-primary">Revisado {{ timeAgo(commit.revisor_efetivo_data) }}.</span>
+          <span v-if="commit.revisado && commit.revisado.indexOf('par') !== -1" class="text-success">Feito em par.</span>
+          </strongx>
+        </p>
       </div>
     </div>
   </div>
@@ -31,8 +40,8 @@ export default {
     committer () {
       return committers.get(this.commit.author_email)
     },
-    timeAgoCommittado () {
-      return utils.timeagoMaiusculo(this.commit.created_at)
+    timeAgo (data) {
+      return utils.timeago(data)
     },
     gitlabLink () {
       return utils.gitlabLink(this.commit.sha)
