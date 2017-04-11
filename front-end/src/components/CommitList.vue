@@ -28,7 +28,7 @@
     <div class="col-md-12">
       <hr>
       <label style="width: 100%">
-        Exibir somente commits do autor:
+        Exibir somente commits do(a) autor(a):
         <select v-model="exibirSomenteCommitsEfetuadosPor" v-on:change="carregarCommits" class="form-control" style="display: inline-block; width: 85%">
         <option v-for="committer in committers" v-bind:value="committer.email">
           {{ committer.nome }}
