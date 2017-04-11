@@ -3,8 +3,8 @@ services:
   couchdb:
     image: "couchdb"
     environment:
-      - COUCHDB_USER=root
-      - COUCHDB_PASSWORD=pass
+      - COUCHDB_USER=root      # altere no node, abaixo, também
+      - COUCHDB_PASSWORD=pass  # altere no node, abaixo, também
     volumes:
         - ./couchdb-dados:/usr/local/var/lib/couchdb
     ports:
@@ -34,5 +34,7 @@ services:
       - CODE_REVIEW_PROJECT_ID=123
       - CODE_REVIEW_PRIVATE_TOKEN=EsspXz7kinZN9RayS8sG
       - CODE_REVIEW_COUCHDB_HOST=couchdb
+      - COUCHDB_USER=root
+      - COUCHDB_PASSWORD=pass
     volumes:
      - ../back-end-node:/projeto
