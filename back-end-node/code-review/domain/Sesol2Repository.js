@@ -13,7 +13,7 @@ class Sesol2Repository {
             if (exists) {
                 return Promise.resolve(false);
             } else {
-                return this.db.put(sesol2).then(_ => {
+                return this.db.put(sesol2).then(ignored => {
                     return new Promise(resolve => {
                         resolve(`${sesol2.type} (novo): ${sesol2.toString()}`);
                     })
@@ -31,6 +31,14 @@ class Sesol2Repository {
             return new Promise((resolve) => {
                 resolve(false, error);
             });
+        });
+    }
+
+    findAll(type) {
+        return this.db.query('type_index', {key: type, include_docs: true}).then(result => {
+            return new Promise(resolve => {
+                resolve(result.rows.map(row => row.doc));
+            })
         });
     }
 
