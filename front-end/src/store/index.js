@@ -2,7 +2,7 @@ import PouchDB from 'pouchdb'
 import _ from 'lodash'
 
 const db = new PouchDB('sesol2')
-const remotedb = new PouchDB('http://localhost:5984/sesol2')
+const remotedb = new PouchDB('http://127.0.0.1:5984/sesol2')
 
 const store = {
   listeners: {},
@@ -80,18 +80,12 @@ store.reloadCommits = (obj, prop, exibirSomenteCommitsEfetuadosPor, exibirSoment
     })
     obj[prop] = commitsTrazidos
   })
-  if (remotedb) {
-    // db.sync(remotedb)
-  }
 }
 
 store.reloadComments = (obj, prop, commitId) => {
   store.findCommentsByCommitId(commitId).then(comments => {
     obj[prop] = _.map(comments, (comment) => comment)
   })
-  if (remotedb) {
-    // db.sync(remotedb)
-  }
 }
 
 export default store
