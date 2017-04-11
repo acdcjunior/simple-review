@@ -1,21 +1,5 @@
 version: '2'
 services:
-  node:
-    build: .
-    ports:
-     - "80:3000"
-    environment:
-      - CODE_REVIEW_HOST=git
-      - CODE_REVIEW_PROJECT_ID=123
-      - CODE_REVIEW_PRIVATE_TOKEN=EsspXz7kinZN9RayS8sG
-    volumes:
-     - ../back-end-node:/projeto
-  php:
-    build: .
-    ports:
-     - "8888:80"
-    volumes:
-     - ..:/var/www/html/
   couchdb:
     image: "couchdb"
     environment:
@@ -39,3 +23,16 @@ services:
     image: gitlab/gitlab-ce
     ports:
       - "8090:80"
+  node:
+#    build: .
+    ports:
+     - "80:3000"
+    links:
+      - couchdb:couchdb
+    environment:
+      - CODE_REVIEW_HOST=git
+      - CODE_REVIEW_PROJECT_ID=123
+      - CODE_REVIEW_PRIVATE_TOKEN=EsspXz7kinZN9RayS8sG
+      - CODE_REVIEW_COUCHDB_HOST=couchdb
+    volumes:
+     - ../back-end-node:/projeto
