@@ -13,12 +13,14 @@ class Sesol2Repository {
             if (exists) {
                 return Promise.resolve(false);
             } else {
-                return this.db.put(sesol2).then(ignored => {
-                    return new Promise(resolve => {
-                        resolve(`${sesol2.type} (novo): ${sesol2.toString()}`);
-                    })
-                })
+                return this.insert(sesol2);
             }
+        });
+    }
+
+    insert(sesol2) {
+        return this.db.put(sesol2).then(ignored => {
+            return Promise.resolve(`${sesol2.type} (inserido): ${sesol2.toString()}`);
         });
     }
 
