@@ -15,11 +15,16 @@ utils.timeagoMaiusculo = (dateAsString) => {
   return capitalizeFirstLetter(utils.timeago(dateAsString))
 }
 
-utils.ocultarEspacosEmBranco = true
-utils.diffLadoALado = true
+utils.ocultarEspacosEmBranco = true;
+utils.diffLadoALado = true;
+
+const gitlabHost = window.location.host.indexOf('127.0.0.1') === -1 ? '127.0.0.1:8090' : 'git';
 utils.gitlabLink = (sha) => {
-  return 'http://127.0.0.1:8090/sti/sagas2/commit/' + sha + '?' + (utils.diffLadoALado ? 'view=parallel&' : '&') + (utils.ocultarEspacosEmBranco ? 'w=1' : '')
-}
+    return `http://${gitlabHost}/sti/sagas2/commit/${sha}?${utils.diffLadoALado ? 'view=parallel&' : '&'}${utils.ocultarEspacosEmBranco ? 'w=1' : ''}`;
+};
+utils.gitlabLoginLink = () => {
+    return `http://${gitlabHost}/users/sign_in`;
+};
 utils.atualizarDiff = (sha) => {
   let gitlabLink = utils.gitlabLink(sha)
   if (document.getElementById('diff').src !== gitlabLink) {
