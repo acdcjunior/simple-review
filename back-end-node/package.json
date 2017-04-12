@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
+    "committers": "node ./code-review/carregarCommitsAndCommitters.js",
     "cors": "node ./code-review/infra/couch-install/corsConfig.js"
   },
   "dependencies": {
