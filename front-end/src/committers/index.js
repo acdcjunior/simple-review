@@ -1,4 +1,4 @@
-const imgInterrogacao = require('../assets/question_mark.png')
+const imgInterrogacao = require('../assets/question_mark.png');
 
 const committers = {
   commiterLogado: undefined,
@@ -16,6 +16,10 @@ window.$.ajax({
     receivedCommitters.forEach(receivedCommitter => {
       committers.committers[receivedCommitter.email] = receivedCommitter
     })
+  },
+  error: (err) => {
+    console.error(err);
+    alert('Servico de committers estah fora!!');
   }
 });
 
@@ -28,14 +32,14 @@ committers.get = (email) => {
 
 committers.testLogin = (component) => {
   if (!committers.commiterLogado) {
-    let cookieLogado = component.$cookie.get('commiterLogado')
+    let cookieLogado = component.$cookie.get('commiterLogado');
     if (cookieLogado) {
       committers.commiterLogado = committers.committers[JSON.parse(cookieLogado).email]
     } else {
-      component.$router.go('/login')
+      component.$router.go('/login');
       return true
     }
   }
-}
+};
 
 export default committers
