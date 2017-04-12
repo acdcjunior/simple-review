@@ -58,15 +58,7 @@
       :commit="commit">
     </commit>
 
-    <div class="col-md-12" style="display: none;">
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <input type="text" class="form-control" v-model="title" placeholder="Enter title">
-          <input type="text" class="form-control" v-model="content" placeholder="Enter content">
-          <button class="btn btn-default" v-on:click="submit">Submit</button>
-        </div>
-      </div>
-    </div>
+    <div class="col-md-12"><br>&nbsp;<br></div>
   </div>
 </div>
 </template>

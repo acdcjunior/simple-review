@@ -11,6 +11,30 @@
         <div class="layout-col_right">
             <iframe id="diff" name="diff" width="100%" height="99.635%" frameborder="0" marginheight="0" marginwidth="0" scrolling="yes" src=""></iframe>
         </div>
+        <button id="botao-encolher" class="btn btn-default"
+        style="
+            position: absolute;
+            bottom: 1%;
+            left: 1%;
+            width: 40px;
+            height:40px;
+            z-index: 99999;
+        "
+        onclick="window.$('.layout-col_left').hide(); window.$('.layout-col_right').css('margin-left', '0'); window.$('#botao-encolher').hide(); window.$('#botao-expandir').show();"
+        ><span class="glyphicon glyphicon-menu-left"></span></button>
+        <button id="botao-expandir" class="btn btn-success"
+        style="
+            display: none;
+
+            position: absolute;
+            bottom: 1%;
+            left: 1%;
+            width: 40px;
+            height:40px;
+            z-index: 99999;
+        "
+        onclick="window.$('.layout-col_left').show(); window.$('.layout-col_right').css('margin-left', '21.5%'); window.$('#botao-encolher').show(); window.$('#botao-expandir').hide();"
+        ><span class="glyphicon glyphicon-menu-right"></span></button>
     </div>
 </template>
 
