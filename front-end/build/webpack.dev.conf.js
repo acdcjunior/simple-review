@@ -15,7 +15,7 @@ Object.keys(config.entry).forEach(function (name, i) {
 
 // necessary for the html plugin to work properly
 // when serving the html from in-memory
-config.output.publicPath = '/'
+config.output.publicPath = '/code-review';
 
 config.plugins = (config.plugins || []).concat([
   // https://github.com/glenjamin/webpack-hot-middleware#installation--usage
@@ -24,9 +24,8 @@ config.plugins = (config.plugins || []).concat([
   new webpack.NoErrorsPlugin(),
   // https://github.com/ampedandwired/html-webpack-plugin
   new HtmlWebpackPlugin({
-    filename: 'index.html',
     template: 'src/index.html'
   })
-])
+]);
 
-module.exports = config
+module.exports = config;
