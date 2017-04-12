@@ -136,7 +136,10 @@ export default {
 
   methods: {
     logado () {
-      return committers.commiterLogado
+        if (!committers.commiterLogado) {
+            console.log('Não há committer logado! -> ', committers.commiterLogado);
+        }
+        return committers.commiterLogado;
     },
     restaurarCommitsEfetuadosPor () {
       this.exibirSomenteCommitsEfetuadosPor = store.todos.email
