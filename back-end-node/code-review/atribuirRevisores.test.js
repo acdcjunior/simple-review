@@ -2,6 +2,9 @@
 let Committer = require('./domain/Committer');
 let Commit = require('./domain/Commit');
 let atribuirRevisores = require('./atribuirRevisores');
+let ArrayShuffle = require('./util/arrayShuffle');
+
+ArrayShuffle.arrayShuffle = (arr) => arr.sort().reverse();
 
 const sesol2Repository = require('./domain/Sesol2Repository');
 sesol2Repository.insert = () => {};
@@ -119,6 +122,7 @@ atribuirRevisores().then(() => {
     assertCommit(commits[17]);
     assert.notEqual(commits[17].revisores[0], "leliakn@tcu.gov.br");
 
+    assertJson(commits);
 });
 
 function assertCommit(commit) {
@@ -157,3 +161,36 @@ function assertCommitRevisor(commit, revisor) {
 }
 
 function x() {}
+
+
+function assertJson(commits) {
+    let expected = [
+        {message:" 0\n ",                author_email:"antonio.junior@tcu.gov.br", revisores:["alexandrevr@tcu.gov.br"],                              historico:[]},
+        {message:" 1\n ",                author_email:"antonio.junior@tcu.gov.br", revisores:["antonio.junior@tcu.gov.br"],                           historico:[]},
+        {message:" 2\n ",                author_email:"antonio.junior@tcu.gov.br", revisores:["fernandesm@tcu.gov.br"],                               historico:["Revisor fernandesm@tcu.gov.br atribuído automaticamente pelo sistema."]},
+        {message:" 3\n ",                author_email:"x11111111111@tcu.gov.br",   revisores:["x22222222222@tcu.gov.br","marcosps@tcu.gov.br"],       historico:["Revisor x22222222222@tcu.gov.br atribuído automaticamente pelo sistema.","Revisor marcosps@tcu.gov.br atribuído automaticamente pelo sistema."]},
+        {message:" 4\n ",                author_email:"antonio.junior@tcu.gov.br", revisores:["regiano@tcu.gov.br"],                                  historico:["Revisor regiano@tcu.gov.br atribuído automaticamente pelo sistema."]},
+        {message:" 5\n ",                author_email:"x22222222222@tcu.gov.br",   revisores:["x11111111111@tcu.gov.br","antonio.junior@tcu.gov.br"], historico:["Revisor x11111111111@tcu.gov.br atribuído automaticamente pelo sistema.","Revisor antonio.junior@tcu.gov.br atribuído automaticamente pelo sistema."]},
+        {message:" 6\n ",                author_email:"antonio.junior@tcu.gov.br", revisores:["alexandrevr@tcu.gov.br"],                              historico:["Revisor alexandrevr@tcu.gov.br atribuído automaticamente pelo sistema."]},
+        {message:" 7\n ",                author_email:"x33333333333@tcu.gov.br",   revisores:["x44444444444@tcu.gov.br","antonio.junior@tcu.gov.br"], historico:["Revisor x44444444444@tcu.gov.br atribuído automaticamente pelo sistema.","Revisor antonio.junior@tcu.gov.br atribuído automaticamente pelo sistema."]},
+        {message:" 8\n ",                author_email:"antonio.junior@tcu.gov.br", revisores:["marcosps@tcu.gov.br"],                                 historico:["Revisor marcosps@tcu.gov.br atribuído automaticamente pelo sistema."]},
+        {message:" 9\n ",                author_email:"x44444444444@tcu.gov.br",   revisores:["x33333333333@tcu.gov.br","antonio.junior@tcu.gov.br"], historico:["Revisor x33333333333@tcu.gov.br atribuído automaticamente pelo sistema.","Revisor antonio.junior@tcu.gov.br atribuído automaticamente pelo sistema."]},
+        {message:"10\n ",                author_email:"antonio.junior@tcu.gov.br", revisores:["alexandrevr@tcu.gov.br"],                              historico:["Revisor alexandrevr@tcu.gov.br atribuído automaticamente pelo sistema."]},
+        {message:"11\n ",                author_email:"antonio.junior@tcu.gov.br", revisores:["marcosps@tcu.gov.br"],                                 historico:["Revisor marcosps@tcu.gov.br atribuído automaticamente pelo sistema."]},
+        {message:"12\n ",                author_email:"antonio.junior@tcu.gov.br", revisores:["alexandrevr@tcu.gov.br"],                              historico:["Revisor alexandrevr@tcu.gov.br atribuído automaticamente pelo sistema."]},
+        {message:"13\n revisor:carlanm", author_email:"marcosps@tcu.gov.br",       revisores:["carlanm@tcu.gov.br"],                                  historico:["Revisor carlanm@tcu.gov.br atribuído por indicação via mensagem de commit."]},
+        {message:"14\n revisor:leliakn", author_email:"x11111111111@tcu.gov.br",   revisores:["x22222222222@tcu.gov.br","leliakn@tcu.gov.br"],        historico:["Revisor x22222222222@tcu.gov.br atribuído automaticamente pelo sistema.","Revisor leliakn@tcu.gov.br atribuído por indicação via mensagem de commit."]},
+        {message:"15\n revisor:lelia",   author_email:"antonio.junior@tcu.gov.br", revisores:["leliakn@tcu.gov.br"],                                  historico:["Revisor leliakn@tcu.gov.br atribuído por indicação via mensagem de commit."]},
+        {message:"16\n revisor:invalid", author_email:"marcosps@tcu.gov.br",       revisores:["antonio.junior@tcu.gov.br"],                           historico:["Revisão atribuída a revisor desconhecido: invalid@tcu.gov.br. Ignorada.","Revisor antonio.junior@tcu.gov.br atribuído automaticamente pelo sistema."]},
+        {message:"17\n revisor:lelia",   author_email:"leliakn@tcu.gov.br",        revisores:["antonio.junior@tcu.gov.br"],                           historico:["Revisão indicada não executada, pois o revisor indicado é o autor do commit.","Revisor antonio.junior@tcu.gov.br atribuído automaticamente pelo sistema."]}
+    ];
+
+    // console.log('---------------------');
+    // console.log(expected);
+    // console.log('---------------------');
+    // console.log(JSON.stringify(commits));
+    // console.log('---------------------');
+    assert.equal(JSON.stringify(commits), JSON.stringify(expected));
+
+
+}

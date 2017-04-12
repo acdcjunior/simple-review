@@ -1,6 +1,7 @@
 const Committer = require("./domain/Committer");
 const Commit = require("./domain/Commit");
 const sesol2Repository = require('./domain/Sesol2Repository');
+const ArrayShuffle = require('./util/arrayShuffle');
 
 const aliases = {
     'alex@tcu.gov.br': 'alexandrevr@tcu.gov.br',
@@ -40,16 +41,6 @@ function isEstagiario(authorEmail) {
 
 function isServidor(authorEmail) {
     return !isEstagiario(authorEmail);
-}
-
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        let j = Math.floor(Math.random() * (i + 1));
-        let temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
-    }
-    return array;
 }
 
 function historicoRevisorIndicado(commitSemRevisor, revisorIndicado) {
@@ -124,7 +115,7 @@ function calcularRevisorComBaseNaOcupacao(commitSemRevisor, percentuaisDeRevisoe
         .filter(email => percentuaisDeRevisoes[email] > 0)
         .filter(email => email !== commitSemRevisor.author_email);
 
-    let emailsMisturados = shuffleArray(emails);
+    let emailsMisturados = ArrayShuffle.arrayShuffle(emails);
 
     let emailComMenorPercentualOcupado = emailsMisturados[0];
 

@@ -17,6 +17,7 @@ class Commit extends Sesol2 {
         this.created_at = created_at;
         this.revisado = false;
         this.revisores = [];
+        this.revisoes = [];
         this.historico = [];
     }
 
