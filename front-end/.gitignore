@@ -4,4 +4,3 @@ dist/static/
 npm-debug.log
 
 .idea/
-build/
