@@ -18,7 +18,7 @@ utils.timeagoMaiusculo = (dateAsString) => {
 utils.ocultarEspacosEmBranco = true;
 utils.diffLadoALado = true;
 
-const gitlabHost = window.location.host.indexOf('127.0.0.1') === -1 ? '127.0.0.1:8090' : 'git';
+const gitlabHost = window.location.host.indexOf('127.0.0.1') !== -1 ? '127.0.0.1:8090' : 'git';
 utils.gitlabLink = (sha) => {
     return `http://${gitlabHost}/sti/sagas2/commit/${sha}?${utils.diffLadoALado ? 'view=parallel&' : '&'}${utils.ocultarEspacosEmBranco ? 'w=1' : ''}`;
 };
