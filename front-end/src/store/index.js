@@ -68,14 +68,25 @@ store.findCommentsByCommitId = (commitId) => {
   )
 }
 
+function commitRevisado (commit) {
+    let revisoresPendentes = commit.revisores.length;
+    commit.revisoes.forEach(revisao => {
+        if (commit.revisores.indexOf(revisao.revisor) !== -1) {
+            revisoresPendentes--;
+        }
+    });
+
+    return revisoresPendentes <= 0;
+}
+
 store.reloadCommits = (obj, prop, exibirSomenteCommitsEfetuadosPor, exibirSomenteCommitsEmQueSouRevisor, meuEmail, exibirSomenteCommitsNaoRevisados) => {
   store.findAllOfType('commit').then(commits => {
     let commitsTrazidos = _.map(commits, (commit) => commit)
     commitsTrazidos = commitsTrazidos.filter(commitTrazido => {
       return (
-             (!exibirSomenteCommitsEmQueSouRevisor || commitTrazido.revisor_email === meuEmail) &&
+             (!exibirSomenteCommitsEmQueSouRevisor || commitTrazido.revisores.indexOf(meuEmail) !== -1) &&
              (exibirSomenteCommitsEfetuadosPor === store.todos.email || commitTrazido.author_email === exibirSomenteCommitsEfetuadosPor) &&
-             (!exibirSomenteCommitsNaoRevisados || !commitTrazido.revisado)
+             (!exibirSomenteCommitsNaoRevisados || !commitRevisado(commitTrazido))
       )
     })
     obj[prop] = commitsTrazidos

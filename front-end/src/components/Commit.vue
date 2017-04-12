@@ -9,11 +9,8 @@
         <button v-if="commit.revisado" class="btn btn-default" style="float: right" v-on:click="abrirRevisao">Ver</button>
         <p style="margin: 10px 5px 0 0">
           Criado {{ timeAgo(commit.created_at) }}.
-          <span v-if="!commit.revisado">Ainda não revisado.</span>
-          <strongx>
-          <span v-if="commit.revisado && commit.revisado.indexOf('par') === -1" class="text-primary">Revisado {{ timeAgo(commit.revisor_efetivo_data) }}.</span>
-          <span v-if="commit.revisado && commit.revisado.indexOf('par') !== -1" class="text-success">Feito em par.</span>
-          </strongx>
+          <span v-if="!commitRevisado()">Ainda não revisado.</span>
+          <span v-else style="font-weight: bold">Revisado {{ timeAgoRevisado() }}.</span>
         </p>
       </div>
     </div>
@@ -43,8 +40,21 @@ export default {
     timeAgo (data) {
       return utils.timeago(data)
     },
+    timeAgoRevisado () {
+      return utils.timeago(this.commit.revisoes[this.commit.revisoes.length - 1].data)
+    },
     gitlabLink () {
       return utils.gitlabLink(this.commit.sha)
+    },
+    commitRevisado () {
+        let revisoresPendentes = this.commit.revisores.length;
+        this.commit.revisoes.forEach(revisao => {
+            if (this.commit.revisores.indexOf(revisao.revisor) !== -1) {
+                revisoresPendentes--;
+            }
+        });
+
+        return revisoresPendentes <= 0;
     },
     abrirRevisao () {
       utils.atualizarDiff(this.commit.sha)
