@@ -11,6 +11,7 @@ window.$.ajax({
   dataType: 'json',
   url: 'http://127.0.0.1:3000/committers',
   async: false,
+  timeout: 3000, // sets timeout to 3 seconds
   success: receivedCommitters => {
     committers.committers = {};
     receivedCommitters.forEach(receivedCommitter => {
