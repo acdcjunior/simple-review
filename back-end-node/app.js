@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const index = require('./routes/index');
 const committers = require('./routes/committers');
 const inject = require('./routes/inject');
+const rpc = require('./routes/rpc');
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use(`${BACK_END_CONTEXT}/public`, express.static(path.join(__dirname, 'publi
 app.use(`${BACK_END_CONTEXT}/index`, index);
 app.use(`${BACK_END_CONTEXT}/committers`, committers);
 app.use(`${BACK_END_CONTEXT}/inject.js`, inject);
+app.use(`${BACK_END_CONTEXT}/rpc`, rpc);
 
 app.use(`/code-review`, express.static(path.join(__dirname, 'front')));
 app.use(`/static`, express.static(path.join(__dirname, 'front', 'static')));
