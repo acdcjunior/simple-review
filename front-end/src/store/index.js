@@ -1,8 +1,8 @@
 import PouchDB from 'pouchdb'
 import _ from 'lodash'
 
-const db = new PouchDB('sesol2')
-const remotedb = new PouchDB('http://127.0.0.1:5984/sesol2')
+const db = new PouchDB('sesol2');
+const remotedb = new PouchDB(`http://${window.env.COUCHDB_HOST}:5984/sesol2`)
 
 const store = {
   listeners: {},

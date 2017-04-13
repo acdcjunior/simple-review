@@ -9,7 +9,7 @@ const committers = {
 
 window.$.ajax({
   dataType: 'json',
-  url: 'http://127.0.0.1:3000/committers',
+  url: `${window.env.BACK_END_NODE}/back-end-review/committers`,
   async: false,
   timeout: 3000, // sets timeout to 3 seconds
   success: receivedCommitters => {
