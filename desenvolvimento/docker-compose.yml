@@ -1,5 +1,6 @@
 version: '2'
 services:
+
   couchdb:
     image: "couchdb"
     environment:
@@ -19,14 +20,17 @@ services:
       - sh
       - "-c"
       - "fauxton -c http://db:5984"
+
   gitlab:
     image: gitlab/gitlab-ce
     ports:
       - "8090:80"
+
+  # serve tanto o back-end quanto o front-end
   node:
-#    build: .
+    image: node:7
     ports:
-     - "80:3000"
+     - 3000
     links:
       - couchdb:couchdb
     environment:
@@ -38,3 +42,13 @@ services:
       - COUCHDB_PASSWORD=pass
     volumes:
      - ../back-end-node:/projeto
+    working_dir: /projeto
+    command: bash -c "npm install && npm run cors && npm start"
+
+  nginx:
+    build: ./nginx
+    links:
+        - gitlab:gitlab
+        - node:node
+    ports:
+        - "80:80"
