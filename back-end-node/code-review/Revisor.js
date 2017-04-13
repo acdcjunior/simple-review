@@ -1,11 +1,25 @@
+const comentar = require('./comentar');
+
 class Revisor {
 
     static revisorIndicado(sha, revisorIndicado) {
-        return `Revisor ${revisorIndicado} atribuído por indicação via mensagem de commit.`;
+        const msg = `Revisor ${revisorIndicado} atribuído por indicação via mensagem de commit.`;
+        comentar(sha, this.comentario(msg));
+        return msg;
     }
 
     static revisorCalculado(sha, revisorCalculado) {
-        return `Revisor ${revisorCalculado} atribuído automaticamente pelo sistema.`;
+        const msg = `Revisor ${revisorCalculado} atribuído automaticamente.`;
+        comentar(sha, this.comentario(msg));
+        return msg;
+    }
+
+    static comentario(msg) {
+        return ':checkered_flag: ' + this.removerDomainDoEmail(msg);
+    }
+
+    static removerDomainDoEmail(msg) {
+        return msg.replace(/(\S+)@tcu.gov.br/, '@$1');
     }
 
 }
