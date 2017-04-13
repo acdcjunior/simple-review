@@ -30,7 +30,7 @@ services:
   node:
     image: node:7
     ports:
-     - 3000
+     - "8093:3000"
     links:
       - couchdb:couchdb
     environment:

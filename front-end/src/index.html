@@ -3,11 +3,22 @@
   <head>
     <meta charset="utf-8">
 
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="https://cdn.rawgit.com/rmm5t/jquery-timeago/180864a9/jquery.timeago.js"></script>
-    <script src="https://cdn.rawgit.com/rmm5t/jquery-timeago/180864a9/locales/jquery.timeago.pt-br.js"></script>
+    <script>
+        window.env = window.env || {};
+        window.env.isDev = window.location.host === '127.0.0.1:8080';
+        window.env.BACK_END_NODE = window.env.isDev ? 'http://127.0.0.1:8093/back-end-review' : '/back-end-review';
+        window.env.GITLAB_HOST   = window.env.isDev ? '127.0.0.1:8090' : '127.0.0.1';
+        window.env.COUCHDB_HOST  = window.location.hostname;
 
-    <title>vue-express</title>{% for (var css in o.htmlWebpackPlugin.files.css) { %}
+        // https://code.jquery.com/jquery-3.2.1.min.js
+        // https://cdn.rawgit.com/rmm5t/jquery-timeago/180864a9/jquery.timeago.js
+        // https://cdn.rawgit.com/rmm5t/jquery-timeago/180864a9/locales/jquery.timeago.pt-br.js
+        document.write(`<script src="${window.env.BACK_END_NODE}/public/javascripts/jquery-3.2.1.min.js"><\/script>
+                        <script src="${window.env.BACK_END_NODE}/public/javascripts/jquery.timeago.js"><\/script>
+                        <script src="${window.env.BACK_END_NODE}/public/javascripts/jquery.timeago.pt-br.js"><\/script>`);
+    </script>
+
+    <title>Sesol-2 Code Review</title>{% for (var css in o.htmlWebpackPlugin.files.css) { %}
     <link href="{%=o.htmlWebpackPlugin.files.css[css] %}" rel="stylesheet">{% } %}
   </head>
   <body>

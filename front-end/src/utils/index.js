@@ -19,10 +19,10 @@ utils.ocultarEspacosEmBranco = true;
 utils.diffLadoALado = true;
 
 utils.gitlabLink = (sha) => {
-    return `http://${window.GITLAB_HOST}/sti/sagas2/commit/${sha}?${utils.diffLadoALado ? 'view=parallel&' : '&'}${utils.ocultarEspacosEmBranco ? 'w=1' : ''}`;
+    return `http://${window.env.GITLAB_HOST}/sti/sagas2/commit/${sha}?${utils.diffLadoALado ? 'view=parallel&' : '&'}${utils.ocultarEspacosEmBranco ? 'w=1' : ''}`;
 };
 utils.gitlabLoginLink = () => {
-    return `http://${window.GITLAB_HOST}/users/sign_in`;
+    return `http://${window.env.GITLAB_HOST}/users/sign_in`;
 };
 utils.atualizarDiff = (sha) => {
   let gitlabLink = utils.gitlabLink(sha)
