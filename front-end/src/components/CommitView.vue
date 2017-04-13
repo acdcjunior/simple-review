@@ -98,6 +98,7 @@ import store from '../store'
 import utils from '../utils'
 import committers from '../committers'
 import Committer from './Committer'
+import backEnd from '../servicos/backEnd'
 
 export default {
   components: {
@@ -181,6 +182,7 @@ export default {
         setTimeout(() => { this.exibirLoadingRevisaoAlterada = false }, 1000);
         this.commit.revisoes.push({revisor: committers.commiterLogado.email, data: new Date().toISOString(), tipo: status || 'comum'});
         store.create(this.commit).then(() => {
+            backEnd.marcarRevisado(this.commit.sha, committers.commiterLogado.email, status === 'par');
             this.loadCommit(this.commit._id)
         })
     },
