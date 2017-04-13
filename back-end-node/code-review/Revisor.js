@@ -15,7 +15,7 @@ class Revisor {
     }
 
     static comentario(msg) {
-        return ':checkered_flag: ' + this.removerDomainDoEmail(msg);
+        return ':loud_sound: ' + this.removerDomainDoEmail(msg);
     }
 
     static removerDomainDoEmail(msg) {
