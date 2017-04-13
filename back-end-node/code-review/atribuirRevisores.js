@@ -2,6 +2,7 @@ const Committer = require("./domain/Committer");
 const Commit = require("./domain/Commit");
 const sesol2Repository = require('./domain/Sesol2Repository');
 const ArrayShuffle = require('./util/arrayShuffle');
+const Revisor = require('./Revisor');
 
 const aliases = {
     'alex@tcu.gov.br': 'alexandrevr@tcu.gov.br',
@@ -44,10 +45,11 @@ function isServidor(authorEmail) {
 }
 
 function historicoRevisorIndicado(commitSemRevisor, revisorIndicado) {
-    commitSemRevisor.historico.push(`Revisor ${revisorIndicado} atribuído por indicação via mensagem de commit.`);
+    commitSemRevisor.historico.push(Revisor.revisorIndicado(commitSemRevisor.sha, revisorIndicado));
 }
+
 function historicoRevisorCalculado(commitSemRevisor, revisorCalculado) {
-    commitSemRevisor.historico.push(`Revisor ${revisorCalculado} atribuído automaticamente pelo sistema.`);
+    commitSemRevisor.historico.push(Revisor.revisorCalculado(commitSemRevisor.sha, revisorCalculado));
 }
 
 function calcularRevisor(commitSemRevisor, percentuaisDeRevisoes, revisores) {
