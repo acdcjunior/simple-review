@@ -1,5 +1,6 @@
 cd ../front-end
-npm install && npm run build
+call npm install
+call npm run build
 cd ../desenvolvimento
 docker-compose up --build
 
