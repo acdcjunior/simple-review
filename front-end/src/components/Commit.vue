@@ -4,11 +4,15 @@
       <div class="panel-body">
         <a v-if="commitRevisado()" href="{{ gitlabLink() }}" target="diff" class="text-muted" style="word-wrap: break-word;"><h3>{{ commit.title }}</h3></a>
         <a v-else=""               href="{{ gitlabLink() }}" target="diff"                    style="word-wrap: break-word;"><h3>{{ commit.title }}</h3></a>
+
         <committer :committer-email="committer().email"></committer>
-        <button v-if="!commit.revisado" class="btn btn-info" style="float: right" v-on:click="abrirRevisao">Revisar</button>
-        <button v-if="commit.revisado" class="btn btn-default" style="float: right" v-on:click="abrirRevisao">Ver</button>
+
+        <button v-if="commitRevisado()" class="btn btn-default" style="float: right" v-on:click="abrirRevisao">Ver</button>
+        <button v-else=""               class="btn btn-info" style="float: right" v-on:click="abrirRevisao">Revisar</button>
+
         <p style="margin: 10px 5px 0 0">
           Criado {{ timeAgo(commit.created_at) }}.
+
           <span v-if="!commitRevisado()">Ainda não revisado.</span>
           <span v-else style="font-weight: bold">Revisado {{ timeAgoRevisado() }}.</span>
         </p>
