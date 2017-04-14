@@ -182,7 +182,9 @@ export default {
         setTimeout(() => { this.exibirLoadingRevisaoAlterada = false }, 1000);
         this.commit.revisoes.push({revisor: committers.commiterLogado.email, data: new Date().toISOString(), tipo: status || 'comum'});
         store.create(this.commit).then(() => {
-            backEnd.marcarRevisado(this.commit.sha, committers.commiterLogado.email, status === 'par');
+            backEnd.marcarRevisado(this.commit.sha, committers.commiterLogado.email, status === 'par').then(() => {
+                window.diff.notes.refresh();
+            });
             this.loadCommit(this.commit._id)
         })
     },

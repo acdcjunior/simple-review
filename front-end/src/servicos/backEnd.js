@@ -2,19 +2,27 @@ const backEnd = {};
 
 
 backEnd.marcarRevisado = function (sha, emailRevisor, feitoEmPar) {
-    window.$.ajax({
-        dataType: 'json',
-        url: `${window.env.BACK_END_NODE}/rpc/marcar-revisado`,
-        data: {
-            sha: sha,
-            revisor: emailRevisor,
-            feitoEmPar: feitoEmPar
-        },
-        error: (err) => {
-            console.error(err);
-            alert('Erro ao gerar comentario de marcar como revisado! Verifique o console!');
-        }
-    });
+    return new Promise((resolve, reject) => {
+        window.$.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: `${window.env.BACK_END_NODE}/rpc/marcar-revisado`,
+            data: {
+                sha: sha,
+                revisor: emailRevisor,
+                feitoEmPar: feitoEmPar
+            },
+            success: () => {
+                console.log('Sucesso ao postar!');
+                resolve();
+            },
+            error: (err) => {
+                console.error('Erro ao post!', err);
+                alert('Erro ao gerar comentario de marcar como revisado! Verifique o console!');
+                reject(err);
+            }
+        });
+    })
 };
 
 
