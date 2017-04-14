@@ -24,12 +24,18 @@ utils.gitlabLink = (sha) => {
 utils.gitlabLoginLink = () => {
     return `${window.env.GITLAB_PROTOCOL_HOST}/users/sign_in`;
 };
+
 utils.atualizarDiff = (sha) => {
-  let gitlabLink = utils.gitlabLink(sha)
-  if (document.getElementById('diff').src !== gitlabLink) {
-    document.getElementById('diff').src = gitlabLink
-  }
-}
+    let gitlabLink = utils.gitlabLink(sha);
+    try {
+        const currentIframeUrl = document.getElementById('diff').contentWindow.location.href;
+        if (currentIframeUrl === gitlabLink) {
+            return;
+        }
+    } catch (ignored) { /* cross-domain error, acontece quando estamos no amb de dev. */ }
+    document.getElementById('diff').src = gitlabLink;
+};
+
 utils.limparDiff = () => {
   document.getElementById('diff').src = ''
 }
