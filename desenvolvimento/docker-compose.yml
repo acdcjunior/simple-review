@@ -48,6 +48,8 @@ services:
     environment:
       - COUCHDB_USER=root
       - COUCHDB_PASSWORD=pass
+      - COUCHDB_HOST=couchdb
+
       - GITLAB_HOST=git
 
       - xGITLAB_HOST_PROJECT_ID=123

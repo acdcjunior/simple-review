@@ -1,21 +1,19 @@
 const PouchDB = require('pouchdb');
 
-const couchdbHost = 'couchdb';
-const couchdbUser = process.env.COUCHDB_USER || 'root';
-const couchdbPassword = process.env.COUCHDB_PASSWORD || 'pass';
+const couchDbConfig = require('./couchDbConfig');
 
 const ajaxOpts = {
     ajax: {
         headers: {
-            Authorization: 'Basic ' + Buffer.from(`${couchdbUser}:${couchdbPassword}`).toString('base64')
+            Authorization: 'Basic ' + Buffer.from(`${couchDbConfig.couchdbUser}:${couchDbConfig.couchdbPassword}`).toString('base64')
         },
         body: {
-            name: couchdbUser,
-            password: couchdbPassword
+            name: couchDbConfig.couchdbUser,
+            password: couchDbConfig.couchdbPassword
         }
     }
 };
 
-const db = new PouchDB(`http://${couchdbHost}:5984/sesol2`, ajaxOpts);
+const db = new PouchDB(`http://${couchDbConfig.couchdbHost}:${couchDbConfig.couchdbPort}/${couchDbConfig.couchdbDatabase}`, ajaxOpts);
 
 module.exports = db;

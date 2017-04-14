@@ -1,13 +1,13 @@
 'use strict';
 const addCorsToCouch = require('add-cors-to-couchdb');
 
-const couchdbHost = 'couchdb';
-const couchdbUser = process.env.COUCHDB_USER || 'root';
-const couchdbPassword = process.env.COUCHDB_PASSWORD || 'pass';
+const couchDbConfig = require('../couchDbConfig');
 
-console.log(`Attempting to configure server at http://${couchdbHost}:5984, with user=${couchdbUser} and password=${couchdbPassword}...`);
+console.log(
+    `Attempting to configure server at http://${couchDbConfig.couchdbHost}:${couchDbConfig.couchdbPort}, with user=${couchDbConfig.couchdbUser} and password=${couchDbConfig.couchdbPassword}...`
+);
 
-addCorsToCouch(`http://${couchdbHost}:5984`, `${couchdbUser}:${couchdbPassword}`).then(function () {
+addCorsToCouch(`http://${couchDbConfig.couchdbHost}:${couchDbConfig.couchdbPort}`, `${couchDbConfig.couchdbUser}:${couchDbConfig.couchdbPassword}`).then(function () {
     console.log('CORS configuration successful.');
 }).catch(function (err) {
     console.log('CORS configuration error:', err);
