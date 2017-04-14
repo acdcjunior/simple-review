@@ -1,36 +1,32 @@
-import PouchDB from 'pouchdb'
-import _ from 'lodash'
+import PouchDB from 'pouchdb';
 
 const DEV_MODE = window.location.host === '127.0.0.1:8080';
+function dev() {
+    if (DEV_MODE) {
+        console.log.apply(this, arguments);
+    }
+}
 
 const db = new PouchDB('sesol2');
-const remotedb = new PouchDB(`http://${window.env.COUCHDB_HOST}:5984/sesol2`)
+const remotedb = new PouchDB(`http://${window.env.COUCHDB_HOST}:5984/sesol2`);
 
 const store = {
-  listeners: {},
-  todos: {name: 'Todos', email: 'nao@existe.com'}
-}
+    listeners: {},
+    todos: {name: 'Todos', email: 'nao@existe.com'}
+};
 
 db.sync(remotedb, {
   live: true,
   retry: true
 }).on('change', function (change) {
-    if (DEV_MODE) {
-        console.log('yo, something changed!', change);
-    }
+    dev('yo, something changed!', change);
     store.callListeners()
 }).on('paused', function (info) {
-    if (DEV_MODE) {
-        console.log('replication was paused, usually because of a lost connection', info);
-    }
+    dev('replication was paused, usually because of a lost connection', info);
 }).on('active', function (info) {
-    if (DEV_MODE) {
-        console.log('replication was resumed:', info);
-    }
+    dev('replication was resumed:', info);
 }).on('error', function (err) {
-    if (DEV_MODE) {
-        console.log('totally unhandled error (shouldn\'t happen):', err)
-    }
+    dev('totally unhandled error (shouldn\'t happen):', err)
 });
 
 if (!DEV_MODE) {
@@ -38,77 +34,51 @@ if (!DEV_MODE) {
 }
 
 store.registerListener = (key, funct) => {
-  store.listeners[key] = funct
-}
+    store.listeners[key] = funct
+};
 store.callListeners = () => {
-  Object.keys(store.listeners).forEach(key => {
-    store.listeners[key]()
-  })
-}
+    Object.keys(store.listeners).forEach(key => {
+        store.listeners[key]()
+    });
+};
 
 store.create = data => {
-  return db.post(data)
-}
+    return db.post(data)
+};
 
-store.findAllOfAllTypes = () => {
-  return db.allDocs({include_docs: true})
+function queryView(nomeView) {
+    return db.query(nomeView, {include_docs: true}).then(result => {
+        return new Promise(resolve => {
+            resolve(result.rows.map(row => row.doc));
+        })
+    });
 }
-
-store.findAllOfType = (tipo) => {
-  function map (doc, emit) {
-    if (doc.type === tipo) {
-      emit(doc.createdAt)
-    }
-  }
-  return db.query(map, {include_docs: true}).then(commits =>
-    _.map(commits.rows, (commit) => commit.doc)
-  )
+function findAllCommits() {
+    return queryView('commits_index');
+}
+function findAllCommitsRevisadosNao() {
+    return queryView('commits_revisados_nao_index');
 }
 
 store.findById = (id) => {
-  return db.get(id)
-}
-
-store.findCommentsByCommitId = (commitId) => {
-  function map (doc, emit) {
-    if (doc.commitId === commitId) {
-      emit(doc.createdAt)
-    }
-  }
-  return db.query(map, {include_docs: true}).then(comments =>
-    _.map(comments.rows, (comment) => comment.doc)
-  )
-}
-
-function commitRevisado (commit) {
-    let revisoresPendentes = commit.revisores.length;
-    commit.revisoes.forEach(revisao => {
-        if (commit.revisores.indexOf(revisao.revisor) !== -1) {
-            revisoresPendentes--;
-        }
-    });
-
-    return revisoresPendentes <= 0;
-}
+    return db.get(id)
+};
 
 store.reloadCommits = (obj, prop, exibirSomenteCommitsEfetuadosPor, exibirSomenteCommitsEmQueSouRevisor, meuEmail, exibirSomenteCommitsNaoRevisados) => {
-  store.findAllOfType('commit').then(commits => {
-    let commitsTrazidos = _.map(commits, (commit) => commit)
-    commitsTrazidos = commitsTrazidos.filter(commitTrazido => {
-      return (
-             (!exibirSomenteCommitsEmQueSouRevisor || commitTrazido.revisores.indexOf(meuEmail) !== -1) &&
-             (exibirSomenteCommitsEfetuadosPor === store.todos.email || commitTrazido.author_email === exibirSomenteCommitsEfetuadosPor) &&
-             (!exibirSomenteCommitsNaoRevisados || !commitRevisado(commitTrazido))
-      )
+    let commitsPromise;
+    if (exibirSomenteCommitsNaoRevisados) {
+        commitsPromise = findAllCommitsRevisadosNao();
+    } else {
+        commitsPromise = findAllCommits();
+    }
+    commitsPromise.then(commits => {
+        obj[prop] = commits.filter(commitTrazido => {
+            return (
+                (!exibirSomenteCommitsEmQueSouRevisor || commitTrazido.revisores.indexOf(meuEmail) !== -1) &&
+                (exibirSomenteCommitsEfetuadosPor === store.todos.email || commitTrazido.author_email === exibirSomenteCommitsEfetuadosPor)
+            )
+        });
     })
-    obj[prop] = commitsTrazidos
-  })
-}
-
-store.reloadComments = (obj, prop, commitId) => {
-  store.findCommentsByCommitId(commitId).then(comments => {
-    obj[prop] = _.map(comments, (comment) => comment)
-  })
-}
+};
 
 export default store

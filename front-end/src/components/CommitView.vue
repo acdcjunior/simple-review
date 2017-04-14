@@ -68,32 +68,12 @@
       </ul>
     </div>
 
-    <button class="btn btn-danger" v-if="0" v-on:click="limparRevisor"><span class="glyphicon glyphicon-user"></span> Tirar</button>
-    <div v-if="0">
-      <div class="col-md-12">
-        <h3 class="page-header">Comments ({{ comments.length }})</h3>
-      </div>
-      <comment
-              v-for="comment in comments"
-              :comment="comment">
-      </comment>
-      <div class="col-md-4">
-        <div class="panel panel-default">
-          <div class="panel-body">
-            <input type="text" class="form-control" v-model="content" placeholder="Enter content">
-            <button class="btn btn-default" v-on:click="submit">Submit</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="col-md-12"><br>&nbsp;<br>&nbsp;<br></div>
   </div>
   </div>
 </template>
 
 <script>
-import Comment from '../components/Comment'
 import store from '../store'
 import utils from '../utils'
 import committers from '../committers'
@@ -102,15 +82,13 @@ import backEnd from '../servicos/backEnd'
 
 export default {
   components: {
-    Committer, Comment
+    Committer
   },
 
   data () {
     return {
       _id: '',
       commit: '',
-      comments: [],
-      content: '',
       type: '',
       createdAt: '',
       commitId: '',
@@ -121,7 +99,6 @@ export default {
 
   created () {
     committers.testLogin(this)
-
   },
 
   route: {
@@ -149,12 +126,9 @@ export default {
       return (revisao.tipo || '').indexOf('par') === -1 ? 'text-primary' : 'text-success'
     },
     loadCommit (commitId) {
-      return store.findById(commitId).then(commit =>
-        store.findCommentsByCommitId(commit._id).then(comments => {
-          this.commit = commit
-          this.comments = comments
-        })
-      )
+      return store.findById(commitId).then(commit => {
+          this.commit = commit;
+      });
     },
     commitRevisado () {
         let revisoresPendentes = this.commit.revisores.length;
@@ -188,28 +162,10 @@ export default {
             this.loadCommit(this.commit._id)
         })
     },
-    limparRevisor () {
-      this.commit.revisoes = [];
-      store.create(this.commit).then(() => {
-        this.loadCommit(this.commit._id)
-      })
-    },
-    submit () {
-      const data = {
-        content: this.content,
-        type: 'comment',
-        createdAt: new Date().toJSON(),
-        commitId: this.commit._id
-      }
-      store.create(data).then(() => {
-        store.reloadComments(this, 'comments', this.commit._id)
-      })
-      this.content = ''
-    },
     retornarParaCommits () {
-      utils.limparDiff()
-      this.commit = undefined
-      this.$router.go('/commits')
+        utils.limparDiff();
+        this.commit = undefined;
+        this.$router.go('/commits')
     }
   }
 }
