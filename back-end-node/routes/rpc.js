@@ -1,10 +1,13 @@
 const comentar = require('../code-review/comentar');
 const Revisor = require('../code-review/Revisor');
+const carregarCommitsAndCommitters = require('../code-review/carregarCommitsAndCommitters');
+
+
 
 const express = require('express');
 const router = express.Router();
 
-router.post('/marcar-revisado', function(req, res, next) {
+router.post('/marcar-revisado', function(req, res) {
     const sha = req.body.sha;
     const revisor = Revisor.removerDomainDoEmail(req.body.revisor);
     const feitoEmPar = req.body.feitoEmPar === "true";
@@ -23,13 +26,8 @@ router.post('/marcar-revisado', function(req, res, next) {
     })
 });
 
-router.post('/webhook', function(req, res, next) {
-    console.log('webhook POST received');
-    console.log('webhook body', req.body);
-    console.log('----------------------------------------------------------------------------');
-    console.log('----------------------------------------------------------------------------');
-    console.log('----------------------------------------------------------------------------');
-    console.log('----------------------------------------------------------------------------');
+router.post('/webhook', function(req, res) {
+    carregarCommitsAndCommitters();
     res.send('ok-post');
 });
 
