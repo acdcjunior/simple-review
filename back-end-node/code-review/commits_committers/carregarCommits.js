@@ -3,7 +3,7 @@ const Utils = require('../util/Utils');
 const sesol2Repository = require('../domain/Sesol2Repository');
 const Commit = require('../domain/Commit');
 
-const atribuirRevisores = require('../atribuirRevisores');
+const atribuirRevisores = require('./atribuirRevisores');
 
 const GitLab = require('../domain/GitLab');
 

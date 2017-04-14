@@ -1,8 +1,8 @@
-const Committer = require("./domain/Committer");
-const Commit = require("./domain/Commit");
-const sesol2Repository = require('./domain/Sesol2Repository');
-const ArrayShuffle = require('./util/arrayShuffle');
-const Revisor = require('./Revisor');
+const Committer = require("../domain/Committer");
+const Commit = require("../domain/Commit");
+const sesol2Repository = require('../domain/Sesol2Repository');
+const ArrayShuffle = require('../util/arrayShuffle');
+const Revisor = require('../Revisor');
 
 const aliases = {
     'alex@tcu.gov.br': 'alexandrevr@tcu.gov.br',

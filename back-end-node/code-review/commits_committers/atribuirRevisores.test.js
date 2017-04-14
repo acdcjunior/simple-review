@@ -1,12 +1,12 @@
 
-let Committer = require('./domain/Committer');
-let Commit = require('./domain/Commit');
+let Committer = require('../domain/Committer');
+let Commit = require('../domain/Commit');
 let atribuirRevisores = require('./atribuirRevisores');
-let ArrayShuffle = require('./util/arrayShuffle');
+let ArrayShuffle = require('../util/arrayShuffle');
 
 ArrayShuffle.arrayShuffle = (arr) => arr.sort().reverse();
 
-const sesol2Repository = require('./domain/Sesol2Repository');
+const sesol2Repository = require('../domain/Sesol2Repository');
 sesol2Repository.insert = () => {};
 
 const assert = require('assert');
