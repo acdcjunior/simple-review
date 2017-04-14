@@ -1,6 +1,8 @@
 import PouchDB from 'pouchdb'
 import _ from 'lodash'
 
+const DEV_MODE = window.location.host === '127.0.0.1:8080';
+
 const db = new PouchDB('sesol2');
 const remotedb = new PouchDB(`http://${window.env.COUCHDB_HOST}:5984/sesol2`)
 
@@ -13,17 +15,27 @@ db.sync(remotedb, {
   live: true,
   retry: true
 }).on('change', function (change) {
-  console.log('yo, something changed!', change)
-  store.callListeners()
+    if (DEV_MODE) {
+        console.log('yo, something changed!', change);
+    }
+    store.callListeners()
 }).on('paused', function (info) {
-  console.log('replication was paused, usually because of a lost connection', info)
+    if (DEV_MODE) {
+        console.log('replication was paused, usually because of a lost connection', info);
+    }
 }).on('active', function (info) {
-  console.log('replication was resumed:', info)
+    if (DEV_MODE) {
+        console.log('replication was resumed:', info);
+    }
 }).on('error', function (err) {
-  console.log('totally unhandled error (shouldn\'t happen):', err)
-})
+    if (DEV_MODE) {
+        console.log('totally unhandled error (shouldn\'t happen):', err)
+    }
+});
 
-PouchDB.debug.disable()
+if (!DEV_MODE) {
+    PouchDB.debug.disable();
+}
 
 store.registerListener = (key, funct) => {
   store.listeners[key] = funct
