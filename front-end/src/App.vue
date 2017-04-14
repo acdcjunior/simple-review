@@ -12,6 +12,7 @@
             <iframe id="diff" name="diff" width="100%" height="99.635%" frameborder="0" marginheight="0" marginwidth="0" scrolling="yes" src=""></iframe>
         </div>
         <button id="botao-encolher" class="btn btn-default"
+                title="Encolher (ocultar) temporariamente barra lateral"
         style="
             position: absolute;
             bottom: 1%;
@@ -23,6 +24,7 @@
         onclick="window.$('.layout-col_left').hide(); window.$('.layout-col_right').css('margin-left', '0'); window.$('#botao-encolher').hide(); window.$('#botao-expandir').show();"
         ><span class="glyphicon glyphicon-menu-left"></span></button>
         <button id="botao-expandir" class="btn btn-success"
+                title="Retornar (expandir) barra lateral"
         style="
             display: none;
 
@@ -40,6 +42,13 @@
 
 <style>
 @import "variables.css";
+
+#botao-encolher, #botao-expandir {
+    opacity: 0.6;
+}
+#botao-encolher:hover, #botao-expandir:hover {
+    opacity: 1;
+}
 
 .layout-container {
     display: block;
