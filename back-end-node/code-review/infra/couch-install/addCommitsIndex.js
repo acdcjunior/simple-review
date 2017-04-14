@@ -1,35 +1,58 @@
+const criarView = require('./criarView');
 
-const db = require('../couchdb');
+function addCommitsIndexes() {
 
-const commitIndex = {
-    _id: '_design/commits_index',
-    views: {
-        'commits_index': {
-            map: function(doc) {
-                if (doc.type === 'commit') {
-                    emit(doc.created_at);
-                }
-            }.toString()
+    return criarView(
+        'commits_index',
+        function (doc) {
+            if (doc.type === 'commit') {
+                emit(doc.created_at);
+            }
         }
-    }
-};
-db.put(commitIndex).then(function () {
-    // kick off an initial build, return immediately
-    db.query('commits_index', {stale: 'update_after'});
-    return Promise.resolve(true);
-}).catch(function (err) {
-    if (err.status === 409) {
-        return Promise.resolve(false);
-    }
-    console.log('Err: ', err);
-}).then(function (viewFoiCriada) {
-    if (viewFoiCriada) {
-        console.log('[commits_index] *** View foi criada.');
-    } else {
-        console.log('[commits_index] *** View jah existia.');
-    }
-    // query the index (much faster now!)
-    return db.query('commits_index', {include_docs: true});
-}).then(function (result) {
-    console.log('[commits_index] Commits via index: ', result.rows.length);
-});
+    ).then(() => {
+
+        return criarView(
+            'commits_revisados_sim_index',
+            function (commit) {
+                if (commit.type === 'commit') {
+                    var revisoresPendentes = commit.revisores.length;
+                    for (var i = 0; i < commit.revisoes.length; i++) {
+                        var revisor = commit.revisoes[i].revisor;
+                        if (commit.revisores.indexOf(revisor) !== -1) {
+                            revisoresPendentes--;
+                        }
+                    }
+                    var commitRevisado = revisoresPendentes <= 0;
+                    if (commitRevisado) {
+                        emit(commit.created_at);
+                    }
+                }
+            }
+        );
+
+    }).then(() => {
+
+        return criarView(
+            'commits_revisados_nao_index',
+            function (commit) {
+                if (commit.type === 'commit') {
+                    var revisoresPendentes = commit.revisores.length;
+                    for (var i = 0; i < commit.revisoes.length; i++) {
+                        var revisor = commit.revisoes[i].revisor;
+                        if (commit.revisores.indexOf(revisor) !== -1) {
+                            revisoresPendentes--;
+                        }
+                    }
+                    var commitRevisado = revisoresPendentes <= 0;
+                    if (!commitRevisado) {
+                        emit(commit.created_at);
+                    }
+                }
+            }
+        );
+
+    });
+
+}
+
+module.exports = addCommitsIndexes;

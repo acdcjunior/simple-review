@@ -1,12 +1,9 @@
-const delay_diff = 1500;
-let delay = 0;
+const corsConfig = require('./corsConfig');
+const addTypeIndex = require('./addTypeIndex');
+const addCommitsIndexes = require('./addCommitsIndex');
 
-require('./corsConfig');
-
-setTimeout(() => {
-    require('./addTypeIndex');
-}, delay += delay_diff);
-
-setTimeout(() => {
-    require('./addCommitsIndex');
-}, delay += delay_diff);
+corsConfig().then(() => {
+    return addTypeIndex()
+}).then(() => {
+    addCommitsIndexes();
+});
