@@ -163,7 +163,6 @@ module.exports = {
     'sort-vars': 0,
     'space-after-keywords': [2, 'always'],
     'space-before-blocks': [2, 'always'],
-    'space-before-function-paren': [2, 'always'],
     'space-in-parens': [2, 'never'],
     'space-infix-ops': 2,
     'space-return-throw-case': 2,
