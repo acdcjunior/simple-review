@@ -1,8 +1,8 @@
 const Committer = require('./Committer');
 
-const host = process.env.CODE_REVIEW_HOST || '192.168.56.1:8090';
-const projectId = process.env.CODE_REVIEW_PROJECT_ID || 3;
-const projectBranch = process.env.CODE_REVIEW_PROJECT_BRANCH || 'desenvolvimento';
+const host = process.env.GITLAB_HOST || '192.168.56.1:8090';
+const projectId = process.env.GITLAB_HOST_PROJECT_ID || 3;
+const projectBranch = process.env.GITLAB_HOST_PROJECT_BRANCH || 'desenvolvimento';
 const privateToken = process.env.CODE_REVIEW_PRIVATE_TOKEN || 'M3_6_x-z3HQEPc4Z4TYg';
 
 class GitLabConfig {
@@ -22,5 +22,18 @@ class GitLabConfig {
     }
 
 }
+
+console.log(`
+    DADOS USADOS PARA CONEXAO DO BACKEND NODE COM GITLAB
+    ----------------------------------------------------
+    host: ${host}
+    projectId: ${projectId}
+    projectBranch: ${projectBranch}
+    privateToken: ${privateToken}
+    projectsUrl: ${GitLabConfig.projectsUrl()}
+    usersUrl: ${GitLabConfig.usersUrl('meu@email.com')}
+    commentsUrl: ${GitLabConfig.commentsUrl('sha1234')}
+    ----------------------------------------------------
+`);
 
 module.exports = GitLabConfig;
