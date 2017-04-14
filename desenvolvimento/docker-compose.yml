@@ -10,45 +10,65 @@ services:
         - ./couchdb-dados:/usr/local/var/lib/couchdb
     ports:
      - "5984:5984"
+    networks:
+     - code-review-network
   fauxton:
     image: 3apaxicom/fauxton
     ports:
       - "8984:8000"
     links:
       - couchdb:db
+    networks:
+      - code-review-network
     command:
       - sh
       - "-c"
       - "fauxton -c http://db:5984"
 
+  # Adicionar como webhook:
+  # http://git/sti/sagas2/settings/integrations
+  # http://srv-codereview/back-end-review/rpc/webhook
   gitlab:
     image: gitlab/gitlab-ce
     ports:
       - "8090:80"
+    networks:
+      - code-review-network
 
   # serve tanto o back-end quanto o front-end
-  node:
+  back-end-node:
     image: node:7
     ports:
      - "8093:3000"
     links:
       - couchdb:couchdb
+      - gitlab:git
+    networks:
+      - code-review-network
     environment:
-      - CODE_REVIEW_HOST=git
-      - CODE_REVIEW_PROJECT_ID=123
-      - CODE_REVIEW_PRIVATE_TOKEN=EsspXz7kinZN9RayS8sG
-      - CODE_REVIEW_COUCHDB_HOST=couchdb
       - COUCHDB_USER=root
       - COUCHDB_PASSWORD=pass
+      - GITLAB_HOST=git
+
+      - xGITLAB_HOST_PROJECT_ID=123
+      - xGITLAB_HOST_PRIVATE_TOKEN=EsspXz7kinZN9RayS8sG
+      - GITLAB_HOST_PROJECT_ID=3
+      - GITLAB_HOST_PRIVATE_TOKEN=M3_6_x-z3HQEPc4Z4TYg
     volumes:
      - ../back-end-node:/projeto
     working_dir: /projeto
     command: bash -c "npm install && npm run cors && npm start"
 
-  nginx:
+  srv-codereview:
     build: ./nginx
-    links:
-        - gitlab:gitlab
-        - node:node
     ports:
         - "80:80"
+    links:
+        - gitlab:git
+        - back-end-node:node
+    networks:
+        - code-review-network
+
+networks:
+  code-review-network:
+    driver: bridge

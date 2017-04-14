@@ -23,4 +23,14 @@ router.post('/marcar-revisado', function(req, res, next) {
     })
 });
 
+router.post('/webhook', function(req, res, next) {
+    console.log('webhook POST received');
+    console.log('webhook body', req.body);
+    console.log('----------------------------------------------------------------------------');
+    console.log('----------------------------------------------------------------------------');
+    console.log('----------------------------------------------------------------------------');
+    console.log('----------------------------------------------------------------------------');
+    res.send('ok-post');
+});
+
 module.exports = router;
