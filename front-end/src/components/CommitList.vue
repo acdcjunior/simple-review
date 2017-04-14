@@ -8,8 +8,6 @@
           <span class="caret"></span>
         </button>
         <ul class="dropdown-menu  dropdown-menu-right" aria-labelledby="dropdownMenu1">
-          <li><a :href="gitlabLoginLink()" target="diff"><span class="glyphicon glyphicon-lock"></span>Abrir página de login do GitLab</a></li>
-          <li role="separator" class="divider"></li>
           <li><a href="#" v-on:click="alterarOpcaoBooleana('ocultarEspacosEmBranco')">Ocultar Espaços em Branco: <b>{{ ocultarEspacosEmBranco ? 'Sim' : 'Não' }}</b></a></li>
           <li><a href="#" v-on:click="alterarOpcaoBooleana('diffLadoALado')">Exibir Diff Lado a Lado: <b>{{ diffLadoALado ? 'Sim' : 'Não' }}</b></a></li>
           <li role="separator" class="divider"></li>
@@ -138,9 +136,6 @@ export default {
     restaurarCommitsEfetuadosPor () {
       this.exibirSomenteCommitsEfetuadosPor = store.todos.email
       this.carregarCommits()
-    },
-    gitlabLoginLink () {
-        return utils.gitlabLoginLink();
     },
     emailTodos () {
       return store.todos.email

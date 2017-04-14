@@ -21,9 +21,6 @@ utils.diffLadoALado = true;
 utils.gitlabLink = (sha) => {
     return `${window.env.GITLAB_PROTOCOL_HOST}/sti/sagas2/commit/${sha}?${utils.diffLadoALado ? 'view=parallel&' : '&'}${utils.ocultarEspacosEmBranco ? 'w=1' : ''}`;
 };
-utils.gitlabLoginLink = () => {
-    return `${window.env.GITLAB_PROTOCOL_HOST}/users/sign_in`;
-};
 
 utils.atualizarDiff = (sha) => {
     let gitlabLink = utils.gitlabLink(sha);
