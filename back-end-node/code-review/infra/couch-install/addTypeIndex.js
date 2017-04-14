@@ -22,12 +22,12 @@ db.put(typeIndex).then(function () {
     console.log('Err: ', err);
 }).then(function (viewFoiCriada) {
     if (viewFoiCriada) {
-        console.log('*** View foi criada.\n');
+        console.log('[type_index] *** View foi criada.');
     } else {
-        console.log('*** View jah existia.\n');
+        console.log('[type_index] *** View jah existia.');
     }
     // query the index (much faster now!)
     return db.query('type_index', {key: 'committer', include_docs: true});
 }).then(function (result) {
-    console.log('Commiters via index: ', result);
+    console.log('[type_index] Commiters via index: ', result.rows.length);
 });
