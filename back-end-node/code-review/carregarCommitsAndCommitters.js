@@ -32,10 +32,15 @@ let commits = gitlab.getCommits().then(commits => {
         promisesDeCommittersInseridos.push(
             gitlab.getUser(committerEmail).then(committerUser => {
                 if (committerUser.length !== 1) {
-                    console.log('USUARIO NAO ENCONTRADO DE MANEIRA UNICA');
+
+                    for (let i = 0; i < 50; i++) {
+                        console.log('USUARIO NAO ENCONTRADO DE MANEIRA UNICA');
+                    }
                     console.log(committerEmail, committerUser);
-                    console.log('USUARIO NAO ENCONTRADO DE MANEIRA UNICA');
-                    process.exit(1);
+                    printBar();
+                    printBar();
+
+                    return;
                 }
                 let user = committerUser[0];
                 return sesol2Repository.insertIfNotExists(
