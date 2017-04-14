@@ -1,13 +1,15 @@
 const comentar = require('../code-review/comentar');
 const Revisor = require('../code-review/Revisor');
 const carregarCommitsAndCommitters = require('../code-review/carregarCommitsAndCommitters');
-
+const addCors = require('./addCors');
 
 
 const express = require('express');
 const router = express.Router();
 
 router.post('/marcar-revisado', function(req, res) {
+    addCors(req, res);
+
     const sha = req.body.sha;
     const revisor = Revisor.removerDomainDoEmail(req.body.revisor);
     const feitoEmPar = req.body.feitoEmPar === "true";
