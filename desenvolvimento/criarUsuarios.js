@@ -1,7 +1,9 @@
-var privateToken = 'M3_6_x-z3HQEPc4Z4TYg';
+// executar isso num console com jQuery
+
+const privateToken = 'M3_6_x-z3HQEPc4Z4TYg';
 function criarUser(nome, username) {
     console.log('Criando username: ', username);
-    var usuario = {
+    let usuario = {
         email: username + "@tcu.gov.br",
         username: username,
         name: nome,
@@ -21,14 +23,14 @@ function criarUser(nome, username) {
     });
 }
 
-criarUser("Afonso Dias de Oliveira Barros (X11111111111)", "x11111111111");
-criarUser("Bruno Kwian Oliveira Silva (X22222222222)", "x22222222222");
+criarUser("Afonso Dias de Oliveira Conceição Silva (X05491194182)", "x05491194182");
+criarUser("Bruno Kywan Vasconcelos Gois (X05929991146)", "x05929991146");
 criarUser("Gabriel Mesquita de Araujo (X04912831131)", "x04912831131");
 criarUser("Rebeca Andrade Baldomir (X05068385107)", "x05068385107");
 
 criarUser("Alexandre Vaz Roriz (ALEXANDREVR)", "alexandrevr");
 criarUser("Antonio C. de Carvalho Junior (CARVALHOJ)", "antonio.junior");
-criarUser("Carla Nassif Sobrenome (CARLANS)", "carlans");
+criarUser("Carla Nassif Nassif Cortez Marcomini (CARLANM)", "carlanm");
 criarUser("Jose Mauricio Fernandes (FERNANDESM)", "fernandesm");
 criarUser("Lelia Karina Nunes (LELIAKN)", "leliakn");
 criarUser("Marcos Paulo Pereira da Silva (MARCOSPS)", "marcosps");
