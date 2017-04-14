@@ -3,10 +3,10 @@ const rest = require("../infra/rest");
 
 class GitLab {
 
-    getCommits() {
+    static getCommits() {
         return rest("GET", GitLabConfig.projectsUrl(), GitLabConfig.privateToken);
     }
-    getUser(committerEmail) {
+    static getUser(committerEmail) {
         return rest("GET", GitLabConfig.usersUrl(committerEmail), GitLabConfig.privateToken);
     }
 
