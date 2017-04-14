@@ -59,7 +59,7 @@ services:
     volumes:
      - ../back-end-node:/projeto
     working_dir: /projeto
-    command: bash -c "npm install && npm run cors && npm start"
+    command: bash -c "npm install && npm run couchdb-setup && npm start"
 
   srv-codereview:
     build: ./nginx

@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "committers": "node ./code-review/carregarCommitsAndCommitters.js",
-    "cors": "node ./code-review/infra/couch-install/corsConfig.js"
+    "webhook": "node ./code-review/carregarCommitsAndCommitters/index.js",
+    "couchdb-setup": "node ./code-review/infra/couch-install/couchDbSetup.js"
   },
   "dependencies": {
     "add-cors-to-couchdb": "0.0.6",
