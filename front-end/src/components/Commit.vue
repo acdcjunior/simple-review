@@ -2,8 +2,8 @@
   <div class="col-md-12">
     <div class="panel panel-default">
       <div class="panel-body">
-        <a v-if="!commit.revisado" href="{{ gitlabLink() }}" target="diff"><h3>{{ commit.title }}</h3></a>
-        <a v-if="commit.revisado" href="{{ gitlabLink() }}" target="diff" class="text-muted"><h3>{{ commit.title }}</h3></a>
+        <a v-if="commitRevisado()" href="{{ gitlabLink() }}" target="diff" class="text-muted" style="word-wrap: break-word;"><h3>{{ commit.title }}</h3></a>
+        <a v-else=""               href="{{ gitlabLink() }}" target="diff"                    style="word-wrap: break-word;"><h3>{{ commit.title }}</h3></a>
         <committer :committer-email="committer().email"></committer>
         <button v-if="!commit.revisado" class="btn btn-info" style="float: right" v-on:click="abrirRevisao">Revisar</button>
         <button v-if="commit.revisado" class="btn btn-default" style="float: right" v-on:click="abrirRevisao">Ver</button>
