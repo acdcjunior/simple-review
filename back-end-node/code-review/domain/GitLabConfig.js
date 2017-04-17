@@ -8,7 +8,7 @@ const privateToken = process.env.CODE_REVIEW_PRIVATE_TOKEN || 'M3_6_x-z3HQEPc4Z4
 class GitLabConfig {
 
     static projectsUrl () {
-        return `http://${host}/api/v4/projects/${projectId}/repository/commits/?ref_name=${projectBranch}&per_page=100`;
+        return `http://${host}/api/v4/projects/${projectId}/repository/commits/?ref_name=${projectBranch}&per_page=10`;
     }
     static usersUrl (committerEmail) {
         const emailCorrigido = Committer.corrigirEmail(committerEmail);
