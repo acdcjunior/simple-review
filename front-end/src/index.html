@@ -13,9 +13,12 @@
         // https://code.jquery.com/jquery-3.2.1.min.js
         // https://cdn.rawgit.com/rmm5t/jquery-timeago/180864a9/jquery.timeago.js
         // https://cdn.rawgit.com/rmm5t/jquery-timeago/180864a9/locales/jquery.timeago.pt-br.js
-        document.write(`<script src="${window.env.BACK_END_NODE}/public/javascripts/jquery-3.2.1.min.js"><\/script>
-                        <script src="${window.env.BACK_END_NODE}/public/javascripts/jquery.timeago.js"><\/script>
-                        <script src="${window.env.BACK_END_NODE}/public/javascripts/jquery.timeago.pt-br.js"><\/script>`);
+        document.write(`<script src="vendor/jquery-3.2.1.min.js"><\/script>
+                        <script src="vendor/jquery.timeago.js"><\/script>
+                        <script src="vendor/jquery.timeago.pt-br.js"><\/script>
+                        <script src="vendor/bootstrap-3.3.7/js/bootstrap.min.js"><\/script>
+                        <link rel="stylesheet" href="vendor/bootstrap-3.3.7/css/bootstrap.min.css"/>
+                        <link rel="stylesheet" href="vendor/bootstrap-3.3.7/css/bootstrap-theme.min.css"/>`);
     </script>
 
     <title>Sesol-2 Code Review</title>{% for (var css in o.htmlWebpackPlugin.files.css) { %}
