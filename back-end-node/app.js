@@ -24,7 +24,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 const BACK_END_CONTEXT = '/back-end-review';
-app.use(`${BACK_END_CONTEXT}/public`, express.static(path.join(__dirname, 'public')));
 app.use(`${BACK_END_CONTEXT}/index`, index);
 app.use(`${BACK_END_CONTEXT}/committers`, committers);
 app.use(`${BACK_END_CONTEXT}/inject.js`, inject);

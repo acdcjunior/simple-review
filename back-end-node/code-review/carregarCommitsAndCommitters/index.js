@@ -8,7 +8,7 @@ function carregarCommitsAndCommitters() {
     Utils.printBar();
 
     return carregarCommitters().then(() => {
-        carregarCommits();
+        // carregarCommits();
     });
 }
 
