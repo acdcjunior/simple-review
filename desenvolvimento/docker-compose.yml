@@ -25,6 +25,13 @@ services:
       - "-c"
       - "fauxton -c http://db:5984"
 
+  compilar-front-end-node:
+    image: node:7
+    volumes:
+     - ..:/fontes
+    working_dir: /fontes/front-end
+    command: bash -c "npm install && npm run build"
+
   # Adicionar como webhook:
   # http://git/sti/sagas2/settings/integrations
   # http://srv-codereview/back-end-review/rpc/webhook
