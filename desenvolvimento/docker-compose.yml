@@ -81,7 +81,7 @@ services:
     links:
 #        - gitlab:git
         - back-end-node:node
-        - front-end-node:front-end-node
+        - front-end-node:front
     networks:
         - code-review-network
 
