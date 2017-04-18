@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "node build/dev-server.js",
     "build": "rimraf dist && rimraf ../back-end-node/front && webpack --progress --hide-modules --config build/webpack.prod.conf.js && node-mv dist ../back-end-node/front",
+    "servir": "http-server dist",
     "test": "karma start build/karma.conf.js --single-run"
   },
   "dependencies": {
@@ -40,6 +41,7 @@
     "font-awesome-webpack": "0.0.4",
     "function-bind": "^1.0.2",
     "html-webpack-plugin": "^1.7.0",
+    "http-server": "^0.9.0",
     "imports-loader": "^0.6.5",
     "inject-loader": "^2.0.1",
     "jasmine-core": "^2.4.1",

@@ -25,12 +25,16 @@ services:
       - "-c"
       - "fauxton -c http://db:5984"
 
-  compilar-front-end-node:
+  front-end-node:
     image: node:7
+    ports:
+      - "8080:8080"
+    networks:
+      - code-review-network
     volumes:
      - ..:/fontes
     working_dir: /fontes/front-end
-    command: bash -c "npm install && npm run build"
+    command: bash -c "npm install && npm run build && npm run servir"
 
   # Adicionar como webhook:
   # http://git/sti/sagas2/settings/integrations
@@ -77,6 +81,7 @@ services:
     links:
 #        - gitlab:git
         - back-end-node:node
+        - front-end-node:front-end-node
     networks:
         - code-review-network
 
