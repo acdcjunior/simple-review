@@ -4,37 +4,7 @@ const sesol2Repository = require('../domain/Sesol2Repository');
 const ArrayShuffle = require('../util/arrayShuffle');
 const Revisor = require('../Revisor');
 
-const aliases = {
-    'alex@tcu.gov.br': 'alexandrevr@tcu.gov.br',
-    'alexandre@tcu.gov.br': 'alexandrevr@tcu.gov.br',
-
-    'antonio@tcu.gov.br': 'antonio.junior@tcu.gov.br',
-    'carvalhoj@tcu.gov.br': 'antonio.junior@tcu.gov.br',
-
-    'marcos@tcu.gov.br': 'marcosps@tcu.gov.br',
-    'marcao@tcu.gov.br': 'marcosps@tcu.gov.br',
-
-    'regis@tcu.gov.br': 'regiano@tcu.gov.br',
-
-    'fernandes@tcu.gov.br': 'fernandesm@tcu.gov.br',
-    'mauricio@tcu.gov.br': 'fernandesm@tcu.gov.br',
-    'josemauricio@tcu.gov.br': 'fernandesm@tcu.gov.br',
-
-    'lelia@tcu.gov.br': 'leliakn@tcu.gov.br',
-    'leliakarina@tcu.gov.br': 'leliakn@tcu.gov.br',
-
-    'carla@tcu.gov.br': 'carlanm@tcu.gov.br',
-
-    'gabriel@tcu.gov.br': 'x04912831131@tcu.gov.br',
-    'mesquita@tcu.gov.br': 'x04912831131@tcu.gov.br',
-
-    'rebeca@tcu.gov.br': 'x05068385107@tcu.gov.br',
-    'rebecca@tcu.gov.br': 'x05068385107@tcu.gov.br',
-
-    'afonso@tcu.gov.br': 'x05491194182@tcu.gov.br',
-
-    'bruno@tcu.gov.br': 'x05929991146@tcu.gov.br',
-};
+const listaRevisores = require('./revisores');
 
 function isEstagiario(authorEmail) {
     return /[xX]\d{11}@tcu.gov.br$/.test(authorEmail);
@@ -53,11 +23,11 @@ function historicoRevisorCalculado(commitSemRevisor, revisorCalculado) {
 }
 
 function calcularRevisor(commitSemRevisor, percentuaisDeRevisoes, revisores) {
-    let revisoresAtribuidos = [];
+    const revisoresAtribuidos = [];
 
     const revisorIndicado = commitFoiIndicadoParaAlgumRevisor(percentuaisDeRevisoes, commitSemRevisor);
-    let revisorOrientadoEhEstagiario = revisorIndicado && isEstagiario(revisorIndicado);
-    let revisorOrientadoEhServidor = revisorIndicado && isServidor(revisorIndicado);
+    const revisorOrientadoEhEstagiario = revisorIndicado && isEstagiario(revisorIndicado);
+    const revisorOrientadoEhServidor = revisorIndicado && isServidor(revisorIndicado);
 
     if (isEstagiario(commitSemRevisor.author_email)) {
         if (revisorOrientadoEhEstagiario) {
@@ -95,9 +65,7 @@ function commitFoiIndicadoParaAlgumRevisor(revisores, commitSemRevisor) {
     const message = commitSemRevisor.message;
     const nomeRevisor = message.replace(/(\s+|:)/g, ' ').match(/revisor ([\w.]+)/);
     if (nomeRevisor !== null) {
-        const emailRevisorOuAlias = nomeRevisor[1] + '@tcu.gov.br';
-
-        const emailCanonicoRevisor = aliases[emailRevisorOuAlias] || emailRevisorOuAlias;
+        const emailCanonicoRevisor = listaRevisores.emailCanonicoRevisor(nomeRevisor[1]);
 
         if (revisores[emailCanonicoRevisor] !== undefined) {
             if (commitSemRevisor.author_email === emailCanonicoRevisor) {
@@ -117,11 +85,11 @@ function calcularRevisorComBaseNaOcupacao(commitSemRevisor, percentuaisDeRevisoe
         .filter(email => percentuaisDeRevisoes[email] > 0)
         .filter(email => email !== commitSemRevisor.author_email);
 
-    let emailsMisturados = ArrayShuffle.arrayShuffle(emails);
+    const emailsMisturados = ArrayShuffle.arrayShuffle(emails);
 
     let emailComMenorPercentualOcupado = emailsMisturados[0];
 
-    let percentuaisOcupados = {};
+    const percentuaisOcupados = {};
     percentuaisOcupados[emailComMenorPercentualOcupado] = -1;
 
     emailsMisturados.forEach(email => {
@@ -141,20 +109,20 @@ function calcularRevisorComBaseNaOcupacao(commitSemRevisor, percentuaisDeRevisoe
 function atribuirRevisores() {
     return Committer.findAll().then(committers => {
         console.log(`Atribuindo Revisores...`);
-        let percentuaisDeRevisoes = {};
+        const percentuaisDeRevisoes = {};
         committers.forEach(committer => {
             percentuaisDeRevisoes[committer.email] = committer.percentualDeRevisoes;
         });
 
         Commit.findAll().then(commits => {
-            let revisores = {};
+            const revisores = {};
             commits.forEach(commit => {
                 commit.revisores.forEach(revisor => {
                     revisores[revisor] = (revisores[revisor] || 0) + 1;
                 })
             });
 
-            let commitsSemRevisores = commits.filter(commit => commit.revisores.length === 0);
+            const commitsSemRevisores = commits.filter(commit => commit.revisores.length === 0);
 
             commitsSemRevisores.forEach(commitSemRevisor => {
                 commitSemRevisor.revisores = calcularRevisor(commitSemRevisor, percentuaisDeRevisoes, revisores);
