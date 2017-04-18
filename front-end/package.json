@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",
-    "build": "rimraf dist && rimraf ../back-end-node/front && webpack --progress --hide-modules --config build/webpack.prod.conf.js && node-mv dist ../back-end-node/front",
+    "build": "rimraf dist && rimraf ../back-end-node/front && webpack --progress --hide-modules --config build/webpack.prod.conf.js",
     "servir": "http-server dist",
     "test": "karma start build/karma.conf.js --single-run"
   },
