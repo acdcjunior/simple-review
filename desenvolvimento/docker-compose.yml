@@ -7,7 +7,7 @@ services:
       - COUCHDB_USER=root      # altere no node, abaixo, também
       - COUCHDB_PASSWORD=pass  # altere no node, abaixo, também
     volumes:
-        - ./couchdb-dados:/usr/local/var/lib/couchdb
+        - /dados/couchdb-dados:/usr/local/var/lib/couchdb
     ports:
      - "5984:5984"
     networks:
@@ -28,14 +28,14 @@ services:
   # Adicionar como webhook:
   # http://git/sti/sagas2/settings/integrations
   # http://srv-codereview/back-end-review/rpc/webhook
-  gitlab:
-    image: gitlab/gitlab-ce
-    ports:
-      - "8090:80"
-    networks:
-      - code-review-network
-    logging:
-      driver: "none"
+  # gitlab:
+  #   image: gitlab/gitlab-ce
+  #   ports:
+  #     - "8090:80"
+  #   networks:
+  #     - code-review-network
+  #   logging:
+  #     driver: "none"
 
   # serve tanto o back-end quanto o front-end
   back-end-node:
@@ -44,7 +44,7 @@ services:
      - "8093:3000"
     links:
       - couchdb:couchdb
-      - gitlab:git
+#      - gitlab:git
     networks:
       - code-review-network
     environment:
@@ -54,10 +54,10 @@ services:
 
       - GITLAB_HOST=git
 
-      - xGITLAB_HOST_PROJECT_ID=123
-      - xGITLAB_HOST_PRIVATE_TOKEN=EsspXz7kinZN9RayS8sG
-      - GITLAB_HOST_PROJECT_ID=3
-      - GITLAB_HOST_PRIVATE_TOKEN=M3_6_x-z3HQEPc4Z4TYg
+      - GITLAB_HOST_PROJECT_ID=123
+      - GITLAB_HOST_PRIVATE_TOKEN=X_zfYU5k2VwDx2KegmdQ
+#      - xGITLAB_HOST_PROJECT_ID=3
+#      - xGITLAB_HOST_PRIVATE_TOKEN=M3_6_x-z3HQEPc4Z4TYg
     volumes:
      - ../back-end-node:/projeto
     working_dir: /projeto
@@ -68,7 +68,7 @@ services:
     ports:
         - "80:80"
     links:
-        - gitlab:git
+#        - gitlab:git
         - back-end-node:node
     networks:
         - code-review-network
