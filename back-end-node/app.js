@@ -30,9 +30,6 @@ app.use(`${BACK_END_CONTEXT}/committers`, committers);
 app.use(`${BACK_END_CONTEXT}/inject.js`, inject);
 app.use(`${BACK_END_CONTEXT}/rpc`, rpc);
 
-app.use(`/code-review`, express.static(path.join(__dirname, 'front')));
-app.use(`/static`, express.static(path.join(__dirname, 'front', 'static')));
-
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   let err = new Error('Not Found');

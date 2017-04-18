@@ -12,5 +12,6 @@ router.use(function(req, res, next) {
 });
 
 app.use(`/code-review`, express.static(path.join(__dirname, 'dist')));
+app.use(`/static`, express.static(path.join(__dirname, 'front', 'static')));
 
 app.listen(8080);
