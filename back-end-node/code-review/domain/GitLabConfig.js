@@ -3,7 +3,7 @@ const Committer = require('./Committer');
 const host = process.env.GITLAB_HOST || '192.168.56.1:8090';
 const projectId = process.env.GITLAB_HOST_PROJECT_ID || 3;
 const projectBranch = process.env.GITLAB_HOST_PROJECT_BRANCH || 'desenvolvimento';
-const privateToken = process.env.CODE_REVIEW_PRIVATE_TOKEN || 'M3_6_x-z3HQEPc4Z4TYg';
+const privateToken = process.env.GITLAB_HOST_PRIVATE_TOKEN || 'M3_6_x-z3HQEPc4Z4TYg';
 
 class GitLabConfig {
 
