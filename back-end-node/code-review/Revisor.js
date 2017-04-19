@@ -5,13 +5,13 @@ class Revisor {
 
     static revisorIndicado(sha, revisorIndicado) {
         const msg = `Revisor ${listaRevisores.userNameComNome(revisorIndicado)} atribuído por indicação via mensagem de commit.`;
-        comentar(sha, this.comentario(msg));
+        // comentar(sha, this.comentario(msg));
         return msg;
     }
 
     static revisorCalculado(sha, revisorCalculado) {
         const msg = `Revisor ${listaRevisores.userNameComNome(revisorCalculado)} atribuído automaticamente.`;
-        comentar(sha, this.comentario(msg));
+        // comentar(sha, this.comentario(msg));
         return msg;
     }
 
