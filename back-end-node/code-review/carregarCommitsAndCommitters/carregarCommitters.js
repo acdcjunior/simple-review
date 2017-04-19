@@ -1,7 +1,7 @@
 const Utils = require('../util/Utils');
 const sesol2Repository = require('../domain/Sesol2Repository');
 const Committer = require('../domain/Committer');
-const GitLab = require('../domain/GitLab');
+const GitLab = require('../domain/GitLab').GitLab;
 
 function getCommittersDosUltimosCommits() {
     return GitLab.getCommits().then(commits => {

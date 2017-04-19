@@ -5,7 +5,7 @@ const Commit = require('../domain/Commit');
 
 const atribuirRevisores = require('./atribuirRevisores');
 
-const GitLab = require('../domain/GitLab');
+const GitLab = require('../domain/GitLab').GitLab;
 
 function carregarCommits() {
 

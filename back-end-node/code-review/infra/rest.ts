@@ -1,8 +1,9 @@
 'use strict';
-Object.defineProperty(exports, "__esModule", { value: true });
-var requestPromise = require("request-promise-native");
-function rest(method, url, token, formData) {
-    var options = {
+
+import * as requestPromise from 'request-promise-native';
+
+export function rest(method, url, token, formData?): Promise<any> {
+    let options = {
         url: url,
         headers: {
             'PRIVATE-TOKEN': token
@@ -14,6 +15,6 @@ function rest(method, url, token, formData) {
     if (method.toUpperCase() === 'POST' && formData !== undefined) {
         options.formData = formData;
     }
+
     return requestPromise(options);
 }
-exports.rest = rest;
