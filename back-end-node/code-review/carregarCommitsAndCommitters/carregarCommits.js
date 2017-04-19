@@ -5,12 +5,12 @@ const Commit = require('../domain/Commit');
 
 const atribuirRevisores = require('./atribuirRevisores');
 
-const GitLab = require('../domain/GitLab').GitLab;
+const GitLabService = require('../gitlab/GitLabService').GitLabService;
 
 function carregarCommits() {
 
-    return GitLab.getCommits().then(commits => {
-        let promisesDeCommitsInseridos = [];
+    return GitLabService.getCommits().then(commits => {
+        const promisesDeCommitsInseridos = [];
 
         console.log(`Processando COMMITS...`);
         console.log(`\tProcessando ${commits.length} commits...`);

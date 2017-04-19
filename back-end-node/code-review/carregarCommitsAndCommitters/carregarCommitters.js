@@ -1,10 +1,11 @@
 const Utils = require('../util/Utils');
 const sesol2Repository = require('../domain/Sesol2Repository');
 const Committer = require('../domain/Committer');
-const GitLab = require('../domain/GitLab').GitLab;
+
+const GitLabService = require('../gitlab/GitLabService').GitLabService;
 
 function getCommittersDosUltimosCommits() {
-    return GitLab.getCommits().then(commits => {
+    return GitLabService.getCommits().then(commits => {
         console.log(`Processando COMMITTERS...`);
 
         console.log(`\tCarregrando committers de ${commits.length} commits...`);
@@ -41,7 +42,7 @@ function carregarCommitters() {
             committersDosUltimosCommits.forEach(committerEmail => {
                 promisesDeCommittersInseridos.push(
 
-                    GitLab.getUser(committerEmail).then(committerUser => {
+                    GitLabService.getUser(committerEmail).then(committerUser => {
 
                         let userDoGitlab = avisarSeUsuarioNaoEncontradoDeManeiraUnica(committerUser, committerEmail);
                         return sesol2Repository.insertIfNotExists(
