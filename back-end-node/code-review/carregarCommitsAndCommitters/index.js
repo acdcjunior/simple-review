@@ -10,4 +10,4 @@ function carregarCommitsAndCommitters() {
         carregarCommits_1.carregarCommits();
     });
 }
-module.exports = carregarCommitsAndCommitters;
+exports.default = carregarCommitsAndCommitters;
