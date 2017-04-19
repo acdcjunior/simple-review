@@ -5,13 +5,14 @@ const COMMITTER_TYPE = 'committer';
 
 class Committer extends Sesol2 {
 
-    constructor(email, name, avatar_url)
+    constructor(email, name, avatar_url, username)
     {
         super(Committer.corrigirEmail(email), COMMITTER_TYPE, Committer.corrigirEmail(email));
 
         this.email = Committer.corrigirEmail(email);
         this.name = name;
         this.avatar_url = avatar_url;
+        this.username = username;
 
         this.percentualDeRevisoes = this.calcularPercentualDeRevisoes();
     }
