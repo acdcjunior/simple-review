@@ -1,4 +1,4 @@
-const GitLabConfig = require('./domain/GitLabConfig');
+const GitLabConfig = require('./domain/GitLabConfig').GitLabConfig;
 const rest = require("./infra/rest");
 
 function comentar(commitSha, comentario) {

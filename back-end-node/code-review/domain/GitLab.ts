@@ -1,4 +1,4 @@
-import * as GitLabConfig from './GitLabConfig';
+import {GitLabConfig} from './GitLabConfig';
 import { rest } from "../infra/rest";
 
 export class GitLab {

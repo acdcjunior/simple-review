@@ -1,4 +1,4 @@
-import * as GitLabConfig from '../domain/GitLabConfig';
+import {GitLabConfig} from '../domain/GitLabConfig';
 import { rest } from "../infra/rest";
 import {GitLabUser} from "./GitLabUser";
 import {GitLabCommit} from "./GitLabCommit";
