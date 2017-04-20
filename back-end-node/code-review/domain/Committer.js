@@ -1,4 +1,4 @@
-const Sesol2 = require('./Sesol2');
+const Sesol2 = require('./Sesol2').Sesol2;
 const sesol2Repository = require('./Sesol2Repository');
 
 const COMMITTER_TYPE = 'committer';

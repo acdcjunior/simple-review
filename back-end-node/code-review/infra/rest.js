@@ -1,8 +1,8 @@
 'use strict';
 Object.defineProperty(exports, "__esModule", { value: true });
-var requestPromise = require("request-promise-native");
+const requestPromise = require("request-promise-native");
 function rest(method, url, token, formData) {
-    var options = {
+    let options = {
         url: url,
         headers: {
             'PRIVATE-TOKEN': token

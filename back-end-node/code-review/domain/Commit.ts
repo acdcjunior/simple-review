@@ -1,11 +1,21 @@
-'use strict';
-const Sesol2 = require('./Sesol2');
+import {Sesol2} from "./Sesol2";
+
 const Committer = require('./Committer');
 const sesol2Repository = require('./Sesol2Repository');
 
 const COMMIT_TYPE = 'commit';
 
-class Commit extends Sesol2 {
+export class Commit extends Sesol2 {
+
+    public sha: string;
+    public title: string;
+    public message: string;
+    public author_email: string;
+    public created_at: string;
+    public revisado: boolean;
+    public revisores: any[];
+    public revisoes: any[];
+    public historico: any[];
 
     constructor(sha, title, message, author_email, created_at) {
         super(sha, COMMIT_TYPE, title);
@@ -21,10 +31,8 @@ class Commit extends Sesol2 {
         this.historico = [];
     }
 
-    static findAll() {
+    public static findAll(): Promise<Commit[]> {
         return sesol2Repository.findAll(COMMIT_TYPE)
     }
 
 }
-
-module.exports = Commit;

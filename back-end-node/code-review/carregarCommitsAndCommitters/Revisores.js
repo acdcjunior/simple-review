@@ -11,12 +11,21 @@ class Revisores {
         let username = Revisores.usernamesAliases[mencaoSemArroba] || mencaoSemArroba;
         return GitLabService_1.GitLabService.getUserByUsername(username).then(user => {
             if (!user) {
-                return Promise.reject(`username <${username}> nao encontrado`);
+                return Promise.resolve(undefined);
             }
-            return Promise.resolve(user.);
+            return Promise.resolve(new Email(user.email));
         });
     }
-    ;
+    static emailCanonicoRevisor(input) {
+        const emailRevisorOuAlias = input + (input.endsWith('@tcu.gov.br') ? '' : '@tcu.gov.br');
+        return Revisores.aliases[emailRevisorOuAlias] || emailRevisorOuAlias;
+    }
+    static userNameComNome(emailCanonico) {
+        const emailCanonicoRevisor = Revisores.emailCanonicoRevisor(emailCanonico);
+        return GitLabService_1.GitLabService.getUser(emailCanonicoRevisor).then(usuario => {
+            return Promise.resolve(`@${usuario.username} [${usuario.name}]`);
+        });
+    }
 }
 Revisores.aliases = {
     'alex@tcu.gov.br': 'alexandrevr@tcu.gov.br',
@@ -63,16 +72,3 @@ Revisores.usernamesAliases = {
     'bruno': 'x05929991146',
 };
 exports.Revisores = Revisores;
-emailCanonicoRevisor(input);
-string;
-{
-    const emailRevisorOuAlias = input + (input.endsWith('@tcu.gov.br') ? '' : '@tcu.gov.br');
-    return Revisores.aliases[emailRevisorOuAlias] || emailRevisorOuAlias;
-}
-userNameComNome(emailCanonico);
-Promise < string > {
-    const: emailCanonicoRevisor = Revisores.emailCanonicoRevisor(emailCanonico),
-    return: GitLabService_1.GitLabService.getUser(emailCanonicoRevisor).then(usuario => {
-        return Promise.resolve(`@${usuario.username} [${usuario.name}]`);
-    })
-};

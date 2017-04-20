@@ -1,15 +1,11 @@
-class Sesol2 {
+export class Sesol2 {
 
-    constructor(_id, type, toString) {
-        this._id = _id;
-        this.type = type;
+    constructor(public _id, public type, toString) {
         Object.defineProperty(this, 'toStringValue', {value: toString, writable: false, enumerable:false});
     }
 
     toString() {
-        return this.toStringValue;
+        return (this as any).toStringValue;
     }
 
 }
-
-module.exports = Sesol2;
