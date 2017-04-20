@@ -1,28 +1,24 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const comentar = require('./comentar');
-const listaRevisores = require('./carregarCommitsAndCommitters/revisores');
-
+const Revisores = require('./carregarCommitsAndCommitters/revisores').Revisores;
 class Revisor {
-
-    static revisorIndicado(sha, revisorIndicado) {
-        const msg = `Revisor ${listaRevisores.userNameComNome(revisorIndicado)} atribuído por indicação via mensagem de commit.`;
-        // comentar(sha, this.comentario(msg));
-        return msg;
-    }
-
     static revisorCalculado(sha, revisorCalculado) {
-        const msg = `Revisor ${listaRevisores.userNameComNome(revisorCalculado)} atribuído automaticamente.`;
-        // comentar(sha, this.comentario(msg));
-        return msg;
+        return Revisores.userNameComNome(revisorCalculado).then((userNameComNome) => {
+            const msg = `Revisor ${userNameComNome} atribuído automaticamente.`;
+            // comentar(sha, this.comentario(msg));
+            return Promise.resolve(msg);
+        });
     }
-
+    static revisorIndicado(sha, revisorIndicado) {
+        return Revisores.userNameComNome(revisorIndicado).then((userNameComNome) => {
+            const msg = `Revisor ${userNameComNome} atribuído por indicação via mensagem de commit.`;
+            // comentar(sha, this.comentario(msg));
+            return Promise.resolve(msg);
+        });
+    }
     static comentario(msg) {
-        return ':loud_sound: ' + this.removerDomainDoEmail(msg);
+        return ':loud_sound: ' + msg;
     }
-
-    static removerDomainDoEmail(msg) {
-        return msg.replace(/(\S+)@tcu.gov.br/, '@$1');
-    }
-
 }
-
-module.exports = Revisor;
+exports.Revisor = Revisor;

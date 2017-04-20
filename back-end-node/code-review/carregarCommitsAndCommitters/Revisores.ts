@@ -47,13 +47,15 @@ revisores.usuarios = {
 };
 
 revisores.emailCanonicoRevisor = function (input) {
-    const emailRevisorOuAlias = input + '@tcu.gov.br';
+    const emailRevisorOuAlias = input + (input.endsWith('@tcu.gov.br') ? '' : '@tcu.gov.br');
 
     return revisores.aliases[emailRevisorOuAlias] || emailRevisorOuAlias;
 };
 
 revisores.userNameComNome = function (emailCanonico) {
-    const usuario = revisores.usuarios(emailCanonico);
+    const emailCanonicoRevisor = revisores.emailCanonicoRevisor(emailCanonico);
+    const usuario = revisores.usuarios[emailCanonicoRevisor];
+    console.log(`email: ${emailCanonicoRevisor} -- usuario: ${usuario}`);
     if (!usuario) {
         return emailCanonico;
     }

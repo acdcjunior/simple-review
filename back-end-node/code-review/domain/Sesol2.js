@@ -1,15 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 class Sesol2 {
-
     constructor(_id, type, toString) {
         this._id = _id;
         this.type = type;
-        Object.defineProperty(this, 'toStringValue', {value: toString, writable: false, enumerable:false});
+        Object.defineProperty(this, 'toStringValue', { value: toString, writable: false, enumerable: false });
     }
-
     toString() {
         return this.toStringValue;
     }
-
 }
-
-module.exports = Sesol2;
+exports.Sesol2 = Sesol2;

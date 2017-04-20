@@ -1,12 +1,15 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const Sesol2_1 = require("./Sesol2");
+'use strict';
+const Sesol2 = require('./Sesol2');
 const Committer = require('./Committer');
 const sesol2Repository = require('./Sesol2Repository');
+
 const COMMIT_TYPE = 'commit';
-class Commit extends Sesol2_1.Sesol2 {
+
+class Commit extends Sesol2 {
+
     constructor(sha, title, message, author_email, created_at) {
         super(sha, COMMIT_TYPE, title);
+
         this.sha = sha;
         this.title = title;
         this.message = message;
@@ -17,8 +20,11 @@ class Commit extends Sesol2_1.Sesol2 {
         this.revisoes = [];
         this.historico = [];
     }
+
     static findAll() {
-        return sesol2Repository.findAll(COMMIT_TYPE);
+        return sesol2Repository.findAll(COMMIT_TYPE)
     }
+
 }
-exports.Commit = Commit;
+
+module.exports = Commit;
