@@ -23,4 +23,10 @@ export class GitLabService {
         });
     }
 
+    static getUserByUsername(username: string): Promise<GitLabUser> {
+        return rest("GET", GitLabConfig.usersUsernameUrl(username), GitLabConfig.tokenReadUsers).then(users => {
+            return Promise.resolve(users[0]);
+        });
+    }
+
 }

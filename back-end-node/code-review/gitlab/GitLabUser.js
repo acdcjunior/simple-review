@@ -1,8 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var GitLabUser = (function () {
-    function GitLabUser() {
-    }
-    return GitLabUser;
-}());
+class GitLabUser {
+}
 exports.GitLabUser = GitLabUser;

@@ -17,5 +17,10 @@ class GitLabService {
             return Promise.resolve(users[0]);
         });
     }
+    static getUserByUsername(username) {
+        return rest_1.rest("GET", GitLabConfig_1.GitLabConfig.usersUsernameUrl(username), GitLabConfig_1.GitLabConfig.tokenReadUsers).then(users => {
+            return Promise.resolve(users[0]);
+        });
+    }
 }
 exports.GitLabService = GitLabService;
