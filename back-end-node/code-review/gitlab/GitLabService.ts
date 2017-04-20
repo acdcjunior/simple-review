@@ -13,8 +13,11 @@ export class GitLabService {
 
     static getUser(committerEmail: string): Promise<GitLabUser> {
         return rest("GET", GitLabConfig.usersUrl(committerEmail), GitLabConfig.privateToken).then(users => {
-            if (users.length !== 1) {
-                throw new Error('USUARIO NAO ENCONTRADO DE MANEIRA UNICA')
+            if (users.length === 0) {
+                throw new Error(`Usuario GitLab com email <${committerEmail}> não encontrado!`);
+            }
+            if (users.length > 1) {
+                throw new Error(`Encontrado MAIS DE UM (${users.length}) usuario GitLab com email <${committerEmail}>:\n${JSON.stringify(users)}`);
             }
             return Promise.resolve(users[0]);
         });
