@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const Committer_1 = require("./Committer");
+const Email_1 = require("../geral/Email");
 let host = process.env.GITLAB_HOST || 'git6';
 let projectId = process.env.GITLAB_HOST_PROJECT_ID || 123;
 let projectBranch = process.env.GITLAB_HOST_PROJECT_BRANCH || 'desenvolvimento';
@@ -17,9 +17,8 @@ class GitLabConfig {
     static projectsUrl(perPage = 10) {
         return `http://${host}/api/v4/projects/${projectId}/repository/commits/?ref_name=${projectBranch}&per_page=${perPage}`;
     }
-    static usersUrl(committerEmail) {
-        const emailCorrigido = Committer_1.Committer.corrigirEmail(committerEmail);
-        return `http://${host}/api/v4/users/?search=${emailCorrigido}`;
+    static usersUrlByEmail(committerEmail) {
+        return `http://${host}/api/v4/users/?search=${committerEmail.email}`;
     }
     static usersUsernameUrl(username) {
         return `http://${host}/api/v4/users/?username=${username}`;
@@ -43,7 +42,7 @@ console.log(`
     projectBranch: ${projectBranch}
     privateToken: ${privateToken}
     projectsUrl: ${GitLabConfig.projectsUrl()}
-    usersUrl: ${GitLabConfig.usersUrl('meu@email.com')}
+    usersUrl: ${GitLabConfig.usersUrlByEmail(new Email_1.Email('meu@email.com'))}
     commentsUrl: ${GitLabConfig.commentsUrl('sha1234')}
     ----------------------------------------------------
 `);

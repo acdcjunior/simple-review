@@ -25,7 +25,7 @@ function carregarCommits() {
             });
             console.log(`\tJah existiam: ${jahExistiam}`);
             Utils_1.Utils.printBar();
-            atribuirRevisores_1.atribuirRevisores();
+            return atribuirRevisores_1.atribuirRevisores();
         });
     });
 }
