@@ -1,3 +1,5 @@
-const carregarCommitsAndCommitters = require('./');
+import carregarCommitsAndCommitters from "./";
 
-carregarCommitsAndCommitters();
+carregarCommitsAndCommitters().then(() => {
+    console.log('up.ts concluído.')
+});

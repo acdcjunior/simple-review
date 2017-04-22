@@ -29,7 +29,7 @@ export function carregarCommits() {
             console.log(`\tJah existiam: ${jahExistiam}`);
             Utils.printBar();
 
-            atribuirRevisores();
+            return atribuirRevisores();
         });
     });
 
