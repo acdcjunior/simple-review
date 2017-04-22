@@ -3,36 +3,79 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Committer_1 = require("../domain/Committer");
 const Sesol2Repository_1 = require("../domain/Sesol2Repository");
 const arrayShuffle_1 = require("../util/arrayShuffle");
-const Revisor_1 = require("../Revisor");
 const Revisores_1 = require("./Revisores");
 const Commit_1 = require("../domain/Commit");
-function isEstagiario(authorEmail) {
-    return /[xX]\d{11}@tcu.gov.br$/.test(authorEmail);
-}
-function isServidor(authorEmail) {
-    return !isEstagiario(authorEmail);
-}
-function historicoRevisorIndicado(commitSemRevisor, revisorIndicado) {
-    return Revisor_1.Revisor.revisorIndicado(commitSemRevisor.sha, revisorIndicado).then(msg => {
-        commitSemRevisor.historico.push(msg);
+const Email_1 = require("../geral/Email");
+//noinspection JSUnusedLocalSymbols
+let debug = {
+    log: ((x) => { }) || console.log,
+    dir: ((x) => { }) || console.dir,
+};
+function atribuirRevisores() {
+    return Committer_1.Committer.findAll().then((committers) => {
+        console.log(`#1 -- Atribuindo Revisores...`);
+        const tabelaProporcoesDeCadaRevisor = new TabelaProporcoesDeCadaRevisor(committers);
+        return Commit_1.Commit.findAll().then((commits) => {
+            tabelaProporcoesDeCadaRevisor.atualizarContagemComRevisoresDosCommits(commits);
+            const commitsSemRevisores = commits.filter(commit => commit.revisores.length === 0);
+            console.log(`#2 -- Commits sem revisores encontrados: ${commitsSemRevisores.length}`);
+            return atribuirRevisoresAosCommits(commitsSemRevisores, tabelaProporcoesDeCadaRevisor).then(() => {
+                console.log('Revisores atribuídos!');
+            });
+        });
     });
 }
-function historicoRevisorCalculado(commitSemRevisor, revisorCalculado) {
-    return Revisor_1.Revisor.revisorCalculado(commitSemRevisor.sha, revisorCalculado).then(msg => {
-        commitSemRevisor.historico.push(msg);
-    });
-}
-function extrairEmailsDeMencoes(mencoes, emails) {
-    if (mencoes.length === 0) {
-        return Promise.resolve(emails);
+exports.atribuirRevisores = atribuirRevisores;
+function atribuirRevisoresAosCommits(commitsSemRevisor, tabelaProporcoesDeCadaRevisor) {
+    if (commitsSemRevisor.length === 0) {
+        return Promise.resolve();
     }
-    const mencao = mencoes.pop();
-    return Revisores_1.Revisores.mencaoToEmail(mencao).then((emailRevisor) => {
-        emails.push(emailRevisor);
-        return Promise.resolve(extrairEmailsDeMencoes(mencoes, emails));
+    const commitSemRevisor = commitsSemRevisor[0];
+    const commitsSemRevisorRestantes = commitsSemRevisor.slice(1);
+    return atribuirRevisoresAoCommit(commitSemRevisor, tabelaProporcoesDeCadaRevisor).then(() => {
+        Sesol2Repository_1.sesol2Repository.insert(commitSemRevisor);
+        return atribuirRevisoresAosCommits(commitsSemRevisorRestantes, tabelaProporcoesDeCadaRevisor);
     });
 }
-function extrairEmailsDosRevisoresMencionadosNoCommit(hashPercentuaisDeRevisoes, commitSemRevisor) {
+function atribuirRevisoresAoCommit(commitSemRevisor, tabelaProporcoesDeCadaRevisor) {
+    return incluirRevisoresMencionadosNaMensagem(commitSemRevisor).then(() => {
+        tabelaProporcoesDeCadaRevisor.atualizarContagemComRevisoresDoCommit(commitSemRevisor);
+        return incluirRevisorEstagiarioEmCommitDeEstagiario(commitSemRevisor, tabelaProporcoesDeCadaRevisor).then(() => {
+            return incluirRevisorServidorDoCommit(commitSemRevisor, tabelaProporcoesDeCadaRevisor);
+        });
+    });
+}
+function incluirRevisorEstagiarioEmCommitDeEstagiario(commitSemRevisor, tabelaProporcoesDeCadaRevisor) {
+    // se for commit de estagiario
+    if (commitSemRevisor.isCommitDeEstagiario()) {
+        // --> verificar se tem pelo menos um revisor estagiario, se nao, add
+        if (commitSemRevisor.naoTemNenhumRevisorEstagiario()) {
+            const estagiarioMaisVago = tabelaProporcoesDeCadaRevisor.calcularEstagiarioMaisVago(commitSemRevisor);
+            return commitSemRevisor.indicarRevisorViaSistema(estagiarioMaisVago).then(() => {
+                tabelaProporcoesDeCadaRevisor.incrementarContagemDoRevisor(estagiarioMaisVago);
+                return Promise.resolve();
+            });
+        }
+    }
+    return Promise.resolve();
+}
+function incluirRevisorServidorDoCommit(commit, tabelaProporcoesDeCadaRevisor) {
+    // todos os commits devem ter pelo menos um revisor servidor
+    if (commit.todosOsRevisoresSaoEstagiarios()) {
+        const servidorMaisVago = tabelaProporcoesDeCadaRevisor.calcularServidorMaisVago(commit);
+        return commit.indicarRevisorViaSistema(servidorMaisVago).then(() => {
+            tabelaProporcoesDeCadaRevisor.incrementarContagemDoRevisor(servidorMaisVago);
+            return Promise.resolve();
+        });
+    }
+    return Promise.resolve();
+}
+function incluirRevisoresMencionadosNaMensagem(commitSemRevisor) {
+    return extrairEmailsDosRevisoresMencionadosNoCommit(commitSemRevisor).then((revisoresIndicados) => {
+        return commitSemRevisor.indicarRevisoresViaMencao(revisoresIndicados);
+    });
+}
+function extrairEmailsDosRevisoresMencionadosNoCommit(commitSemRevisor) {
     const message = commitSemRevisor.message;
     const mencoes = message.match(/@[a-zA-Z.0-9]+/g);
     if (mencoes) {
@@ -40,124 +83,70 @@ function extrairEmailsDosRevisoresMencionadosNoCommit(hashPercentuaisDeRevisoes,
     }
     return Promise.resolve([]);
 }
-function incluirRevisoresMencionadosNaMensagem(commitSemRevisor, tabelaProporcoesDeCadaRevisor, tabelaContagemRevisoesAtribuidas) {
-    return extrairEmailsDosRevisoresMencionadosNoCommit(tabelaProporcoesDeCadaRevisor, commitSemRevisor).then((revisoresIndicados) => {
-        console.log('revisores indicados', revisoresIndicados);
+function extrairEmailsDeMencoes(mencoes, emails) {
+    if (mencoes.length === 0) {
+        return Promise.resolve(emails);
+    }
+    const mencao = mencoes[0];
+    const mencoesRestantes = mencoes.slice(1);
+    return Revisores_1.Revisores.mencaoToEmail(mencao).then((emailRevisor) => {
+        emails.push(emailRevisor);
+        return Promise.resolve(extrairEmailsDeMencoes(mencoesRestantes, emails));
     });
-}
-function calcularRevisoresDoCommit(commitSemRevisor, tabelaProporcoesDeCadaRevisor, tabelaContagemRevisoesAtribuidas) {
-    console.log('calcularRevisoresDoCommit', commitSemRevisor);
-    return incluirRevisoresMencionadosNaMensagem(commitSemRevisor, tabelaProporcoesDeCadaRevisor, tabelaContagemRevisoesAtribuidas).then(() => {
-        // se for commit de estagiario
-        // --> verificar se tem pelo menos um revisor estagiario, se nao, add
-        // qualquer caso
-        // --> verificar se tem pelo menos um revisor servidor
-    });
-    // return incluirRevisores(commitSemRevisor, tabelaProporcoesDeCadaRevisor, revisoresIndicados).then(() => {
-    //
-    //     let revisorIndicado = revisorIndicadoEmail.asString;
-    //     const revisoresAtribuidos = [];
-    //
-    //     const revisorIndicadoEhEstagiario = revisorIndicado && isEstagiario(revisorIndicado);
-    //     const revisorIndicadoEhServidor = revisorIndicado && isServidor(revisorIndicado);
-    //
-    //     const promises = [];
-    //     const ehCommitDeEstagiario = isEstagiario(commitSemRevisor.author_email);
-    //     if (ehCommitDeEstagiario) {
-    //         if (revisorIndicadoEhEstagiario) {
-    //             revisoresAtribuidos.push(revisorIndicado);
-    //             promises.push(historicoRevisorIndicado(commitSemRevisor, revisorIndicado));
-    //         } else {
-    //             const revisorCalculado = calcularRevisorComBaseNaOcupacao(commitSemRevisor, tabelaProporcoesDeCadaRevisor, tabelaContagemRevisoesAtribuidas, isEstagiario);
-    //             revisoresAtribuidos.push(revisorCalculado);
-    //             promises.push(historicoRevisorCalculado(commitSemRevisor, revisorCalculado));
-    //         }
-    //     } else {
-    //         // autor eh servidor, mas ele indicou um estagiario, mesmo assim
-    //         if (revisorIndicadoEhEstagiario) {
-    //             revisoresAtribuidos.push(revisorIndicado);
-    //             promises.push(historicoRevisorIndicado(commitSemRevisor, revisorIndicado));
-    //         }
-    //     }
-    //
-    //     if (revisorIndicadoEhServidor) {
-    //         revisoresAtribuidos.push(revisorIndicado);
-    //         promises.push(historicoRevisorIndicado(commitSemRevisor, revisorIndicado));
-    //     } else {
-    //         const revisorCalculado = calcularRevisorComBaseNaOcupacao(commitSemRevisor, tabelaProporcoesDeCadaRevisor, tabelaContagemRevisoesAtribuidas, isServidor);
-    //         revisoresAtribuidos.push(revisorCalculado);
-    //         promises.push(historicoRevisorCalculado(commitSemRevisor, revisorCalculado));
-    //     }
-    //
-    //     revisoresAtribuidos.forEach(revisorAtribuido => {
-    //         tabelaContagemRevisoesAtribuidas[revisorAtribuido] = (tabelaContagemRevisoesAtribuidas[revisorAtribuido] || 0) + 1;
-    //     });
-    //     return Promise.all(promises).then(() => {
-    //         commitSemRevisor.revisores = revisoresAtribuidos;
-    //         return Promise.resolve();
-    //     });
-    //
-    // });
-}
-function calcularRevisorComBaseNaOcupacao(commitSemRevisor, percentuaisDeRevisoes, revisores, funcaoTipoRevisor) {
-    const emails = Object.keys(percentuaisDeRevisoes).filter(funcaoTipoRevisor)
-        .filter(email => percentuaisDeRevisoes[email] > 0)
-        .filter(email => email !== commitSemRevisor.author_email);
-    const emailsMisturados = arrayShuffle_1.ArrayShuffle.arrayShuffle(emails);
-    let emailComMenorPercentualOcupado = emailsMisturados[0];
-    const percentuaisOcupados = {};
-    percentuaisOcupados[emailComMenorPercentualOcupado] = -1;
-    emailsMisturados.forEach(email => {
-        if (!revisores[email]) {
-            percentuaisOcupados[email] = 0;
-        }
-        else {
-            percentuaisOcupados[email] = revisores[email] / percentuaisDeRevisoes[email];
-        }
-        if (percentuaisOcupados[email] <= percentuaisOcupados[emailComMenorPercentualOcupado]) {
-            emailComMenorPercentualOcupado = email;
-        }
-    });
-    return emailComMenorPercentualOcupado;
 }
 class TabelaProporcoesDeCadaRevisor {
     constructor(committers) {
+        this.capacidadeDeRevisoes = {};
+        this.contagemRevisoesAtribuidas = {};
         committers.forEach(committer => {
-            this[committer.email] = committer.percentualDeRevisoes;
+            this.capacidadeDeRevisoes[committer.email] = committer.quota;
         });
+        debug.log('#############################################');
+        debug.dir(this.capacidadeDeRevisoes);
+        debug.log('#############################################');
     }
-}
-class TabelaContagemRevisoesAtribuidas {
-    constructor(commits) {
+    atualizarContagemComRevisoresDosCommits(commits) {
         commits.forEach(commit => {
-            commit.revisores.forEach(revisor => {
-                this[revisor] = (this[revisor] || 0) + 1;
-            });
+            this.atualizarContagemComRevisoresDoCommit(commit);
         });
     }
-}
-function calcularParaCommits(commitsSemRevisores, tabelaProporcoesDeCadaRevisor, tabelaContagemRevisoesAtribuidas) {
-    if (commitsSemRevisores.length === 0) {
-        return Promise.resolve();
-    }
-    const commitSemRevisor = commitsSemRevisores.pop();
-    return calcularRevisoresDoCommit(commitSemRevisor, tabelaProporcoesDeCadaRevisor, tabelaContagemRevisoesAtribuidas).then(() => {
-        Sesol2Repository_1.sesol2Repository.insert(commitSemRevisor);
-        return calcularParaCommits(commitsSemRevisores, tabelaProporcoesDeCadaRevisor, tabelaContagemRevisoesAtribuidas);
-    });
-}
-function atribuirRevisores() {
-    return Committer_1.Committer.findAll().then(committers => {
-        console.log(`#1 -- Atribuindo Revisores...`);
-        const tabelaProporcoesDeCadaRevisor = new TabelaProporcoesDeCadaRevisor(committers);
-        return Commit_1.Commit.findAll().then((commits) => {
-            const tabelaContagemRevisoesAtribuidas = new TabelaContagemRevisoesAtribuidas(commits);
-            const commitsSemRevisores = commits.filter(commit => commit.revisores.length === 0);
-            console.log(`#2 -- Commits sem revisores encontrados...`);
-            return calcularParaCommits(commitsSemRevisores, tabelaProporcoesDeCadaRevisor, tabelaContagemRevisoesAtribuidas).then(() => {
-                console.log('Revisores atribuídos!');
-            });
+    atualizarContagemComRevisoresDoCommit(commit) {
+        commit.revisores.forEach(revisor => {
+            this.incrementarContagemDoRevisor(new Email_1.Email(revisor));
         });
-    });
+    }
+    incrementarContagemDoRevisor(revisor) {
+        this.contagemRevisoesAtribuidas[revisor.email] = this.contagemRevisoesAtribuidasA(revisor.email) + 1;
+    }
+    calcularEstagiarioMaisVago(commit) {
+        return this.calcularRevisorMaisVago(email => email !== commit.author_email && new Email_1.Email(email).isEmailDeEstagiario());
+    }
+    calcularServidorMaisVago(commit) {
+        return this.calcularRevisorMaisVago(email => email !== commit.author_email && new Email_1.Email(email).isEmailDeServidor());
+    }
+    contagemRevisoesAtribuidasA(email) {
+        return this.contagemRevisoesAtribuidas[email] || 0;
+    }
+    percentualDeOcupacaoDoRevisor(email) {
+        return this.contagemRevisoesAtribuidasA(email) / this.capacidadeDeRevisoes[email];
+    }
+    calcularRevisorMaisVago(funcaoFiltragemPossiveisRevisores) {
+        debug.log('--- calcularRevisorMaisVago ---');
+        const possiveisRevisores = arrayShuffle_1.ArrayShuffle.arrayShuffle(Object.keys(this.capacidadeDeRevisoes)
+            .filter(funcaoFiltragemPossiveisRevisores)
+            .filter(email => this.capacidadeDeRevisoes[email] > 0));
+        debug.dir(this.contagemRevisoesAtribuidas);
+        let emailComMenorPercentualOcupado = possiveisRevisores[0];
+        let ocupacaoMenorOcupado = 999999;
+        possiveisRevisores.forEach(email => {
+            let percentualDeOcupacao = this.percentualDeOcupacaoDoRevisor(email);
+            debug.log(`Percentual de ocupacao de ${email}: ${percentualDeOcupacao}     \t\t---- menor atual: ${emailComMenorPercentualOcupado}: ${ocupacaoMenorOcupado}`);
+            if (percentualDeOcupacao <= ocupacaoMenorOcupado) {
+                emailComMenorPercentualOcupado = email;
+                ocupacaoMenorOcupado = percentualDeOcupacao;
+            }
+        });
+        debug.log(`Mais vago é ${emailComMenorPercentualOcupado}`);
+        return new Email_1.Email(emailComMenorPercentualOcupado);
+    }
 }
-exports.atribuirRevisores = atribuirRevisores;

@@ -1,162 +1,153 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const chai_1 = require("chai");
 const atribuirRevisores_1 = require("./atribuirRevisores");
 const arrayShuffle_1 = require("../util/arrayShuffle");
 const Commit_1 = require("../domain/Commit");
 const Committer_1 = require("../domain/Committer");
 const Sesol2Repository_1 = require("../domain/Sesol2Repository");
 const Bluebird = require("bluebird");
+const GitLabService_1 = require("../gitlab/GitLabService");
+const Email_1 = require("../geral/Email");
 Bluebird.longStackTraces();
+GitLabService_1.GitLabService.desabilitarComentariosNoGitLab = true;
 arrayShuffle_1.ArrayShuffle.arrayShuffle = (arr) => arr.sort().reverse();
 Sesol2Repository_1.sesol2Repository.insert = () => { };
 const assert = require('assert');
 const committers = [
-    /* 0 */ { email: 'alexandrevr@example.com', percentualDeRevisoes: 20 },
-    /* 1 */ { email: 'antonio.junior@example.com', percentualDeRevisoes: 50 },
-    /* 2 */ { email: 'marcosps@example.com', percentualDeRevisoes: 20 },
-    /* 3 */ { email: 'regiano@example.com', percentualDeRevisoes: 5 },
-    /* 4 */ { email: 'fernandesm@example.com', percentualDeRevisoes: 5 },
-    /* 5 */ { email: 'leliakn@example.com', percentualDeRevisoes: 0 },
-    /* 6 */ { email: 'carlanm@example.com', percentualDeRevisoes: 0 },
-    /* 7 */ { email: 'x04992831131@example.com', percentualDeRevisoes: 25 },
-    /* 8 */ { email: 'x05068388213@example.com', percentualDeRevisoes: 25 },
-    /* 9 */ { email: 'x05499033332@example.com', percentualDeRevisoes: 25 },
-    /* 10 */ { email: 'x05929988846@example.com', percentualDeRevisoes: 25 },
+    /* 0 */ new Committer_1.Committer('alexandrevr@example.com', 'Alexandre Nome (LOGIN)', 'avatar_url', 'alexandrevr'),
+    /* 1 */ new Committer_1.Committer('antonio.junior@example.com', 'Antonio Nome (LOGIN)', 'avatar_url', 'carvalhoj'),
+    /* 2 */ new Committer_1.Committer('marcosps@example.com', 'Marcos Nome (LOGIN)', 'avatar_url', 'marcosps'),
+    /* 3 */ new Committer_1.Committer('regiano@example.com', 'Regiano Nome (LOGIN)', 'avatar_url', 'regiano'),
+    /* 4 */ new Committer_1.Committer('fernandesm@example.com', 'Santos Nome (LOGIN)', 'avatar_url', 'fernandesm'),
+    /* 5 */ new Committer_1.Committer('leliakn@example.com', 'Lelia Nome (LOGIN)', 'avatar_url', 'LELIAKN'),
+    /* 6 */ new Committer_1.Committer('carlanm@example.com', 'Carla Nome (LOGIN)', 'avatar_url', 'CarlaNM'),
+    /* 7 */ new Committer_1.Committer('x04992831131@example.com', 'Gabriel Nome (LOGIN)', 'avatar_url', 'x04992831131'),
+    /* 8 */ new Committer_1.Committer('x05068388213@example.com', 'Rebeca Nome (LOGIN)', 'avatar_url', 'x05068388213'),
+    /* 9 */ new Committer_1.Committer('x05499033332@example.com', 'Afonso Nome (LOGIN)', 'avatar_url', 'x05499033332'),
+    /* 10 */ new Committer_1.Committer('x05929988846@example.com', 'Bruno Nome (LOGIN)', 'avatar_url', 'x05929988846'),
 ];
 Committer_1.Committer.findAll = () => Promise.resolve(committers);
+const commit0 = new Commit_1.Commit('sha 0', 't 0', ' 0\n ', committers[1].email, '');
+commit0.revisores.push(committers[0].email);
+const commit1 = new Commit_1.Commit('sha 1', 't 1', ' 1\n ', committers[1].email, '');
+commit1.revisores.push(committers[6].email);
 const commits = [
-    /*  0 */ { message: ' 0\n ', author_email: committers[1].email, historico: [], revisores: [committers[0].email] },
-    /*  1 */ { message: ' 1\n ', author_email: committers[1].email, historico: [], revisores: [committers[1].email] },
-    /*  2 */ { message: ' 2\n ', author_email: committers[1].email, historico: [], revisores: [] },
-    /*  3 */ { message: ' 3\n ', author_email: committers[7].email, historico: [], revisores: [] },
-    /*  4 */ { message: ' 4\n ', author_email: committers[1].email, historico: [], revisores: [] },
-    /*  5 */ { message: ' 5\n ', author_email: committers[8].email, historico: [], revisores: [] },
-    /*  6 */ { message: ' 6\n ', author_email: committers[1].email, historico: [], revisores: [] },
-    /*  7 */ { message: ' 7\n ', author_email: committers[9].email, historico: [], revisores: [] },
-    /*  8 */ { message: ' 8\n ', author_email: committers[1].email, historico: [], revisores: [] },
-    /*  9 */ { message: ' 9\n ', author_email: committers[10].email, historico: [], revisores: [] },
-    /* 10 */ { message: '10\n ', author_email: committers[1].email, historico: [], revisores: [] },
-    /* 11 */ { message: '11\n ', author_email: committers[1].email, historico: [], revisores: [] },
-    /* 12 */ { message: '12\n ', author_email: committers[1].email, historico: [], revisores: [] },
-    /* 13 */ { message: '13\n @carlanm', author_email: committers[2].email, historico: [], revisores: [] },
-    /* 14 */ { message: '14\n @leliakn', author_email: committers[7].email, historico: [], revisores: [] },
-    /* 15 */ { message: '15\n @lelia', author_email: committers[1].email, historico: [], revisores: [] },
-    /* 16 */ { message: '16\n @invalido', author_email: committers[2].email, historico: [], revisores: [] },
-    /* 17 */ { message: '17\n @lelia', author_email: committers[5].email, historico: [], revisores: [] },
+    /*  0 */ commit0,
+    /*  1 */ commit1,
+    /*  2 */ new Commit_1.Commit('sha 2', 't 2', ' 2\n ', committers[1].email, ''),
+    /*  3 */ new Commit_1.Commit('sha 3', 't 3', ' 3\n ', committers[7].email, ''),
+    /*  4 */ new Commit_1.Commit('sha 4', 't 4', ' 4\n ', committers[1].email, ''),
+    /*  5 */ new Commit_1.Commit('sha 5', 't 5', ' 5\n ', committers[8].email, ''),
+    /*  6 */ new Commit_1.Commit('sha 6', 't 6', ' 6\n ', committers[1].email, ''),
+    /*  7 */ new Commit_1.Commit('sha 7', 't 7', ' 7\n ', committers[9].email, ''),
+    /*  8 */ new Commit_1.Commit('sha 8', 't 8', ' 8\n ', committers[1].email, ''),
+    /*  9 */ new Commit_1.Commit('sha 9', 't 9', ' 9\n ', committers[10].email, ''),
+    /* 10 */ new Commit_1.Commit('sha10', 't10', '10\n ', committers[1].email, ''),
+    /* 11 */ new Commit_1.Commit('sha11', 't11', '11\n ', committers[1].email, ''),
+    /* 12 */ new Commit_1.Commit('sha12', 't12', '12\n ', committers[1].email, ''),
+    /* 13 */ new Commit_1.Commit('sha13', 't13', '13\n @carlanm', committers[2].email, ''),
+    /* 14 */ new Commit_1.Commit('sha14', 't14', '14\n @leliakn', committers[7].email, ''),
+    /* 15 */ new Commit_1.Commit('sha15', 't15', '15\n @lelia', committers[1].email, ''),
+    /* 16 */ new Commit_1.Commit('sha16', 't16', '16\n @invalido', committers[2].email, ''),
+    /* 17 */ new Commit_1.Commit('sha17', 't17', '17\n @lelia @antonio . @marcos @afonso', committers[5].email, '')
 ];
 Commit_1.Commit.findAll = () => Promise.resolve(commits);
-function debug(s) {
-    console.log(s);
-}
-const expect = require("chai").expect;
-describe("atribuirRevisores", function () {
+describe("atribuirRevisores suite", function () {
     this.timeout(15000);
-    it("atribuirRevisores", function () {
+    it("atribuirRevisores()", function () {
         return atribuirRevisores_1.atribuirRevisores().then(() => {
             console.log('-- DENTRO DO TESTE - ATRIBUICAO CONCLUIDA --');
-            const counts = {};
-            commits.forEach(commit => {
-                commit.revisores.forEach(revisor => {
-                    counts[revisor] = (counts[revisor] || 0) + 1;
-                });
-                debug(`autor: ${commit.author_email} \trevisores: ${JSON.stringify(commit.revisores)} \thistorico: ${JSON.stringify(commit.historico)}`);
-            });
-            debug('---------------------------------');
-            debug('COUNTS:');
-            Object.keys(counts).sort().forEach(key => {
-                debug(key + ': ' + counts[key]);
-            });
-            commits.forEach(commit => {
-                debug(JSON.stringify(commit));
-            });
-            x({ message: " 0\n ", author_email: "antonio.junior@example.com", revisores: ["alexandrevr@example.com"], historico: [] });
-            x({ message: " 1\n ", author_email: "antonio.junior@example.com", revisores: ["antonio.junior@example.com"], historico: [] });
-            x({ message: " 2\n ", author_email: "antonio.junior@example.com", revisores: ["marcosps@example.com"], historico: ["Revisor marcosps@example.com atribuído automaticamente pelo sistema."] });
-            assertCommit(commits[2]);
-            x({ message: " 3\n ", author_email: "x04992831131@example.com", revisores: ["x05929988846@example.com", "fernandesm@example.com"], historico: ["Revisor x05929988846@example.com atribuído automaticamente pelo sistema.", "Revisor fernandesm@example.com atribuído automaticamente pelo sistema."] });
+            console.log('-- Era pra ter sido 16 commits sem revisores. Foram? --');
+            assertCommitComRevisoresEHistorico(commits[2]);
             assertCommitDeEstagiario(commits[3]);
-            x({ message: " 4\n ", author_email: "antonio.junior@example.com", revisores: ["regiano@example.com"], historico: ["Revisor regiano@example.com atribuído automaticamente pelo sistema."] });
-            assertCommit(commits[4]);
-            x({ message: " 5\n ", author_email: "x05068388213@example.com", revisores: ["x04992831131@example.com", "antonio.junior@example.com"], historico: ["Revisor x04992831131@example.com atribuído automaticamente pelo sistema.", "Revisor antonio.junior@example.com atribuído automaticamente pelo sistema."] });
+            assertCommitComRevisoresEHistorico(commits[4]);
             assertCommitDeEstagiario(commits[5]);
-            x({ message: " 6\n ", author_email: "antonio.junior@example.com", revisores: ["marcosps@example.com"], historico: ["Revisor marcosps@example.com atribuído automaticamente pelo sistema."] });
-            assertCommit(commits[6]);
-            x({ message: " 7\n ", author_email: "x05499033332@example.com", revisores: ["x05068388213@example.com", "antonio.junior@example.com"], historico: ["Revisor x05068388213@example.com atribuído automaticamente pelo sistema.", "Revisor antonio.junior@example.com atribuído automaticamente pelo sistema."] });
+            assertCommitComRevisoresEHistorico(commits[6]);
             assertCommitDeEstagiario(commits[7]);
-            x({ message: " 8\n ", author_email: "antonio.junior@example.com", revisores: ["alexandrevr@example.com"], historico: ["Revisor alexandrevr@example.com atribuído automaticamente pelo sistema."] });
-            assertCommit(commits[8]);
-            x({ message: " 9\n ", author_email: "x05929988846@example.com", revisores: ["x05499033332@example.com", "antonio.junior@example.com"], historico: ["Revisor x05499033332@example.com atribuído automaticamente pelo sistema.", "Revisor antonio.junior@example.com atribuído automaticamente pelo sistema."] });
+            assertCommitComRevisoresEHistorico(commits[8]);
             assertCommitDeEstagiario(commits[9]);
-            x({ message: "10\n ", author_email: "antonio.junior@example.com", revisores: ["alexandrevr@example.com"], historico: ["Revisor alexandrevr@example.com atribuído automaticamente pelo sistema."] });
-            assertCommit(commits[10]);
-            x({ message: "11\n ", author_email: "antonio.junior@example.com", revisores: ["marcosps@example.com"], historico: ["Revisor marcosps@example.com atribuído automaticamente pelo sistema."] });
-            assertCommit(commits[11]);
-            x({ message: "12\n ", author_email: "antonio.junior@example.com", revisores: ["alexandrevr@example.com"], historico: ["Revisor alexandrevr@example.com atribuído automaticamente pelo sistema."] });
-            assertCommit(commits[12]);
-            x({ message: "13\n revisor:carlanm", author_email: "marcosps@example.com", revisores: ["carlanm@example.com"], historico: ["Revisor carlanm@example.com atribuído por indicação via mensagem de commit."] });
+            assertCommitComRevisoresEHistorico(commits[10]);
+            assertCommitComRevisoresEHistorico(commits[11]);
+            assertCommitComRevisoresEHistorico(commits[12]);
             assertCommitRevisor(commits[13], "carlanm@example.com");
-            x({ message: "14\n revisor:leliakn", author_email: "x04992831131@example.com", revisores: ["x05068388213@example.com", "leliakn@example.com"], historico: ["Revisor x05068388213@example.com atribuído automaticamente pelo sistema.", "Revisor leliakn@example.com atribuído por indicação via mensagem de commit."] });
             assertCommitDeEstagiario(commits[14]);
-            assert.equal(commits[14].revisores[1], "leliakn@example.com");
-            x({ message: "15\n revisor:lelia", author_email: "antonio.junior@example.com", revisores: ["leliakn@example.com"], historico: ["Revisor leliakn@example.com atribuído por indicação via mensagem de commit."] });
+            chai_1.expect(commits[14].revisores[0]).to.equal("leliakn@example.com");
+            chai_1.expect(commits[15].revisores[0]).to.equal("leliakn@example.com");
             assertCommitRevisor(commits[15], "leliakn@example.com");
-            x({ message: "16\n revisor:invalid", author_email: "marcosps@example.com", revisores: ["antonio.junior@example.com"], historico: ["Revisão atribuída a revisor desconhecido: invalid@example.com. Ignorada.", "Revisor antonio.junior@example.com atribuído automaticamente pelo sistema."] });
-            assertCommit(commits[16]);
-            x({ message: "17\n revisor:lelia", author_email: "leliakn@example.com", revisores: ["marcosps@example.com"], historico: ["Revisão indicada não executada, pois o revisor indicado é o autor do commit.", "Revisor marcosps@example.com atribuído automaticamente pelo sistema."] });
-            assertCommit(commits[17]);
-            expect(commits[17].revisores[0]).to.not.equal("leliakn@example.com");
+            assertCommitComRevisoresEHistorico(commits[16]);
+            assertCommitComRevisoresEHistorico(commits[17]);
+            chai_1.expect(commits[17].revisores[0]).to.not.equal("leliakn@example.com");
             assertJson(commits);
             return Promise.resolve();
         });
     });
 });
-function assertCommit(commit) {
-    expect(commit.historico.length).to.be.above(0);
-    expect(commit.revisores.length).to.be.above(0);
-    expect(commit.historico.length).to.be.at.least(commit.revisores.length);
-    expect(commit.revisores.indexOf(commit.author_email)).to.equal(-1);
+function assertCommitComRevisoresEHistorico(commit) {
+    chai_1.expect(commit.historico.length).to.be.above(0);
+    chai_1.expect(commit.revisores.length).to.be.above(0);
+    chai_1.expect(commit.historico.length).to.be.at.least(commit.revisores.length);
+    chai_1.expect(commit.revisores.indexOf(commit.author_email)).to.equal(-1);
 }
 function isEstagiario(authorEmail) {
-    return /[xX]\d{11}@example.com$/.test(authorEmail);
+    return new Email_1.Email(authorEmail).isEmailDeEstagiario();
 }
 function assertCommitDeEstagiario(commit) {
-    assertCommit(commit);
+    assertCommitComRevisoresEHistorico(commit);
     assert.equal(commit.historico.length, 2);
     assert.notEqual(commit.author_email, commit.revisores[0]);
     assert.notEqual(commit.author_email, commit.revisores[1]);
     assert(isEstagiario(commit.author_email));
-    assert(isEstagiario(commit.revisores[0]));
-    assert(!isEstagiario(commit.revisores[1]));
+    chai_1.expect(commit.revisores.filter(isEstagiario)).to.have.lengthOf(1);
+    chai_1.expect(commit.revisores.filter(x => !isEstagiario(x))).to.have.lengthOf(1);
 }
 function assertCommitRevisor(commit, revisor) {
-    assertCommit(commit);
+    assertCommitComRevisoresEHistorico(commit);
     assert(commit.historico.length > 0);
     assert(commit.historico.length >= commit.revisores.length);
     assert.equal(commit.revisores.length, 1, `Commit ${commit.message} - esperado um revisor, obtidos: ${commit.revisores}\n\n${JSON.stringify(commit)}`);
     assert.equal(commit.revisores[0], revisor);
     assert(commit.revisores.indexOf(commit.author_email) === -1);
 }
-function x(x) { }
 function assertJson(commits) {
+    commits.forEach(c => {
+        delete c._id;
+        delete c.type;
+        delete c.sha;
+        delete c.title;
+        delete c.created_at;
+        delete c.revisado;
+        delete c.revisoes;
+    });
     let expected = [
-        { message: "x 0\n ", author_email: "antonio.junior@example.com", revisores: ["alexandrevr@example.com"], historico: [] },
-        { message: " 1\n ", author_email: "antonio.junior@example.com", revisores: ["antonio.junior@example.com"], historico: [] },
+        { message: " 0\n ", author_email: "antonio.junior@example.com", revisores: ["alexandrevr@example.com"], historico: [] },
+        { message: " 1\n ", author_email: "antonio.junior@example.com", revisores: ["carlanm@example.com"], historico: [] },
         { message: " 2\n ", author_email: "antonio.junior@example.com", revisores: ["marcosps@example.com"], historico: ["Revisor @marcosps [Marcos Paulo Santos da Silva (MARCOSPS)] atribuído automaticamente."] },
-        { message: " 3\n ", author_email: "x04992831131@example.com", revisores: ["x05068388213@example.com", "antonio.junior@example.com"], historico: ["Revisor @carvalhoj [Antonio C. de Carvalho Junior (CARVALHOJ)] atribuído automaticamente.", "Revisor @x05068388213 [REBECA ANDRADE BALDOMIR (X05068388213)] atribuído automaticamente."] },
-        { message: " 4\n ", author_email: "antonio.junior@example.com", revisores: ["alexandrevr@example.com"], historico: ["Revisor @alexandrevr [Alexandre Silva Santos (ALEXANDREVR)] atribuído automaticamente."] },
-        { message: " 5\n ", author_email: "x05068388213@example.com", revisores: ["x05499033332@example.com", "antonio.junior@example.com"], historico: ["Revisor @x05499033332 [AFONSO DIAS de OLIVEIRA CONCEICAO SILVA (X05499033332)] atribuído automaticamente.", "Revisor @carvalhoj [Antonio C. de Carvalho Junior (CARVALHOJ)] atribuído automaticamente."] },
-        { message: " 6\n ", author_email: "antonio.junior@example.com", revisores: ["marcosps@example.com"], historico: ["Revisor @marcosps [Marcos Paulo Santos da Silva (MARCOSPS)] atribuído automaticamente."] },
-        { message: " 7\n ", author_email: "x05499033332@example.com", revisores: ["x05929988846@example.com", "antonio.junior@example.com"], historico: ["Revisor @x05929988846 [BRUNO KYWAN VASCONCELOS GOIS (X05929988846)] atribuído automaticamente.", "Revisor @carvalhoj [Antonio C. de Carvalho Junior (CARVALHOJ)] atribuído automaticamente."] },
+        { message: " 3\n ", author_email: "x04992831131@example.com", revisores: ["x05068388213@example.com", "antonio.junior@example.com"], historico: ["Revisora @x05068388213 [Rebeca Andrade Silva (X05068388213)] atribuída automaticamente.", "Revisor @carvalhoj [Antonio C. de Carvalho Junior (CARVALHOJ)] atribuído automaticamente."] },
+        { message: " 4\n ", author_email: "antonio.junior@example.com", revisores: ["regiano@example.com"], historico: ["Revisor @regiano [Regiano da Silva Santos (REGIANO)] atribuído automaticamente."] },
+        { message: " 5\n ", author_email: "x05068388213@example.com", revisores: ["x04992831131@example.com", "antonio.junior@example.com"], historico: ["Revisor @x04992831131 [Gabriel Mesquita de Araujo (X04992831131)] atribuído automaticamente.", "Revisor @carvalhoj [Antonio C. de Carvalho Junior (CARVALHOJ)] atribuído automaticamente."] },
+        { message: " 6\n ", author_email: "antonio.junior@example.com", revisores: ["alexandrevr@example.com"], historico: ["Revisor @alexandrevr [Alexandre Silva Santos (ALEXANDREVR)] atribuído automaticamente."] },
+        { message: " 7\n ", author_email: "x05499033332@example.com", revisores: ["x05929988846@example.com", "marcosps@example.com"], historico: ["Revisor @x05929988846 [Bruno Silva Santos Souza (X05929988846)] atribuído automaticamente.", "Revisor @marcosps [Marcos Paulo Santos da Silva (MARCOSPS)] atribuído automaticamente."] },
         { message: " 8\n ", author_email: "antonio.junior@example.com", revisores: ["alexandrevr@example.com"], historico: ["Revisor @alexandrevr [Alexandre Silva Santos (ALEXANDREVR)] atribuído automaticamente."] },
-        { message: " 9\n ", author_email: "x05929988846@example.com", revisores: ["x04992831131@example.com", "antonio.junior@example.com"], historico: ["Revisor @x04992831131 [GABRIEL MESQUITA de ARAUJO (X04992831131)] atribuído automaticamente.", "Revisor @carvalhoj [Antonio C. de Carvalho Junior (CARVALHOJ)] atribuído automaticamente."] },
+        { message: " 9\n ", author_email: "x05929988846@example.com", revisores: ["x05499033332@example.com", "antonio.junior@example.com"], historico: ["Revisor @x05499033332 [Afonso Santos de Souza Barros (X05499033332)] atribuído automaticamente.", "Revisor @carvalhoj [Antonio C. de Carvalho Junior (CARVALHOJ)] atribuído automaticamente."] },
         { message: "10\n ", author_email: "antonio.junior@example.com", revisores: ["marcosps@example.com"], historico: ["Revisor @marcosps [Marcos Paulo Santos da Silva (MARCOSPS)] atribuído automaticamente."] },
-        { message: "11\n ", author_email: "antonio.junior@example.com", revisores: ["alexandrevr@example.com"], historico: ["Revisor @alexandrevr [Alexandre Silva Santos (ALEXANDREVR)] atribuído automaticamente."] },
-        { message: "12\n ", author_email: "antonio.junior@example.com", revisores: ["marcosps@example.com"], historico: ["Revisor @marcosps [Marcos Paulo Santos da Silva (MARCOSPS)] atribuído automaticamente."] },
-        { message: "13\n @carlanm", author_email: "marcosps@example.com", revisores: ["carlanm@example.com"], historico: ["Revisor @CarlaNM [Carla Souza (CARLANM)] atribuído por indicação via mensagem de commit."] },
-        { message: "14\n @leliakn", author_email: "x04992831131@example.com", revisores: ["x05068388213@example.com", "leliakn@example.com"], historico: ["Revisor @x05068388213 [REBECA ANDRADE BALDOMIR (X05068388213)] atribuído automaticamente.", "Revisor @LELIAKN [Lelia Silva Cotrim (LELIAKN)] atribuído por indicação via mensagem de commit."] },
-        { message: "15\n @lelia", author_email: "antonio.junior@example.com", revisores: ["leliakn@example.com"], historico: ["Revisor @LELIAKN [Lelia Silva Cotrim (LELIAKN)] atribuído por indicação via mensagem de commit."] },
-        { message: "16\n @invalido", author_email: "marcosps@example.com", revisores: ["regiano@example.com"], historico: ["Revisão atribuída a revisor desconhecido: invalid@example.com. Ignorada.", "Revisor @Regiano [Regiano da Silva Santos (REGIANO)] atribuído automaticamente."] },
-        { message: "17\n @lelia", author_email: "leliakn@example.com", revisores: ["fernandesm@example.com"], historico: ["Revisão indicada não executada, pois o revisor indicado é o autor do commit.", "Revisor @fernandesm [Jose Mauricio Santos Medeiros (FERNANDESM)] atribuído automaticamente."] }
+        { message: "11\n ", author_email: "antonio.junior@example.com", revisores: ["regiano@example.com"], historico: ["Revisor @regiano [Regiano da Silva Santos (REGIANO)] atribuído automaticamente."] },
+        { message: "12\n ", author_email: "antonio.junior@example.com", revisores: ["alexandrevr@example.com"], historico: ["Revisor @alexandrevr [Alexandre Silva Santos (ALEXANDREVR)] atribuído automaticamente."] },
+        { message: "13\n @carlanm", author_email: "marcosps@example.com", revisores: ["carlanm@example.com"], historico: ["Revisora @CarlaNM [Carla Nassif Sobrenome (CarlaNM)] atribuída via menção em mensagem de commit."] },
+        { message: "14\n @leliakn", author_email: "x04992831131@example.com", revisores: ["leliakn@example.com", "x05068388213@example.com"], historico: ["Revisora @LELIAKN [Lelia Silva (LELIAKN)] atribuída via menção em mensagem de commit.", "Revisora @x05068388213 [Rebeca Andrade Silva (X05068388213)] atribuída automaticamente."] },
+        { message: "15\n @lelia", author_email: "antonio.junior@example.com", revisores: ["leliakn@example.com"], historico: ["Revisora @LELIAKN [Lelia Silva (LELIAKN)] atribuída via menção em mensagem de commit."] },
+        { message: "16\n @invalido", author_email: "marcosps@example.com", revisores: ["antonio.junior@example.com"], historico: ["Revisor(a) @invalido mencionado(a), mas não reconhecido(a) na base de usuários. Menção ignorada.", "Revisor @carvalhoj [Antonio C. de Carvalho Junior (CARVALHOJ)] atribuído automaticamente."] },
+        {
+            message: "17\n @lelia @antonio . @marcos @afonso",
+            author_email: "leliakn@example.com",
+            revisores: ["antonio.junior@example.com", "marcosps@example.com", "x05499033332@example.com"],
+            historico: [
+                "Revisora leliakn@example.com mencionada é autora do commit. Menção ignorada.",
+                "Revisor @carvalhoj [Antonio C. de Carvalho Junior (CARVALHOJ)] atribuído via menção em mensagem de commit.",
+                "Revisor @marcosps [Marcos Paulo Santos da Silva (MARCOSPS)] atribuído via menção em mensagem de commit.",
+                "Revisor @x05499033332 [Afonso Santos de Souza Barros (X05499033332)] atribuído via menção em mensagem de commit."
+            ]
+        }
     ];
-    expect(JSON.stringify(commits)).to.equal(JSON.stringify(expected));
+    chai_1.expect(commits).to.deep.equal(expected);
 }

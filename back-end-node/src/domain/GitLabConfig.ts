@@ -1,5 +1,4 @@
-
-import {Committer} from "./Committer";
+import {Email} from "../geral/Email";
 
 declare let process: any;
 
@@ -22,9 +21,8 @@ export class GitLabConfig {
     static projectsUrl (perPage:number = 10) {
         return `http://${host}/api/v4/projects/${projectId}/repository/commits/?ref_name=${projectBranch}&per_page=${perPage}`;
     }
-    static usersUrl (committerEmail: string): string {
-        const emailCorrigido = Committer.corrigirEmail(committerEmail);
-        return `http://${host}/api/v4/users/?search=${emailCorrigido}`;
+    static usersUrlByEmail(committerEmail: Email): string {
+        return `http://${host}/api/v4/users/?search=${committerEmail.email}`;
     }
     static usersUsernameUrl (username: string): string {
         return `http://${host}/api/v4/users/?username=${username}`;
@@ -49,7 +47,7 @@ console.log(`
     projectBranch: ${projectBranch}
     privateToken: ${privateToken}
     projectsUrl: ${GitLabConfig.projectsUrl()}
-    usersUrl: ${GitLabConfig.usersUrl('meu@email.com')}
+    usersUrl: ${GitLabConfig.usersUrlByEmail(new Email('meu@email.com'))}
     commentsUrl: ${GitLabConfig.commentsUrl('sha1234')}
     ----------------------------------------------------
 `);

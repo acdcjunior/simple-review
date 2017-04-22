@@ -4,6 +4,7 @@ import {sesol2Repository} from "../domain/Sesol2Repository";
 import {Committer} from "../domain/Committer";
 import {GitLabService} from "../gitlab/GitLabService";
 import {GitLabUser} from "../gitlab/GitLabUser";
+import {Email} from "../geral/Email";
 
 
 function getEmailsDosCommittersDosUltimosCommits(): Promise<string[]> {
@@ -14,7 +15,7 @@ function getEmailsDosCommittersDosUltimosCommits(): Promise<string[]> {
 
         let committersHash = {};
         commits.forEach(commit => {
-            const emailCorrigido = Committer.corrigirEmail(commit.author_email);
+            const emailCorrigido = Email.corrigirEmail(commit.author_email);
             committersHash[emailCorrigido] = true;
         });
         const committers = Object.keys(committersHash);
@@ -34,7 +35,7 @@ export function carregarCommitters() {
             committersDosUltimosCommits.forEach((committerEmail: string) => {
                 promisesDeCommittersInseridos.push(
 
-                    GitLabService.getUser(committerEmail).then((gitlabUser:GitLabUser) => {
+                    GitLabService.getUserByEmail(new Email(committerEmail)).then((gitlabUser:GitLabUser) => {
                         return sesol2Repository.insertIfNotExists(
                             new Committer(committerEmail, gitlabUser.name, gitlabUser.avatar_url, gitlabUser.username)
                         );
