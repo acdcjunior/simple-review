@@ -2,13 +2,13 @@ import * as fs from "fs";
 import {GitLabService} from "../gitlab/GitLabService";
 import {GitLabUser} from "../gitlab/GitLabUser";
 
-const revisoresJson = JSON.parse(fs.readFileSync('../config/revisores.json', 'utf8'));
+const arquivoRevisoresJson = JSON.parse(fs.readFileSync('../config/revisores.json', 'utf8'));
 
 export class RevisoresConfig {
 
     public static revisores = (() => {
         let revisores = {};
-        revisoresJson.revisores.forEach(revisor => {
+        arquivoRevisoresJson.revisores.forEach(revisor => {
             if (!revisor.username) {
                 throw new Error(`Revisor cadastrado sem username! ${revisor}`);
             }
@@ -38,7 +38,8 @@ export class RevisoresConfig {
 
     public static aliases = (() => {
         let aliases = {};
-        revisoresJson.revisores.forEach(revisor => {
+        arquivoRevisoresJson.revisores.forEach(revisor => {
+            aliases[revisor.username] = revisor.username;
             if (revisor.aliases) {
                 revisor.aliases.forEach(alias => {
                     if (aliases[alias]) {
@@ -53,7 +54,7 @@ export class RevisoresConfig {
 
     public static verificados = (() => {
         let promisesVerificacoes = [];
-        revisoresJson.revisores.forEach(revisor => {
+        arquivoRevisoresJson.revisores.forEach(revisor => {
             promisesVerificacoes.push(GitLabService.getUserByUsername(revisor.username).then((gitlabUser: GitLabUser) => {
                 if (!gitlabUser) {
                     throw new Error(`Revisor de username ${revisor.username} não foi encontrado no GitLab!`);

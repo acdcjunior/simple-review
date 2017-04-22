@@ -15,10 +15,10 @@ export class Committer extends Sesol2 {
     public quota: number;
     public sexo: string;
 
-    constructor(email, name, avatar_url, username) {
-        super(Email.corrigirEmail(email), COMMITTER_TYPE, Email.corrigirEmail(email));
+    constructor(email: Email, name, avatar_url, username) {
+        super(email.email, COMMITTER_TYPE, email.email);
 
-        this.email = Email.corrigirEmail(email);
+        this.email = email.email;
         this.name = name;
         this.avatar_url = avatar_url;
         this.username = username;
