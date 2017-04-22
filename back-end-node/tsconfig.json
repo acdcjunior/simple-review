@@ -1,7 +1,13 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "target": "es2015",
-    "allowJs": true
-  }
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "ES6",
+//		"allowJs": true,
+        "rootDir": "src",
+        "outDir": "build"
+    },
+	"exclude": [
+		"node_modules",
+		".git"
+	]
 }

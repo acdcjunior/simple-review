@@ -1,0 +1,2 @@
+const carregarCommitsAndCommitters = require('./');
+carregarCommitsAndCommitters();

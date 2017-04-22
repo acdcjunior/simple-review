@@ -9,6 +9,7 @@
     "test": "./node_modules/.bin/mocha code-review/**/*.test.js --reporter spec"
   },
   "dependencies": {
+    "@types/bluebird": "^3.5.2",
     "add-cors-to-couchdb": "0.0.6",
     "bluebird": "^3.5.0",
     "body-parser": "~1.17.1",
@@ -19,6 +20,7 @@
     "morgan": "~1.8.1",
     "pouchdb": "^6.1.2",
     "request": "^2.81.0",
+    "request-promise": "^4.2.0",
     "request-promise-native": "^1.0.3",
     "serve-favicon": "~2.4.2",
     "typescript": "^2.2.2"
@@ -27,6 +29,7 @@
     "@types/mocha": "^2.2.41",
     "@types/node": "^7.0.13",
     "chai": "^3.5.0",
-    "mocha": "^3.2.0"
+    "mocha": "^3.2.0",
+    "ts-node": "^3.0.2"
   }
 }
