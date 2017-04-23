@@ -7,20 +7,17 @@ class Sesol2Repository {
         this.db = require('../infra/couchdb');
     }
 
-    /**
-     * Retorna uma promise!
-     */
-    insertIfNotExists (sesol2) {
+    insertIfNotExists (sesol2): Promise<string> {
         return this.exists(sesol2).then(exists => {
             if (exists) {
-                return Promise.resolve(false);
+                return Promise.resolve(undefined as string);
             } else {
                 return this.insert(sesol2);
             }
         });
     }
 
-    insert(sesol2) {
+    insert(sesol2): Promise<string> {
         return this.db.put(sesol2).then(ignored => {
             return Promise.resolve(`${sesol2.type} (inserido): ${sesol2.toString()}`);
         });

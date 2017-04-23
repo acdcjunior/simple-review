@@ -4,13 +4,10 @@ class Sesol2Repository {
     constructor() {
         this.db = require('../infra/couchdb');
     }
-    /**
-     * Retorna uma promise!
-     */
     insertIfNotExists(sesol2) {
         return this.exists(sesol2).then(exists => {
             if (exists) {
-                return Promise.resolve(false);
+                return Promise.resolve(undefined);
             }
             else {
                 return this.insert(sesol2);

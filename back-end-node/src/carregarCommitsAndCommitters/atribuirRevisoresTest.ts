@@ -8,28 +8,37 @@ import {sesol2Repository} from "../domain/Sesol2Repository";
 import * as Bluebird from 'bluebird';
 import {GitLabService} from "../gitlab/GitLabService";
 import {Email} from "../geral/Email";
+import {GitLabUser} from "../gitlab/GitLabUser";
 Bluebird.longStackTraces();
 
 GitLabService.desabilitarComentariosNoGitLab = true;
 
 ArrayShuffle.arrayShuffle = (arr) => arr.sort().reverse();
 
-sesol2Repository.insert = () => { /* mock */ };
+sesol2Repository.insert = () => Promise.resolve("mock");
 
 const assert = require('assert');
 
+function gu(email, name, username) {
+    const gitLabUser = new GitLabUser();
+    gitLabUser.email = email;
+    gitLabUser.name = name;
+    gitLabUser.username = username;
+    return gitLabUser;
+}
+
 const committers = [
-    /* 0 */  new Committer('alexandrevr@example.com',    'Alexandre Nome (LOGIN)', 'avatar_url', 'alexandrevr'),
-    /* 1 */  new Committer('antonio.junior@example.com', 'Antonio Nome (LOGIN)',   'avatar_url', 'carvalhoj'),
-    /* 2 */  new Committer('marcosps@example.com',       'Marcos Nome (LOGIN)',    'avatar_url', 'marcosps'),
-    /* 3 */  new Committer('regiano@example.com',        'Regiano Nome (LOGIN)',   'avatar_url', 'regiano'),
-    /* 4 */  new Committer('fernandesm@example.com',     'Santos Nome (LOGIN)', 'avatar_url', 'fernandesm'),
-    /* 5 */  new Committer('leliakn@example.com',        'Lelia Nome (LOGIN)',     'avatar_url', 'LELIAKN'),
-    /* 6 */  new Committer('carlanm@example.com',        'Carla Nome (LOGIN)',     'avatar_url', 'CarlaNM'),
-    /* 7 */  new Committer('x04992831131@example.com',   'Gabriel Nome (LOGIN)',   'avatar_url', 'x04992831131'),
-    /* 8 */  new Committer('x05068388213@example.com',   'Rebeca Nome (LOGIN)',    'avatar_url', 'x05068388213'),
-    /* 9 */  new Committer('x05499033332@example.com',   'Afonso Nome (LOGIN)',    'avatar_url', 'x05499033332'),
-    /* 10 */ new Committer('x05929988846@example.com',   'Bruno Nome (LOGIN)',     'avatar_url', 'x05929988846'),
+    /* 0 */  new Committer(gu('alexandrevr@example.com',    'Alexandre Nome (LOGIN)', 'alexandrevr'),  [],          25),
+    /* 1 */  new Committer(gu('antonio.junior@example.com', 'Antonio Nome (LOGIN)',   'carvalhoj'),    ["antonio"], 40),
+    /* 2 */  new Committer(gu('marcosps@example.com',       'Marcos Nome (LOGIN)',    'marcosps'),     ["marcos"],  25),
+    /* 3 */  new Committer(gu('regiano@example.com',        'Regiano Nome (LOGIN)',   'regiano'),      [],          10),
+    /* 4 */  new Committer(gu('fernandesm@example.com',     'Santos Nome (LOGIN)', 'fernandesm'),   [],          0),
+    /* 5 */  new Committer(gu('leliakn@example.com',        'Lelia Nome (LOGIN)',     'LELIAKN'),      ["lelia"],   0),
+    /* 6 */  new Committer(gu('carlanm@example.com',        'Carla Nome (LOGIN)',     'CarlaNM'),      [],          0),
+    /* 7 */  new Committer(gu('x04992831131@example.com',   'Gabriel Nome (LOGIN)',   'x04992831131'), [],          25),
+    /* 8 */  new Committer(gu('x05068388213@example.com',   'Rebeca Nome (LOGIN)',    'x05068388213'), [],          25),
+    /* 9 */  new Committer(gu('x05499033332@example.com',   'Afonso Nome (LOGIN)',    'x05499033332'), ["afonso"],  25),
+    /* 10 */ new Committer(gu('x05929988846@example.com',   'Bruno Nome (LOGIN)',     'x05929988846'), [],          25),
 ];
 Committer.findAll = () => Promise.resolve(committers);
 

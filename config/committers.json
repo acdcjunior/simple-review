@@ -1,0 +1,72 @@
+{
+  "committers": [
+    {
+      "username": "alexandrevr",
+      "sexo": "m",
+      "aliases": ["alex", "alexandre"],
+      "quota": 25
+    },
+    {
+      "username": "carvalhoj",
+      "sexo": "m",
+      "aliases": ["antonio", "antonio.junior"],
+      "quota": 40
+    },
+    {
+      "username": "marcosps",
+      "sexo": "m",
+      "aliases": ["marcos", "marcao"],
+      "quota": 25
+    },
+    {
+      "username": "regiano",
+      "sexo": "m",
+      "aliases": ["regis"],
+      "quota": 10
+    },
+    {
+      "username": "fernandesm",
+      "sexo": "m",
+      "aliases": ["fernandes", "mauricio", "josemauricio"],
+      "quota": 0
+    },
+    {
+      "username": "LELIAKN",
+      "sexo": "f",
+      "aliases": ["lelia", "leliakarina", "leliakn"],
+      "quota": 0
+    },
+    {
+      "username": "CarlaNM",
+      "sexo": "f",
+      "aliases": ["carla", "carlanm"],
+      "quota": 0
+    },
+
+
+    {
+      "username": "x05491194182",
+      "sexo": "m",
+      "aliases": ["afonso"],
+      "quota": 25
+    },
+    {
+      "username": "x05929991146",
+      "sexo": "m",
+      "aliases": ["bruno"],
+      "quota": 25
+    },
+    {
+      "username": "x04912831131",
+      "sexo": "m",
+      "aliases": ["gabriel", "mesquita"],
+      "quota": 25
+    },
+    {
+      "username": "x05068385107",
+      "sexo": "f",
+      "aliases": ["rebeca", "rebecca"],
+      "quota": 25
+    }
+  ]
+}

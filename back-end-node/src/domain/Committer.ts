@@ -1,31 +1,41 @@
 import {Sesol2} from "./Sesol2";
 import {sesol2Repository} from "./Sesol2Repository";
-import {Email} from "../geral/Email";
-import {RevisoresConfig} from "../codereview/RevisoresConfig";
+import {GitLabUser} from "../gitlab/GitLabUser";
 
 const COMMITTER_TYPE = 'committer';
 
 export class Committer extends Sesol2 {
 
-    public email: string;
-    public name: string;
-    public avatar_url: string;
-    public username: string;
+    public readonly email: string;
+    public readonly name: string;
+    public readonly avatar_url: string;
+    public readonly username: string;
 
-    public quota: number;
-    public sexo: string;
+    public readonly aliases: string[];
+    public readonly quota: number;
+    public readonly sexo: string;
 
-    constructor(email: Email, name, avatar_url, username) {
-        super(email.email, COMMITTER_TYPE, email.email);
+    constructor(user: GitLabUser, aliases: string[] = [], quota: number = 0, sexo?: string) {
+        super(user.email, COMMITTER_TYPE, user.email);
 
-        this.email = email.email;
-        this.name = name;
-        this.avatar_url = avatar_url;
-        this.username = username;
+        this.email = user.email;
+        this.name = user.name;
+        this.avatar_url = user.avatar_url;
+        this.username = user.username;
 
-        const revisoresViaConfig = RevisoresConfig.getDadosRevisorConfig(username);
-        this.quota = revisoresViaConfig.quota;
-        this.sexo = revisoresViaConfig.sexo;
+        if (aliases.indexOf(user.username.toLowerCase()) === -1) {
+            aliases.push(user.username.toLowerCase());
+        }
+        this.aliases = aliases;
+        this.quota = quota;
+        this.sexo = sexo;
+    }
+
+    vazioOuA() {
+        return !this.sexo ? "(a)" : this.sexo === "m" ? "" : "a";
+    }
+    oOuA() {
+        return !this.sexo ? "o(a)" : this.sexo === "m" ? "o" : "a";
     }
 
     static findAll(): Promise<Committer[]> {

@@ -1,13 +1,16 @@
 import {Utils} from "../util/Utils";
-import {carregarCommitters} from "./carregarCommitters";
 import {carregarCommits} from "./carregarCommits";
+import {CommittersFactory} from "../committers/CommittersFactory";
 
 
 export function carregarCommitsAndCommitters() {
     console.log('Iniciando carga de committers e commits...');
     Utils.printBar();
 
-    return carregarCommitters().then(() => {
+    return CommittersFactory.carregarCommittersDoArquivo().then(() => {
+        return CommittersFactory.carregarCommittersDosUltimosCommits()
+    }).then(() => {
         return carregarCommits();
     });
+
 }
