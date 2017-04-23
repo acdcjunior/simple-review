@@ -2,10 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const Sesol2_1 = require("./Sesol2");
 const Email_1 = require("../geral/Email");
-const Revisores_1 = require("../carregarCommitsAndCommitters/Revisores");
 const GitLabService_1 = require("../gitlab/GitLabService");
 const Sesol2Repository_1 = require("./Sesol2Repository");
-const RevisoresConfig_1 = require("../codereview/RevisoresConfig");
 const COMMIT_TYPE = 'commit';
 class Commit extends Sesol2_1.Sesol2 {
     constructor(sha, title, message, author_email, created_at) {
@@ -34,33 +32,24 @@ class Commit extends Sesol2_1.Sesol2 {
         });
     }
     indicarRevisorViaMencao(revisor) {
-        if (revisor.invalido) {
-            this.incluirHistorico(`Revisor(a) ${revisor.email} mencionado(a), mas não reconhecido(a) na base de usuários. Menção ignorada.`);
+        if (revisor.isInvalido()) {
+            this.incluirHistorico(`Revisor(a) @${revisor.username} mencionado(a), mas não reconhecido(a) na base de usuários. Menção ignorada.`);
             return Promise.resolve();
         }
-        return RevisoresConfig_1.RevisoresConfig.verificados.then(() => {
-            const revisorConfig = RevisoresConfig_1.RevisoresConfig.revisores[revisor.email];
-            if (revisor.email == this.author_email) {
-                this.incluirHistorico(`Revisor${revisorConfig.vazioOuA()} ${revisor.email} mencionad${revisorConfig.oOuA()} é autor${revisorConfig.vazioOuA()} do commit. Menção ignorada.`);
-                return Promise.resolve();
-            }
-            return this.incluirRevisor(revisor, userNameComNome => `Revisor${revisorConfig.vazioOuA()} ${userNameComNome} atribuíd${revisorConfig.oOuA()} via menção em mensagem de commit.`);
-        });
+        if (revisor.email == this.author_email) {
+            this.incluirHistorico(`Revisor${revisor.vazioOuA()} ${revisor.mencao()} mencionad${revisor.oOuA()} é autor${revisor.vazioOuA()} do commit. Menção ignorada.`);
+            return Promise.resolve();
+        }
+        return this.incluirRevisor(revisor, `Revisor${revisor.vazioOuA()} ${revisor.mencao()} atribuíd${revisor.oOuA()} via menção em mensagem de commit.`);
     }
     indicarRevisorViaSistema(revisor) {
-        return RevisoresConfig_1.RevisoresConfig.verificados.then(() => {
-            const revisorConfig = RevisoresConfig_1.RevisoresConfig.revisores[revisor.email];
-            return this.incluirRevisor(revisor, userNameComNome => `Revisor${revisorConfig.vazioOuA()} ${userNameComNome} atribuíd${revisorConfig.oOuA()} automaticamente.`);
-        });
+        return this.incluirRevisor(revisor, `Revisor${revisor.vazioOuA()} ${revisor.mencao()} atribuíd${revisor.oOuA()} automaticamente.`);
     }
-    incluirRevisor(revisor, funcaoMensagem) {
+    incluirRevisor(revisor, msg) {
         this.revisores.push(revisor.email);
-        return Revisores_1.Revisores.userNameComNome(revisor).then((userNameComNome) => {
-            const msg = funcaoMensagem(userNameComNome);
-            this.comentarNoGitLab(msg);
-            this.incluirHistorico(msg);
-            return Promise.resolve();
-        });
+        this.comentarNoGitLab(msg);
+        this.incluirHistorico(msg);
+        return Promise.resolve();
     }
     incluirHistorico(s) {
         this.historico.push(s);

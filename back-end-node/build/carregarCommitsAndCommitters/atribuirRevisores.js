@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const Sesol2Repository_1 = require("../domain/Sesol2Repository");
 const arrayShuffle_1 = require("../util/arrayShuffle");
-const Revisores_1 = require("./Revisores");
 const Commit_1 = require("../domain/Commit");
 const Email_1 = require("../geral/Email");
 const CommitterRepository_1 = require("../committers/CommitterRepository");
@@ -71,39 +70,36 @@ function incluirRevisorServidorDoCommit(commit, tabelaProporcoesDeCadaRevisor) {
     return Promise.resolve();
 }
 function incluirRevisoresMencionadosNaMensagem(commitSemRevisor) {
-    return extrairEmailsDosRevisoresMencionadosNoCommit(commitSemRevisor).then((revisoresIndicados) => {
+    return extrairCommittersMencionadosNaMsgDoCommit(commitSemRevisor).then((revisoresIndicados) => {
         return commitSemRevisor.indicarRevisoresViaMencao(revisoresIndicados);
     });
 }
-function extrairEmailsDosRevisoresMencionadosNoCommit(commitSemRevisor) {
+function extrairCommittersMencionadosNaMsgDoCommit(commitSemRevisor) {
     const message = commitSemRevisor.message;
     const mencoes = message.match(/@[a-zA-Z.0-9]+/g);
     if (mencoes) {
-        return extrairEmailsDeMencoes(mencoes, []);
+        return extrairCommittersDeMencoes(mencoes, []);
     }
     return Promise.resolve([]);
 }
-function extrairEmailsDeMencoes(mencoes, emails) {
+function extrairCommittersDeMencoes(mencoes, committers) {
     if (mencoes.length === 0) {
-        return Promise.resolve(emails);
+        return Promise.resolve(committers);
     }
-    const mencao = mencoes[0];
+    const mencao = mencoes[0].substring(1); // tirar a @
     const mencoesRestantes = mencoes.slice(1);
-    return Revisores_1.Revisores.mencaoToEmail(mencao).then((emailRevisor) => {
-        emails.push(emailRevisor);
-        return Promise.resolve(extrairEmailsDeMencoes(mencoesRestantes, emails));
+    return CommitterRepository_1.CommitterRepository.findCommittersByUsernameOrAlias(mencao).then((committer) => {
+        committers.push(committer);
+        return Promise.resolve(extrairCommittersDeMencoes(mencoesRestantes, committers));
     });
 }
 class TabelaProporcoesDeCadaRevisor {
     constructor(committers) {
-        this.capacidadeDeRevisoes = {};
+        this.committersHash = {};
         this.contagemRevisoesAtribuidas = {};
         committers.forEach(committer => {
-            this.capacidadeDeRevisoes[committer.email] = committer.quota;
+            this.committersHash[committer.email] = committer;
         });
-        debug.log('#############################################');
-        debug.dir(this.capacidadeDeRevisoes);
-        debug.log('#############################################');
     }
     atualizarContagemComRevisoresDosCommits(commits) {
         commits.forEach(commit => {
@@ -111,30 +107,30 @@ class TabelaProporcoesDeCadaRevisor {
         });
     }
     atualizarContagemComRevisoresDoCommit(commit) {
-        commit.revisores.forEach(revisor => {
-            this.incrementarContagemDoRevisor(new Email_1.Email(revisor));
+        commit.revisores.forEach((emailRevisor) => {
+            this.incrementarContagemDoRevisor(this.committersHash[emailRevisor]);
         });
     }
     incrementarContagemDoRevisor(revisor) {
         this.contagemRevisoesAtribuidas[revisor.email] = this.contagemRevisoesAtribuidasA(revisor.email) + 1;
     }
     calcularEstagiarioMaisVago(commit) {
-        return this.calcularRevisorMaisVago(email => email !== commit.author_email && new Email_1.Email(email).isEmailDeEstagiario());
+        return this.calcularRevisorMaisVago((email) => email !== commit.author_email && new Email_1.Email(email).isEmailDeEstagiario());
     }
     calcularServidorMaisVago(commit) {
-        return this.calcularRevisorMaisVago(email => email !== commit.author_email && new Email_1.Email(email).isEmailDeServidor());
+        return this.calcularRevisorMaisVago((email) => email !== commit.author_email && new Email_1.Email(email).isEmailDeServidor());
     }
     contagemRevisoesAtribuidasA(email) {
         return this.contagemRevisoesAtribuidas[email] || 0;
     }
     percentualDeOcupacaoDoRevisor(email) {
-        return this.contagemRevisoesAtribuidasA(email) / this.capacidadeDeRevisoes[email];
+        return this.contagemRevisoesAtribuidasA(email) / this.committersHash[email].quota;
     }
     calcularRevisorMaisVago(funcaoFiltragemPossiveisRevisores) {
         debug.log('--- calcularRevisorMaisVago ---');
-        const possiveisRevisores = arrayShuffle_1.ArrayShuffle.arrayShuffle(Object.keys(this.capacidadeDeRevisoes)
+        const possiveisRevisores = arrayShuffle_1.ArrayShuffle.arrayShuffle(Object.keys(this.committersHash)
             .filter(funcaoFiltragemPossiveisRevisores)
-            .filter(email => this.capacidadeDeRevisoes[email] > 0));
+            .filter(email => this.committersHash[email].quota > 0));
         debug.dir(this.contagemRevisoesAtribuidas);
         let emailComMenorPercentualOcupado = possiveisRevisores[0];
         let ocupacaoMenorOcupado = 999999;
@@ -147,6 +143,6 @@ class TabelaProporcoesDeCadaRevisor {
             }
         });
         debug.log(`Mais vago é ${emailComMenorPercentualOcupado}`);
-        return new Email_1.Email(emailComMenorPercentualOcupado);
+        return this.committersHash[emailComMenorPercentualOcupado];
     }
 }

@@ -1,5 +1,4 @@
 import {Sesol2} from "./Sesol2";
-import {sesol2Repository} from "./Sesol2Repository";
 import {GitLabUser} from "../gitlab/GitLabUser";
 
 export class Committer extends Sesol2 {
@@ -23,6 +22,9 @@ export class Committer extends Sesol2 {
         this.avatar_url = user.avatar_url;
         this.username = user.username;
 
+        if (aliases.indexOf(user.username) === -1) {
+            aliases.push(user.username);
+        }
         if (aliases.indexOf(user.username.toLowerCase()) === -1) {
             aliases.push(user.username.toLowerCase());
         }
@@ -36,6 +38,19 @@ export class Committer extends Sesol2 {
     }
     oOuA() {
         return !this.sexo ? "o(a)" : this.sexo === "m" ? "o" : "a";
+    }
+    mencao() {
+        return `@${this.username} [${this.name}]`;
+    }
+
+    private static readonly COMMITTER_INVALIDO = 'committer-invalido';
+    public static committerInvalido(username): Committer {
+        const gitLabUser = new GitLabUser();
+        gitLabUser.username = username;
+        return new Committer(gitLabUser, [], 0, Committer.COMMITTER_INVALIDO);
+    }
+    isInvalido() {
+        return this.sexo === Committer.COMMITTER_INVALIDO;
     }
 
 }

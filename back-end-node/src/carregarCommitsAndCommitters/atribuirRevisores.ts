@@ -1,7 +1,6 @@
 import {Committer} from "../domain/Committer";
 import {sesol2Repository} from "../domain/Sesol2Repository";
 import {ArrayShuffle} from "../util/arrayShuffle";
-import {Revisores} from "./Revisores";
 import {Commit} from "../domain/Commit";
 import {Email} from '../geral/Email';
 import {CommitterRepository} from "../committers/CommitterRepository";
@@ -77,7 +76,7 @@ function incluirRevisorEstagiarioEmCommitDeEstagiario(commitSemRevisor: Commit, 
 function incluirRevisorServidorDoCommit(commit: Commit, tabelaProporcoesDeCadaRevisor: TabelaProporcoesDeCadaRevisor): Promise<void> {
     // todos os commits devem ter pelo menos um revisor servidor
     if (commit.todosOsRevisoresSaoEstagiarios()) {
-        const servidorMaisVago = tabelaProporcoesDeCadaRevisor.calcularServidorMaisVago(commit);
+        const servidorMaisVago: Committer = tabelaProporcoesDeCadaRevisor.calcularServidorMaisVago(commit);
         return commit.indicarRevisorViaSistema(servidorMaisVago).then(() => {
             tabelaProporcoesDeCadaRevisor.incrementarContagemDoRevisor(servidorMaisVago);
             return Promise.resolve();
@@ -87,44 +86,41 @@ function incluirRevisorServidorDoCommit(commit: Commit, tabelaProporcoesDeCadaRe
 }
 
 function incluirRevisoresMencionadosNaMensagem(commitSemRevisor: Commit): Promise<void> {
-    return extrairEmailsDosRevisoresMencionadosNoCommit(commitSemRevisor).then((revisoresIndicados: Email[]) => {
+    return extrairCommittersMencionadosNaMsgDoCommit(commitSemRevisor).then((revisoresIndicados: Committer[]) => {
         return commitSemRevisor.indicarRevisoresViaMencao(revisoresIndicados);
     });
 }
 
-function extrairEmailsDosRevisoresMencionadosNoCommit(commitSemRevisor): Promise<Email[]> {
+function extrairCommittersMencionadosNaMsgDoCommit(commitSemRevisor): Promise<Committer[]> {
     const message = commitSemRevisor.message;
     const mencoes = message.match(/@[a-zA-Z.0-9]+/g);
     if (mencoes) {
-        return extrairEmailsDeMencoes(mencoes, []);
+        return extrairCommittersDeMencoes(mencoes, []);
     }
     return Promise.resolve([]);
 }
 
-function extrairEmailsDeMencoes(mencoes, emails: Email[]): Promise<Email[]> {
+function extrairCommittersDeMencoes(mencoes, committers: Committer[]): Promise<Committer[]> {
     if (mencoes.length === 0) {
-        return Promise.resolve(emails);
+        return Promise.resolve(committers);
     }
-    const mencao = mencoes[0];
+    const mencao = mencoes[0].substring(1); // tirar a @
     const mencoesRestantes = mencoes.slice(1);
-    return Revisores.mencaoToEmail(mencao).then((emailRevisor: Email) => {
-        emails.push(emailRevisor);
-        return Promise.resolve(extrairEmailsDeMencoes(mencoesRestantes, emails));
+    return CommitterRepository.findCommittersByUsernameOrAlias(mencao).then((committer: Committer) => {
+        committers.push(committer);
+        return Promise.resolve(extrairCommittersDeMencoes(mencoesRestantes, committers));
     });
 }
 
 class TabelaProporcoesDeCadaRevisor {
 
-    private capacidadeDeRevisoes: any = {};
+    private committersHash: any = {};
     private contagemRevisoesAtribuidas: any = {};
 
     constructor(committers: Committer[]) {
         committers.forEach(committer => {
-            this.capacidadeDeRevisoes[committer.email] = committer.quota;
+            this.committersHash[committer.email] = committer;
         });
-        debug.log('#############################################');
-        debug.dir(this.capacidadeDeRevisoes);
-        debug.log('#############################################');
     }
 
     atualizarContagemComRevisoresDosCommits(commits: Commit[]) {
@@ -134,24 +130,24 @@ class TabelaProporcoesDeCadaRevisor {
     }
 
     atualizarContagemComRevisoresDoCommit(commit: Commit) {
-        commit.revisores.forEach(revisor => {
-            this.incrementarContagemDoRevisor(new Email(revisor));
+        commit.revisores.forEach((emailRevisor: string) => {
+            this.incrementarContagemDoRevisor(this.committersHash[emailRevisor]);
         })
     }
 
-    incrementarContagemDoRevisor(revisor: Email) {
+    incrementarContagemDoRevisor(revisor: Committer) {
         this.contagemRevisoesAtribuidas[revisor.email] = this.contagemRevisoesAtribuidasA(revisor.email) + 1;
     }
 
-    calcularEstagiarioMaisVago(commit: Commit): Email {
+    calcularEstagiarioMaisVago(commit: Commit): Committer {
         return this.calcularRevisorMaisVago(
-            email => email !== commit.author_email && new Email(email).isEmailDeEstagiario(),
+            (email: string) => email !== commit.author_email && new Email(email).isEmailDeEstagiario(),
         );
     }
 
-    calcularServidorMaisVago(commit: Commit): Email {
+    calcularServidorMaisVago(commit: Commit): Committer {
         return this.calcularRevisorMaisVago(
-            email => email !== commit.author_email && new Email(email).isEmailDeServidor(),
+            (email: string) => email !== commit.author_email && new Email(email).isEmailDeServidor(),
         );
     }
 
@@ -159,15 +155,15 @@ class TabelaProporcoesDeCadaRevisor {
         return this.contagemRevisoesAtribuidas[email] || 0
     }
     percentualDeOcupacaoDoRevisor(email: string) {
-        return this.contagemRevisoesAtribuidasA(email) / this.capacidadeDeRevisoes[email];
+        return this.contagemRevisoesAtribuidasA(email) / this.committersHash[email].quota;
     }
 
-    calcularRevisorMaisVago(funcaoFiltragemPossiveisRevisores): Email {
+    calcularRevisorMaisVago(funcaoFiltragemPossiveisRevisores: (email: string) => boolean): Committer {
         debug.log('--- calcularRevisorMaisVago ---');
         const possiveisRevisores = ArrayShuffle.arrayShuffle(
-            Object.keys(this.capacidadeDeRevisoes)
+            Object.keys(this.committersHash)
             .filter(funcaoFiltragemPossiveisRevisores)
-            .filter(email => this.capacidadeDeRevisoes[email] > 0)
+            .filter(email => this.committersHash[email].quota > 0)
         );
 
         debug.dir(this.contagemRevisoesAtribuidas);
@@ -185,7 +181,7 @@ class TabelaProporcoesDeCadaRevisor {
         });
 
         debug.log(`Mais vago é ${emailComMenorPercentualOcupado}`);
-        return new Email(emailComMenorPercentualOcupado);
+        return this.committersHash[emailComMenorPercentualOcupado];
     }
 
 

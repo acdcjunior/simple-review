@@ -24,18 +24,24 @@ function gu(email, name, username) {
     return gitLabUser;
 }
 const committers = [
-    /* 0 */ new Committer_1.Committer(gu('alexandrevr@example.com', 'Alexandre Nome (LOGIN)', 'alexandrevr'), [], 25),
-    /* 1 */ new Committer_1.Committer(gu('antonio.junior@example.com', 'Antonio Nome (LOGIN)', 'carvalhoj'), ["antonio"], 40),
-    /* 2 */ new Committer_1.Committer(gu('marcosps@example.com', 'Marcos Nome (LOGIN)', 'marcosps'), ["marcos"], 25),
-    /* 3 */ new Committer_1.Committer(gu('regiano@example.com', 'Regiano Nome (LOGIN)', 'regiano'), [], 10),
-    /* 4 */ new Committer_1.Committer(gu('fernandesm@example.com', 'Santos Nome (LOGIN)', 'fernandesm'), [], 0),
-    /* 5 */ new Committer_1.Committer(gu('leliakn@example.com', 'Lelia Nome (LOGIN)', 'LELIAKN'), ["lelia"], 0),
-    /* 6 */ new Committer_1.Committer(gu('carlanm@example.com', 'Carla Nome (LOGIN)', 'CarlaNM'), [], 0),
-    /* 7 */ new Committer_1.Committer(gu('x04992831131@example.com', 'Gabriel Nome (LOGIN)', 'x04992831131'), [], 25),
-    /* 8 */ new Committer_1.Committer(gu('x05068388213@example.com', 'Rebeca Nome (LOGIN)', 'x05068388213'), [], 25),
-    /* 9 */ new Committer_1.Committer(gu('x05499033332@example.com', 'Afonso Nome (LOGIN)', 'x05499033332'), ["afonso"], 25),
-    /* 10 */ new Committer_1.Committer(gu('x05929988846@example.com', 'Bruno Nome (LOGIN)', 'x05929988846'), [], 25),
+    /* 0 */ new Committer_1.Committer(gu('alexandrevr@example.com', "Alexandre Silva Santos (ALEXANDREVR)", 'alexandrevr'), [], 25, "m"),
+    /* 1 */ new Committer_1.Committer(gu('antonio.junior@example.com', "Antonio C. de Carvalho Junior (CARVALHOJ)", 'carvalhoj'), ["antonio"], 40, "m"),
+    /* 2 */ new Committer_1.Committer(gu('marcosps@example.com', "Marcos Paulo Santos da Silva (MARCOSPS)", 'marcosps'), ["marcos"], 25, "m"),
+    /* 3 */ new Committer_1.Committer(gu('regiano@example.com', "Regiano da Silva Santos (REGIANO)", 'regiano'), [], 10, "m"),
+    /* 4 */ new Committer_1.Committer(gu('fernandesm@example.com', "Jose Mauricio Santos (FERNANDESM)", 'fernandesm'), [], 0, "m"),
+    /* 5 */ new Committer_1.Committer(gu('leliakn@example.com', "Lelia Silva (LELIAKN)", 'LELIAKN'), ["lelia"], 0, "f"),
+    /* 6 */ new Committer_1.Committer(gu('carlanm@example.com', "Carla Souza (CARLANM)", 'CarlaNM'), [], 0, "f"),
+    /* 7 */ new Committer_1.Committer(gu('x04992831131@example.com', "Gabriel Mesquita de Araujo (X04992831131)", 'x04992831131'), [], 25, "m"),
+    /* 8 */ new Committer_1.Committer(gu('x05068388213@example.com', "Rebeca Andrade Silva (X05068388213)", 'x05068388213'), [], 25, "f"),
+    /* 9 */ new Committer_1.Committer(gu('x05499033332@example.com', "Afonso Santos de Souza Silva (X05499033332)", 'x05499033332'), ["afonso"], 25, "m"),
+    /* 10 */ new Committer_1.Committer(gu('x05929988846@example.com', "Bruno Silva Santos Souza (X05929988846)", 'x05929988846'), [], 25, undefined),
 ];
+CommitterRepository_1.CommitterRepository.findCommittersByUsernameOrAlias = (usernameOrAlias) => {
+    const committer = committers.find(committer => committer.aliases.indexOf(usernameOrAlias) !== -1);
+    if (!committer)
+        return Promise.resolve(Committer_1.Committer.committerInvalido(usernameOrAlias));
+    return Promise.resolve(committer);
+};
 CommitterRepository_1.CommitterRepository.findAllCommitters = () => Promise.resolve(committers);
 const commit0 = new Commit_1.Commit('sha 0', 't 0', ' 0\n ', committers[1].email, '');
 commit0.revisores.push(committers[0].email);
@@ -136,13 +142,13 @@ function assertJson(commits) {
         { message: " 4\n ", author_email: "antonio.junior@example.com", revisores: ["regiano@example.com"], historico: ["Revisor @regiano [Regiano da Silva Santos (REGIANO)] atribuído automaticamente."] },
         { message: " 5\n ", author_email: "x05068388213@example.com", revisores: ["x04992831131@example.com", "antonio.junior@example.com"], historico: ["Revisor @x04992831131 [Gabriel Mesquita de Araujo (X04992831131)] atribuído automaticamente.", "Revisor @carvalhoj [Antonio C. de Carvalho Junior (CARVALHOJ)] atribuído automaticamente."] },
         { message: " 6\n ", author_email: "antonio.junior@example.com", revisores: ["alexandrevr@example.com"], historico: ["Revisor @alexandrevr [Alexandre Silva Santos (ALEXANDREVR)] atribuído automaticamente."] },
-        { message: " 7\n ", author_email: "x05499033332@example.com", revisores: ["x05929988846@example.com", "marcosps@example.com"], historico: ["Revisor @x05929988846 [Bruno Silva Santos Souza (X05929988846)] atribuído automaticamente.", "Revisor @marcosps [Marcos Paulo Santos da Silva (MARCOSPS)] atribuído automaticamente."] },
+        { message: " 7\n ", author_email: "x05499033332@example.com", revisores: ["x05929988846@example.com", "marcosps@example.com"], historico: ["Revisor(a) @x05929988846 [Bruno Silva Santos Souza (X05929988846)] atribuído(a) automaticamente.", "Revisor @marcosps [Marcos Paulo Santos da Silva (MARCOSPS)] atribuído automaticamente."] },
         { message: " 8\n ", author_email: "antonio.junior@example.com", revisores: ["alexandrevr@example.com"], historico: ["Revisor @alexandrevr [Alexandre Silva Santos (ALEXANDREVR)] atribuído automaticamente."] },
-        { message: " 9\n ", author_email: "x05929988846@example.com", revisores: ["x05499033332@example.com", "antonio.junior@example.com"], historico: ["Revisor @x05499033332 [Afonso Santos de Souza Barros (X05499033332)] atribuído automaticamente.", "Revisor @carvalhoj [Antonio C. de Carvalho Junior (CARVALHOJ)] atribuído automaticamente."] },
+        { message: " 9\n ", author_email: "x05929988846@example.com", revisores: ["x05499033332@example.com", "antonio.junior@example.com"], historico: ["Revisor @x05499033332 [Afonso Santos de Souza Silva (X05499033332)] atribuído automaticamente.", "Revisor @carvalhoj [Antonio C. de Carvalho Junior (CARVALHOJ)] atribuído automaticamente."] },
         { message: "10\n ", author_email: "antonio.junior@example.com", revisores: ["marcosps@example.com"], historico: ["Revisor @marcosps [Marcos Paulo Santos da Silva (MARCOSPS)] atribuído automaticamente."] },
         { message: "11\n ", author_email: "antonio.junior@example.com", revisores: ["regiano@example.com"], historico: ["Revisor @regiano [Regiano da Silva Santos (REGIANO)] atribuído automaticamente."] },
         { message: "12\n ", author_email: "antonio.junior@example.com", revisores: ["alexandrevr@example.com"], historico: ["Revisor @alexandrevr [Alexandre Silva Santos (ALEXANDREVR)] atribuído automaticamente."] },
-        { message: "13\n @carlanm", author_email: "marcosps@example.com", revisores: ["carlanm@example.com"], historico: ["Revisora @CarlaNM [Carla Nassif Sobrenome (CarlaNM)] atribuída via menção em mensagem de commit."] },
+        { message: "13\n @carlanm", author_email: "marcosps@example.com", revisores: ["carlanm@example.com"], historico: ["Revisora @CarlaNM [Carla Souza (CARLANM)] atribuída via menção em mensagem de commit."] },
         { message: "14\n @leliakn", author_email: "x04992831131@example.com", revisores: ["leliakn@example.com", "x05068388213@example.com"], historico: ["Revisora @LELIAKN [Lelia Silva (LELIAKN)] atribuída via menção em mensagem de commit.", "Revisora @x05068388213 [Rebeca Andrade Silva (X05068388213)] atribuída automaticamente."] },
         { message: "15\n @lelia", author_email: "antonio.junior@example.com", revisores: ["leliakn@example.com"], historico: ["Revisora @LELIAKN [Lelia Silva (LELIAKN)] atribuída via menção em mensagem de commit."] },
         { message: "16\n @invalido", author_email: "marcosps@example.com", revisores: ["antonio.junior@example.com"], historico: ["Revisor(a) @invalido mencionado(a), mas não reconhecido(a) na base de usuários. Menção ignorada.", "Revisor @carvalhoj [Antonio C. de Carvalho Junior (CARVALHOJ)] atribuído automaticamente."] },
@@ -151,10 +157,10 @@ function assertJson(commits) {
             author_email: "leliakn@example.com",
             revisores: ["antonio.junior@example.com", "marcosps@example.com", "x05499033332@example.com"],
             historico: [
-                "Revisora leliakn@example.com mencionada é autora do commit. Menção ignorada.",
+                "Revisora @LELIAKN [Lelia Silva (LELIAKN)] mencionada é autora do commit. Menção ignorada.",
                 "Revisor @carvalhoj [Antonio C. de Carvalho Junior (CARVALHOJ)] atribuído via menção em mensagem de commit.",
                 "Revisor @marcosps [Marcos Paulo Santos da Silva (MARCOSPS)] atribuído via menção em mensagem de commit.",
-                "Revisor @x05499033332 [Afonso Santos de Souza Barros (X05499033332)] atribuído via menção em mensagem de commit."
+                "Revisor @x05499033332 [Afonso Santos de Souza Silva (X05499033332)] atribuído via menção em mensagem de commit."
             ]
         }
     ];
