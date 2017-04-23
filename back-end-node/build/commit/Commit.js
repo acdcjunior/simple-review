@@ -46,8 +46,8 @@ class Commit extends Sesol2_1.Sesol2 {
         this.incluirHistorico(msg);
         return Promise.resolve();
     }
-    incluirHistorico(s) {
-        this.historico.push(s);
+    incluirHistorico(msgHistorico) {
+        this.historico.push(msgHistorico.replace(/`/g, ''));
     }
     comentarNoGitLab(msg) {
         //noinspection JSIgnoredPromiseFromCall

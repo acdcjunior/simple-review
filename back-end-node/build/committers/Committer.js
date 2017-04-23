@@ -26,7 +26,7 @@ class Committer extends Sesol2_1.Sesol2 {
         return !this.sexo ? "o(a)" : this.sexo === "m" ? "o" : "a";
     }
     mencao() {
-        return `@${this.username} [${this.name}]`;
+        return `@${this.username} [\`${this.name}\`]`;
     }
     static committerInvalido(username) {
         const gitLabUser = new GitLabUser_1.GitLabUser();
