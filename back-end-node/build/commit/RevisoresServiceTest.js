@@ -71,7 +71,7 @@ Commit_1.Commit.findAll = () => Promise.resolve(commits);
 describe("RevisoresService suite", function () {
     this.timeout(15000);
     it("atribuirRevisores()", function () {
-        return RevisoresService_1.atribuirRevisores().then(() => {
+        return RevisoresService_1.RevisoresService.atribuirRevisores().then(() => {
             console.log('-- DENTRO DO TESTE - ATRIBUICAO CONCLUIDA --');
             console.log('-- Era pra ter sido 16 commits sem revisores. Foram? --');
             assertCommitComRevisoresEHistorico(commits[2]);

@@ -10,21 +10,23 @@ let debug = {
     log: ((x) => { }) || console.log,
     dir: ((x) => { }) || console.dir,
 };
-function atribuirRevisores() {
-    return CommitterRepository_1.CommitterRepository.findAllCommitters().then((committers) => {
-        console.log(`RevisoresService: Atribuindo Revisores...`);
-        const tabelaProporcoesDeCadaRevisor = new TabelaProporcoesDeCadaRevisor(committers);
-        return Commit_1.Commit.findAll().then((commits) => {
-            tabelaProporcoesDeCadaRevisor.atualizarContagemComRevisoresDosCommits(commits);
-            const commitsSemRevisores = commits.filter(commit => commit.revisores.length === 0);
-            console.log(`RevisoresService: Commits sem revisores encontrados: ${commitsSemRevisores.length}`);
-            return atribuirRevisoresAosCommits(commitsSemRevisores, tabelaProporcoesDeCadaRevisor).then(() => {
-                console.log('RevisoresService: Revisores atribuídos!');
+class RevisoresService {
+    static atribuirRevisores() {
+        return CommitterRepository_1.CommitterRepository.findAllCommitters().then((committers) => {
+            console.log(`\n\nRevisoresService: Atribuindo Revisores...`);
+            const tabelaProporcoesDeCadaRevisor = new TabelaProporcoesDeCadaRevisor(committers);
+            return Commit_1.Commit.findAll().then((commits) => {
+                tabelaProporcoesDeCadaRevisor.atualizarContagemComRevisoresDosCommits(commits);
+                const commitsSemRevisores = commits.filter(commit => commit.revisores.length === 0);
+                console.log(`RevisoresService: Commits sem revisores encontrados: ${commitsSemRevisores.length}`);
+                return atribuirRevisoresAosCommits(commitsSemRevisores, tabelaProporcoesDeCadaRevisor).then(() => {
+                    console.log('RevisoresService: Revisores atribuídos!');
+                });
             });
         });
-    });
+    }
 }
-exports.atribuirRevisores = atribuirRevisores;
+exports.RevisoresService = RevisoresService;
 function atribuirRevisoresAosCommits(commitsSemRevisor, tabelaProporcoesDeCadaRevisor) {
     if (commitsSemRevisor.length === 0) {
         return Promise.resolve();

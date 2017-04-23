@@ -11,22 +11,26 @@ let debug = {
     dir: ((x) => {}) || console.dir,
 };
 
-export function atribuirRevisores() {
-    return CommitterRepository.findAllCommitters().then((committers: Committer[]) => {
-        console.log(`RevisoresService: Atribuindo Revisores...`);
-        const tabelaProporcoesDeCadaRevisor = new TabelaProporcoesDeCadaRevisor(committers);
+export class RevisoresService {
 
-        return Commit.findAll().then((commits: Commit[]) => {
-            tabelaProporcoesDeCadaRevisor.atualizarContagemComRevisoresDosCommits(commits);
+    static atribuirRevisores() {
+        return CommitterRepository.findAllCommitters().then((committers: Committer[]) => {
+            console.log(`\n\nRevisoresService: Atribuindo Revisores...`);
+            const tabelaProporcoesDeCadaRevisor = new TabelaProporcoesDeCadaRevisor(committers);
 
-            const commitsSemRevisores = commits.filter(commit => commit.revisores.length === 0);
-            console.log(`RevisoresService: Commits sem revisores encontrados: ${commitsSemRevisores.length}`);
+            return Commit.findAll().then((commits: Commit[]) => {
+                tabelaProporcoesDeCadaRevisor.atualizarContagemComRevisoresDosCommits(commits);
 
-            return atribuirRevisoresAosCommits(commitsSemRevisores, tabelaProporcoesDeCadaRevisor).then(() => {
-                console.log('RevisoresService: Revisores atribuídos!');
+                const commitsSemRevisores = commits.filter(commit => commit.revisores.length === 0);
+                console.log(`RevisoresService: Commits sem revisores encontrados: ${commitsSemRevisores.length}`);
+
+                return atribuirRevisoresAosCommits(commitsSemRevisores, tabelaProporcoesDeCadaRevisor).then(() => {
+                    console.log('RevisoresService: Revisores atribuídos!');
+                });
             });
         });
-    });
+    }
+
 }
 
 function atribuirRevisoresAosCommits(commitsSemRevisor: Commit[], tabelaProporcoesDeCadaRevisor: TabelaProporcoesDeCadaRevisor) {

@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {atribuirRevisores} from "./RevisoresService";
+import {RevisoresService} from "./RevisoresService";
 import {ArrayShuffle} from "../geral/arrayShuffle";
 import {Commit} from "./Commit";
 import {Committer} from "../committers/Committer";
@@ -79,7 +79,7 @@ describe("RevisoresService suite", function () {
     this.timeout(15000);
 
     it("atribuirRevisores()", function () {
-        return atribuirRevisores().then(() => {
+        return RevisoresService.atribuirRevisores().then(() => {
             console.log('-- DENTRO DO TESTE - ATRIBUICAO CONCLUIDA --');
             console.log('-- Era pra ter sido 16 commits sem revisores. Foram? --');
 

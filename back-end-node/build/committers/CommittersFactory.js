@@ -9,7 +9,7 @@ class CommitterConfigStruct {
 }
 class CommittersFactory {
     static carregarCommittersDoArquivo() {
-        console.log(`CommittersFactory: Iniciando carga dos committers do committers.json...`);
+        console.log(`\n\nCommittersFactory: Iniciando carga dos committers do committers.json...`);
         const arquivoCommitters = JSON.parse(fs.readFileSync('../config/committers.json', 'utf8'));
         let promisesDeCommittersInseridos = [];
         arquivoCommitters.committers.forEach((committer) => {
@@ -27,7 +27,7 @@ class CommittersFactory {
         });
     }
     static carregarCommittersDosUltimosCommits() {
-        console.log(`CommittersFactory: Iniciando carga dos committers dos ultimos commits...`);
+        console.log(`\n\nCommittersFactory: Iniciando carga dos committers dos ultimos commits...`);
         return CommittersFactory.getEmailsDosCommittersDosUltimosCommits().then((committersDosUltimosCommits) => {
             let promisesDeCommittersInseridos = [];
             console.info(`\tCommittersFactory: Inserindo, se necessario, ultimos ${committersDosUltimosCommits.length} committers...`);
