@@ -15,4 +15,4 @@ app.use(`/code-review`, express.static(path.join(__dirname, 'dist')));
 app.use(`/static`, express.static(path.join(__dirname, 'dist', 'static')));
 app.use(`/code-review/vendor`, express.static(path.join(__dirname, 'vendor')));
 
-app.listen(8080);
+app.listen(5000);
