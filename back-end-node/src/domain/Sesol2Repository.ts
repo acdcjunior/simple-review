@@ -32,10 +32,12 @@ class Sesol2Repository {
     }
 
     findAll(type) {
-        return this.db.query('type_index', {key: type, include_docs: true}).then(result => {
-            return new Promise(resolve => {
-                resolve(result.rows.map(row => row.doc));
-            })
+        return this.queryView('type_index', type);
+    }
+
+    queryView(viewName: string, viewKey: string): Promise<any> {
+        return this.db.query(viewName, {key: viewKey, include_docs: true}).then(result => {
+            return Promise.resolve(result.rows.map(row => row.doc));
         });
     }
 
