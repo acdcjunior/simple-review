@@ -1,28 +1,37 @@
 const addCors = require('./addCors');
+//noinspection JSUnresolvedVariable
+const CommitterRepository = require('../build/committers/CommitterRepository').CommitterRepository;
+//noinspection JSUnresolvedVariable
 const GitLabService = require('../build/gitlab/GitLabService').GitLabService;
+//noinspection JSUnresolvedVariable
 const carregarCommitsAndCommitters = require("../build/codereview").carregarCommitsAndCommitters;
 
 const express = require('express');
 const router = express.Router();
 
-router.post('/marcar-revisado', function(req, res) {
+/** @namespace req.body.sha */
+/** @namespace req.body.usernameRevisor */
+/** @namespace req.body.tipoRevisao */
+router.post('/comentar-revisado', function(req, res) {
     addCors(req, res);
 
     const sha = req.body.sha;
-    const revisor = req.body.revisor;
-    const feitoEmPar = req.body.feitoEmPar === "true";
+    const usernameRevisor = req.body.usernameRevisor;
+    const tipoRevisao = req.body.tipoRevisao;
 
-    let comentarioRest;
-    if (feitoEmPar) {
-        comentarioRest = GitLabService.comentar(sha, `:white_check_mark: Commit marcado como **feito em par** por ${revisor}.`)
-    } else {
-        comentarioRest = GitLabService.comentar(sha, `:ballot_box_with_check: Commit marcado como **revisado** por ${revisor}.`)
-    }
-
-    comentarioRest.then(() => {
+    CommitterRepository.findCommittersByUsernameOrAlias(usernameRevisor).then((committer) => {
+        switch (tipoRevisao) {
+            case "par":
+                return GitLabService.comentar(sha, `:white_check_mark: Commit marcado como **feito em par** por ${committer.mencao()}.`);
+            case "com-follow-up":
+                return GitLabService.comentar(sha, `:ballot_box_with_check: Commit marcado como **revisado com** ***follow-up*** por ${committer.mencao()}.`);
+            default:
+                return GitLabService.comentar(sha, `:ballot_box_with_check: Commit marcado como **revisado sem** ***follow-up*** por ${committer.mencao()}.`);
+        }
+    }).then(() => {
         res.send({resultado:"sucesso!"});
-    }).catch((err) => {
-        res.status(500).send({ errorJSON: JSON.stringify(err) });
+    }).catch((err, a) => {
+        res.status(500).send({ erroPromise: err, a: a });
     })
 });
 
