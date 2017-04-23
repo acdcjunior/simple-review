@@ -11,6 +11,7 @@ class CommittersFactory {
     static carregarCommittersDoArquivo() {
         console.log(`\n\nCommittersFactory: Iniciando carga dos committers do committers.json...`);
         const arquivoCommitters = JSON.parse(fs.readFileSync('../config/committers.json', 'utf8'));
+        console.log(`\tCommittersFactory: Inserindo (se nao existirem) ${arquivoCommitters.committers.length} committers...`);
         let promisesDeCommittersInseridos = [];
         arquivoCommitters.committers.forEach((committer) => {
             promisesDeCommittersInseridos.push(GitLabService_1.GitLabService.getUserByUsername(committer.username).then((gitlabUser) => {
@@ -30,7 +31,7 @@ class CommittersFactory {
         console.log(`\n\nCommittersFactory: Iniciando carga dos committers dos ultimos commits...`);
         return CommittersFactory.getEmailsDosCommittersDosUltimosCommits().then((committersDosUltimosCommits) => {
             let promisesDeCommittersInseridos = [];
-            console.info(`\tCommittersFactory: Inserindo, se necessario, ultimos ${committersDosUltimosCommits.length} committers...`);
+            console.info(`\tCommittersFactory: Inserindo (se nao existirem) ultimos ${committersDosUltimosCommits.length} committers...`);
             committersDosUltimosCommits.forEach((committerEmail) => {
                 promisesDeCommittersInseridos.push(GitLabService_1.GitLabService.getUserByEmail(committerEmail).then((gitlabUser) => {
                     return Sesol2Repository_1.sesol2Repository.insertIfNotExists(new Committer_1.Committer(gitlabUser));

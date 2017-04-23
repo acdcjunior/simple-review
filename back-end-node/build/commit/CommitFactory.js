@@ -23,7 +23,8 @@ class CommitFactory {
                         console.log('\t\tCommitFactory: ' + resultadoDePromise);
                     }
                 });
-                console.log(`\tCommitFactory: Jah existiam: ${jahExistiam}\n\n`);
+                console.log(`\tCommitFactory: Jah existiam: ${jahExistiam}`);
+                console.log(`CommitFactory: insercao de commits concluida!\n`);
                 return RevisoresService_1.RevisoresService.atribuirRevisores();
             });
         });
