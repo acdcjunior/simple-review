@@ -1,11 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Sesol2_1 = require("./Sesol2");
-const Sesol2Repository_1 = require("./Sesol2Repository");
-const COMMITTER_TYPE = 'committer';
 class Committer extends Sesol2_1.Sesol2 {
     constructor(user, aliases = [], quota = 0, sexo) {
-        super(user.email, COMMITTER_TYPE, user.email);
+        super(user.email, Committer.COMMITTER_TYPE, user.email);
         this.email = user.email;
         this.name = user.name;
         this.avatar_url = user.avatar_url;
@@ -23,8 +21,6 @@ class Committer extends Sesol2_1.Sesol2 {
     oOuA() {
         return !this.sexo ? "o(a)" : this.sexo === "m" ? "o" : "a";
     }
-    static findAll() {
-        return Sesol2Repository_1.sesol2Repository.findAll(COMMITTER_TYPE);
-    }
 }
+Committer.COMMITTER_TYPE = 'committer';
 exports.Committer = Committer;

@@ -1,18 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const Committer_1 = require("../domain/Committer");
 const Sesol2Repository_1 = require("../domain/Sesol2Repository");
 const arrayShuffle_1 = require("../util/arrayShuffle");
 const Revisores_1 = require("./Revisores");
 const Commit_1 = require("../domain/Commit");
 const Email_1 = require("../geral/Email");
+const CommitterRepository_1 = require("../committers/CommitterRepository");
 //noinspection JSUnusedLocalSymbols
 let debug = {
     log: ((x) => { }) || console.log,
     dir: ((x) => { }) || console.dir,
 };
 function atribuirRevisores() {
-    return Committer_1.Committer.findAll().then((committers) => {
+    return CommitterRepository_1.CommitterRepository.findAllCommitters().then((committers) => {
         console.log(`#1 -- Atribuindo Revisores...`);
         const tabelaProporcoesDeCadaRevisor = new TabelaProporcoesDeCadaRevisor(committers);
         return Commit_1.Commit.findAll().then((commits) => {

@@ -35,7 +35,7 @@ class Sesol2Repository {
         return this.queryView('type_index', type);
     }
 
-    queryView(viewName: string, viewKey: string): Promise<any> {
+    queryView<T>(viewName: string, viewKey: string): Promise<T[]> {
         return this.db.query(viewName, {key: viewKey, include_docs: true}).then(result => {
             return Promise.resolve(result.rows.map(row => row.doc));
         });

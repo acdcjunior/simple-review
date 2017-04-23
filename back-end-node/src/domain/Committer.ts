@@ -2,9 +2,9 @@ import {Sesol2} from "./Sesol2";
 import {sesol2Repository} from "./Sesol2Repository";
 import {GitLabUser} from "../gitlab/GitLabUser";
 
-const COMMITTER_TYPE = 'committer';
-
 export class Committer extends Sesol2 {
+
+    public static readonly COMMITTER_TYPE = 'committer';
 
     public readonly email: string;
     public readonly name: string;
@@ -16,7 +16,7 @@ export class Committer extends Sesol2 {
     public readonly sexo: string;
 
     constructor(user: GitLabUser, aliases: string[] = [], quota: number = 0, sexo?: string) {
-        super(user.email, COMMITTER_TYPE, user.email);
+        super(user.email, Committer.COMMITTER_TYPE, user.email);
 
         this.email = user.email;
         this.name = user.name;
@@ -36,10 +36,6 @@ export class Committer extends Sesol2 {
     }
     oOuA() {
         return !this.sexo ? "o(a)" : this.sexo === "m" ? "o" : "a";
-    }
-
-    static findAll(): Promise<Committer[]> {
-        return sesol2Repository.findAll(COMMITTER_TYPE)
     }
 
 }

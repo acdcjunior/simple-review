@@ -10,6 +10,7 @@ const Bluebird = require("bluebird");
 const GitLabService_1 = require("../gitlab/GitLabService");
 const Email_1 = require("../geral/Email");
 const GitLabUser_1 = require("../gitlab/GitLabUser");
+const CommitterRepository_1 = require("../committers/CommitterRepository");
 Bluebird.longStackTraces();
 GitLabService_1.GitLabService.desabilitarComentariosNoGitLab = true;
 arrayShuffle_1.ArrayShuffle.arrayShuffle = (arr) => arr.sort().reverse();
@@ -35,7 +36,7 @@ const committers = [
     /* 9 */ new Committer_1.Committer(gu('x05499033332@example.com', 'Afonso Nome (LOGIN)', 'x05499033332'), ["afonso"], 25),
     /* 10 */ new Committer_1.Committer(gu('x05929988846@example.com', 'Bruno Nome (LOGIN)', 'x05929988846'), [], 25),
 ];
-Committer_1.Committer.findAll = () => Promise.resolve(committers);
+CommitterRepository_1.CommitterRepository.findAllCommitters = () => Promise.resolve(committers);
 const commit0 = new Commit_1.Commit('sha 0', 't 0', ' 0\n ', committers[1].email, '');
 commit0.revisores.push(committers[0].email);
 const commit1 = new Commit_1.Commit('sha 1', 't 1', ' 1\n ', committers[1].email, '');

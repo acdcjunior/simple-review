@@ -9,6 +9,7 @@ import * as Bluebird from 'bluebird';
 import {GitLabService} from "../gitlab/GitLabService";
 import {Email} from "../geral/Email";
 import {GitLabUser} from "../gitlab/GitLabUser";
+import {CommitterRepository} from "../committers/CommitterRepository";
 Bluebird.longStackTraces();
 
 GitLabService.desabilitarComentariosNoGitLab = true;
@@ -40,7 +41,7 @@ const committers = [
     /* 9 */  new Committer(gu('x05499033332@example.com',   'Afonso Nome (LOGIN)',    'x05499033332'), ["afonso"],  25),
     /* 10 */ new Committer(gu('x05929988846@example.com',   'Bruno Nome (LOGIN)',     'x05929988846'), [],          25),
 ];
-Committer.findAll = () => Promise.resolve(committers);
+CommitterRepository.findAllCommitters = () => Promise.resolve(committers);
 
 const commit0 = new Commit('sha 0', 't 0', ' 0\n ',                  committers[1].email,  '');
 commit0.revisores.push(committers[0].email);

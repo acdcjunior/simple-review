@@ -4,6 +4,7 @@ import {ArrayShuffle} from "../util/arrayShuffle";
 import {Revisores} from "./Revisores";
 import {Commit} from "../domain/Commit";
 import {Email} from '../geral/Email';
+import {CommitterRepository} from "../committers/CommitterRepository";
 
 //noinspection JSUnusedLocalSymbols
 let debug = {
@@ -12,7 +13,7 @@ let debug = {
 };
 
 export function atribuirRevisores() {
-    return Committer.findAll().then((committers: Committer[]) => {
+    return CommitterRepository.findAllCommitters().then((committers: Committer[]) => {
 
         console.log(`#1 -- Atribuindo Revisores...`);
         const tabelaProporcoesDeCadaRevisor = new TabelaProporcoesDeCadaRevisor(committers);
