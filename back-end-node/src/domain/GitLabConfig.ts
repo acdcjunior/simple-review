@@ -8,7 +8,7 @@ let projectBranch = process.env.GITLAB_HOST_PROJECT_BRANCH || 'desenvolvimento';
 let privateToken = process.env.GITLAB_HOST_PRIVATE_TOKEN || 'X_zfYU5k2VwDx2KegmdQ';
 let tokenReadUsers = process.env.GITLAB_HOST_PRIVATE_TOKEN_READ_USERS || 'Esj8Vxs__raBTUkX1Zns';
 
-if (true) {
+if (require("os").hostname() === "delljr") {
     host = '127.0.0.1:8090';
     projectId = 3;
     projectBranch = 'desenvolvimento';
