@@ -2,10 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const chai_1 = require("chai");
 const RevisoresService_1 = require("./RevisoresService");
-const arrayShuffle_1 = require("../util/arrayShuffle");
+const arrayShuffle_1 = require("../geral/arrayShuffle");
 const Commit_1 = require("./Commit");
 const Committer_1 = require("../committers/Committer");
-const Sesol2Repository_1 = require("../domain/Sesol2Repository");
+const Sesol2Repository_1 = require("../geral/Sesol2Repository");
 const Bluebird = require("bluebird");
 const GitLabService_1 = require("../gitlab/GitLabService");
 const Email_1 = require("../geral/Email");
@@ -68,7 +68,7 @@ const commits = [
     /* 17 */ new Commit_1.Commit('sha17', 't17', '17\n @lelia @antonio . @marcos @afonso', committers[5].email, '')
 ];
 Commit_1.Commit.findAll = () => Promise.resolve(commits);
-describe("atribuirRevisores suite", function () {
+describe("RevisoresService suite", function () {
     this.timeout(15000);
     it("atribuirRevisores()", function () {
         return RevisoresService_1.atribuirRevisores().then(() => {

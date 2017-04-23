@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const Sesol2Repository_1 = require("../domain/Sesol2Repository");
+const Sesol2Repository_1 = require("../geral/Sesol2Repository");
 const Committer_1 = require("./Committer");
 class CommitterRepository {
     static findCommittersByUsernameOrAlias(usernameOrAlias) {
