@@ -1,6 +1,6 @@
 const addCors = require('./addCors');
-const GitLabService = require('../build/gitlab/GitLabService');
-const carregarCommitsAndCommitters = require("../build/codereview");
+const GitLabService = require('../build/gitlab/GitLabService').GitLabService;
+const carregarCommitsAndCommitters = require("../build/codereview").carregarCommitsAndCommitters;
 
 const express = require('express');
 const router = express.Router();
@@ -27,7 +27,7 @@ router.post('/marcar-revisado', function(req, res) {
 });
 
 router.post('/webhook', function(req, res) {
-    carregarCommitsAndCommitters.carregarCommitsAndCommitters();
+    carregarCommitsAndCommitters();
     res.send('ok-post');
 });
 

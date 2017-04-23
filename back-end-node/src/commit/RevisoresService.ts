@@ -13,20 +13,17 @@ let debug = {
 
 export function atribuirRevisores() {
     return CommitterRepository.findAllCommitters().then((committers: Committer[]) => {
-
-        console.log(`#1 -- Atribuindo Revisores...`);
+        console.log(`RevisoresService: Atribuindo Revisores...`);
         const tabelaProporcoesDeCadaRevisor = new TabelaProporcoesDeCadaRevisor(committers);
 
         return Commit.findAll().then((commits: Commit[]) => {
-
             tabelaProporcoesDeCadaRevisor.atualizarContagemComRevisoresDosCommits(commits);
 
             const commitsSemRevisores = commits.filter(commit => commit.revisores.length === 0);
-
-            console.log(`#2 -- Commits sem revisores encontrados: ${commitsSemRevisores.length}`);
+            console.log(`RevisoresService: Commits sem revisores encontrados: ${commitsSemRevisores.length}`);
 
             return atribuirRevisoresAosCommits(commitsSemRevisores, tabelaProporcoesDeCadaRevisor).then(() => {
-                console.log('Revisores atribuídos!');
+                console.log('RevisoresService: Revisores atribuídos!');
             });
         });
     });

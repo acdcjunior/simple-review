@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class Sesol2Repository {
     constructor() {
-        this.db = require('../infra/couchdb');
+        this.db = require('../infra/couchdb').PouchDBService;
     }
     insertIfNotExists(sesol2) {
         return this.exists(sesol2).then(exists => {

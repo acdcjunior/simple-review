@@ -4,7 +4,7 @@ class Sesol2Repository {
     private db: any;
 
     constructor() {
-        this.db = require('../infra/couchdb');
+        this.db = require('../infra/couchdb').PouchDBService;
     }
 
     insertIfNotExists (sesol2): Promise<string> {
