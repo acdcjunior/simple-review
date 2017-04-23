@@ -1,7 +1,7 @@
 import {Committer} from "../committers/Committer";
 import {sesol2Repository} from "../domain/Sesol2Repository";
 import {ArrayShuffle} from "../util/arrayShuffle";
-import {Commit} from "../commit/Commit";
+import {Commit} from "./Commit";
 import {Email} from '../geral/Email';
 import {CommitterRepository} from "../committers/CommitterRepository";
 

@@ -1,10 +1,12 @@
 import {Utils} from "../util/Utils";
 import {sesol2Repository} from "../domain/Sesol2Repository";
-import {Commit} from "../commit/Commit";
-import {atribuirRevisores} from "./atribuirRevisores";
+import {Commit} from "./Commit";
+import {atribuirRevisores} from "./RevisoresService";
 import {GitLabService} from "../gitlab/GitLabService";
 
-export function carregarCommits() {
+export class CommitFactory {
+
+    static carregarCommits() {
 
     return GitLabService.getCommits().then(commits => {
         const promisesDeCommitsInseridos = [];
@@ -32,5 +34,7 @@ export function carregarCommits() {
             return atribuirRevisores();
         });
     });
+
+}
 
 }

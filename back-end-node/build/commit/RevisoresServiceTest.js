@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const chai_1 = require("chai");
-const atribuirRevisores_1 = require("./atribuirRevisores");
+const RevisoresService_1 = require("./RevisoresService");
 const arrayShuffle_1 = require("../util/arrayShuffle");
-const Commit_1 = require("../commit/Commit");
+const Commit_1 = require("./Commit");
 const Committer_1 = require("../committers/Committer");
 const Sesol2Repository_1 = require("../domain/Sesol2Repository");
 const Bluebird = require("bluebird");
@@ -71,7 +71,7 @@ Commit_1.Commit.findAll = () => Promise.resolve(commits);
 describe("atribuirRevisores suite", function () {
     this.timeout(15000);
     it("atribuirRevisores()", function () {
-        return atribuirRevisores_1.atribuirRevisores().then(() => {
+        return RevisoresService_1.atribuirRevisores().then(() => {
             console.log('-- DENTRO DO TESTE - ATRIBUICAO CONCLUIDA --');
             console.log('-- Era pra ter sido 16 commits sem revisores. Foram? --');
             assertCommitComRevisoresEHistorico(commits[2]);

@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const Sesol2Repository_1 = require("../domain/Sesol2Repository");
 const arrayShuffle_1 = require("../util/arrayShuffle");
-const Commit_1 = require("../commit/Commit");
+const Commit_1 = require("./Commit");
 const Email_1 = require("../geral/Email");
 const CommitterRepository_1 = require("../committers/CommitterRepository");
 //noinspection JSUnusedLocalSymbols

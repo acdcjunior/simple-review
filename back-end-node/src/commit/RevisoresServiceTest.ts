@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {atribuirRevisores} from "./atribuirRevisores";
+import {atribuirRevisores} from "./RevisoresService";
 import {ArrayShuffle} from "../util/arrayShuffle";
-import {Commit} from "../commit/Commit";
+import {Commit} from "./Commit";
 import {Committer} from "../committers/Committer";
 import {sesol2Repository} from "../domain/Sesol2Repository";
 

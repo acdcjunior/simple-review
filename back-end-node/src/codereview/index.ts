@@ -1,5 +1,5 @@
 import {Utils} from "../util/Utils";
-import {carregarCommits} from "./carregarCommits";
+import {CommitFactory} from "../commit/CommitFactory";
 import {CommittersFactory} from "../committers/CommittersFactory";
 
 
@@ -10,7 +10,7 @@ export function carregarCommitsAndCommitters() {
     return CommittersFactory.carregarCommittersDoArquivo().then(() => {
         return CommittersFactory.carregarCommittersDosUltimosCommits()
     }).then(() => {
-        return carregarCommits();
+        return CommitFactory.carregarCommits();
     });
 
 }
