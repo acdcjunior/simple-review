@@ -5,7 +5,7 @@ export function corsConfig() {
 
     return new Promise((resolve, reject) => {
         console.log(
-            `[CORS] Tentando configurar CouchDB em http://${couchDbConfig.couchdbHost}:${couchDbConfig.couchdbPort}, com user=${couchDbConfig.couchdbUser} e password=${couchDbConfig.couchdbPassword}...`
+            `[CORS] Tentando configurar CouchDB...`
         );
 
         addCorsToCouch(`http://${couchDbConfig.couchdbHost}:${couchDbConfig.couchdbPort}`, `${couchDbConfig.couchdbUser}:${couchDbConfig.couchdbPassword}`).then(function () {

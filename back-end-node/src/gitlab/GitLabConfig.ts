@@ -40,12 +40,15 @@ export class GitLabConfig {
 }
 
 console.log(`
-    DADOS USADOS PARA CONEXAO DO BACKEND NODE COM GITLAB
+    BACKEND --> GITLAB
     ----------------------------------------------------
     host: ${host}
     projectId: ${projectId}
     projectBranch: ${projectBranch}
+    
     privateToken: ${privateToken}
+    tokenReadUsers: ${tokenReadUsers}
+    
     projectsUrl: ${GitLabConfig.projectsUrl()}
     usersUrl: ${GitLabConfig.usersUrlByEmail(new Email('meu@email.com'))}
     commentsUrl: ${GitLabConfig.commentsUrl('sha1234')}

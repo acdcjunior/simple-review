@@ -5,3 +5,15 @@ export const couchDbConfig = {
     couchdbPort: '5984',
     couchdbDatabase: 'sesol2'
 };
+
+console.log(`
+    BACKEND --> COUCHDB
+    ----------------------------------------------------
+    couchdbHost: ${couchDbConfig.couchdbHost}
+    couchdbPort: ${couchDbConfig.couchdbPort}
+    couchdbDatabase: ${couchDbConfig.couchdbDatabase}
+    
+    couchdbUser: ${couchDbConfig.couchdbUser}
+    couchdbPassword: ${couchDbConfig.couchdbPassword}
+    ----------------------------------------------------
+`);
