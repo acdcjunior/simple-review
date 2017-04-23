@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "webhook": "node ./code-review/carregarCommitsAndCommitters/up.js",
-    "couchdb-setup": "node ./code-review/infra/couch-install/couchDbSetup.js",
-    "test": "./node_modules/.bin/mocha code-review/**/*.test.js --reporter spec"
+    "webhook": "node ./build/codereview/up.js",
+    "couchdb-setup": "node ./build/infra/couch-install/couchDbSetup.js",
+    "test": "./node_modules/.bin/mocha src/**/*Test.js --reporter spec"
   },
   "dependencies": {
     "@types/bluebird": "^3.5.2",
