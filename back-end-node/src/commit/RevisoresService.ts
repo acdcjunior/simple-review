@@ -4,6 +4,7 @@ import {ArrayShuffle} from "../geral/arrayShuffle";
 import {Commit} from "./Commit";
 import {Email} from '../geral/Email';
 import {CommitterRepository} from "../committers/CommitterRepository";
+import {CommitRepository} from "./CommitRepository";
 
 //noinspection JSUnusedLocalSymbols
 let debug = {
@@ -18,7 +19,7 @@ export class RevisoresService {
             console.log(`\n\nRevisoresService: Atribuindo Revisores...`);
             const tabelaProporcoesDeCadaRevisor = new TabelaProporcoesDeCadaRevisor(committers);
 
-            return Commit.findAll().then((commits: Commit[]) => {
+            return CommitRepository.findAllCommits().then((commits: Commit[]) => {
                 tabelaProporcoesDeCadaRevisor.atualizarContagemComRevisoresDosCommits(commits);
 
                 const commitsSemRevisores = commits.filter(commit => commit.revisores.length === 0);

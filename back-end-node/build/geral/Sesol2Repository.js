@@ -26,12 +26,12 @@ class Sesol2Repository {
             return Promise.resolve(false);
         });
     }
-    findAll(type) {
-        return this.queryView('type_index', type);
+    findAll(type, prototype) {
+        return this.queryView('type_index', prototype, type);
     }
-    queryView(viewName, viewKey) {
+    queryView(viewName, prototype, viewKey) {
         return this.db.query(viewName, { key: viewKey, include_docs: true }).then(result => {
-            return Promise.resolve(result.rows.map(row => row.doc));
+            return Promise.resolve(result.rows.map(row => Object.assign(Object.create(prototype), row.doc)));
         });
     }
 }

@@ -1,25 +1,24 @@
 import {Sesol2} from "../geral/Sesol2";
 import {Email} from "../geral/Email";
 import {GitLabService} from "../gitlab/GitLabService";
-import {sesol2Repository} from "../geral/Sesol2Repository";
 import {Committer} from "../committers/Committer";
-
-const COMMIT_TYPE = 'commit';
 
 export class Commit extends Sesol2 {
 
-    public sha: string;
-    public title: string;
-    public message: string;
-    public author_email: string;
-    public created_at: string;
+    public static readonly COMMIT_TYPE = 'commit';
+
+    public readonly sha: string;
+    public readonly title: string;
+    public readonly message: string;
+    public readonly author_email: string;
+    public readonly created_at: string;
     public revisado: boolean;
-    public revisores: any[];
-    public revisoes: any[];
-    public historico: any[];
+    public readonly revisores: any[];
+    public readonly revisoes: any[];
+    public readonly historico: any[];
 
     constructor(sha, title, message, author_email, created_at) {
-        super(sha, COMMIT_TYPE, title);
+        super(sha, Commit.COMMIT_TYPE, title);
 
         this.sha = sha;
         this.title = title;
@@ -30,10 +29,6 @@ export class Commit extends Sesol2 {
         this.revisores = [];
         this.revisoes = [];
         this.historico = [];
-    }
-
-    public static findAll(): Promise<Commit[]> {
-        return sesol2Repository.findAll(COMMIT_TYPE)
     }
 
     public indicarRevisoresViaMencao(revisores: Committer[]): Promise<void> {

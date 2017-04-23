@@ -1,3 +1,4 @@
+import {Sesol2} from "./Sesol2";
 
 class Sesol2Repository {
 
@@ -7,7 +8,7 @@ class Sesol2Repository {
         this.db = require('../infra/couchdb').PouchDBService;
     }
 
-    insertIfNotExists (sesol2): Promise<string> {
+    insertIfNotExists(sesol2: Sesol2): Promise<string> {
         return this.exists(sesol2).then(exists => {
             if (exists) {
                 return Promise.resolve(undefined as string);
@@ -17,13 +18,13 @@ class Sesol2Repository {
         });
     }
 
-    insert(sesol2): Promise<string> {
+    insert(sesol2: Sesol2): Promise<string> {
         return this.db.put(sesol2).then(ignored => {
             return Promise.resolve(`${sesol2.type} (inserido): ${sesol2.toString()}`);
         });
     }
 
-    exists (sesol2): Promise<boolean> {
+    exists(sesol2: Sesol2): Promise<boolean> {
         return this.db.get(sesol2._id).then(() => {
             return Promise.resolve(true);
         }).catch(() => {
@@ -31,13 +32,13 @@ class Sesol2Repository {
         });
     }
 
-    findAll(type) {
-        return this.queryView('type_index', type);
+    findAll<T>(type: string, prototype: object): Promise<T[]> {
+        return this.queryView('type_index', prototype, type);
     }
 
-    queryView<T>(viewName: string, viewKey: string): Promise<T[]> {
+    queryView<T>(viewName: string, prototype: object, viewKey?: string): Promise<T[]> {
         return this.db.query(viewName, {key: viewKey, include_docs: true}).then(result => {
-            return Promise.resolve(result.rows.map(row => row.doc));
+            return Promise.resolve(result.rows.map(row => Object.assign(Object.create(prototype), row.doc)));
         });
     }
 

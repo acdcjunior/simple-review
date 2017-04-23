@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const Sesol2Repository_1 = require("../geral/Sesol2Repository");
 const arrayShuffle_1 = require("../geral/arrayShuffle");
-const Commit_1 = require("./Commit");
 const Email_1 = require("../geral/Email");
 const CommitterRepository_1 = require("../committers/CommitterRepository");
+const CommitRepository_1 = require("./CommitRepository");
 //noinspection JSUnusedLocalSymbols
 let debug = {
     log: ((x) => { }) || console.log,
@@ -15,7 +15,7 @@ class RevisoresService {
         return CommitterRepository_1.CommitterRepository.findAllCommitters().then((committers) => {
             console.log(`\n\nRevisoresService: Atribuindo Revisores...`);
             const tabelaProporcoesDeCadaRevisor = new TabelaProporcoesDeCadaRevisor(committers);
-            return Commit_1.Commit.findAll().then((commits) => {
+            return CommitRepository_1.CommitRepository.findAllCommits().then((commits) => {
                 tabelaProporcoesDeCadaRevisor.atualizarContagemComRevisoresDosCommits(commits);
                 const commitsSemRevisores = commits.filter(commit => commit.revisores.length === 0);
                 console.log(`RevisoresService: Commits sem revisores encontrados: ${commitsSemRevisores.length}`);

@@ -3,11 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Sesol2_1 = require("../geral/Sesol2");
 const Email_1 = require("../geral/Email");
 const GitLabService_1 = require("../gitlab/GitLabService");
-const Sesol2Repository_1 = require("../geral/Sesol2Repository");
-const COMMIT_TYPE = 'commit';
 class Commit extends Sesol2_1.Sesol2 {
     constructor(sha, title, message, author_email, created_at) {
-        super(sha, COMMIT_TYPE, title);
+        super(sha, Commit.COMMIT_TYPE, title);
         this.sha = sha;
         this.title = title;
         this.message = message;
@@ -17,9 +15,6 @@ class Commit extends Sesol2_1.Sesol2 {
         this.revisores = [];
         this.revisoes = [];
         this.historico = [];
-    }
-    static findAll() {
-        return Sesol2Repository_1.sesol2Repository.findAll(COMMIT_TYPE);
     }
     indicarRevisoresViaMencao(revisores) {
         if (revisores.length === 0) {
@@ -72,4 +67,5 @@ class Commit extends Sesol2_1.Sesol2 {
         return this.revisores.filter(Commit.isEmailDeEstagiario).length === this.revisores.length;
     }
 }
+Commit.COMMIT_TYPE = 'commit';
 exports.Commit = Commit;

@@ -10,6 +10,7 @@ import {GitLabService} from "../gitlab/GitLabService";
 import {Email} from "../geral/Email";
 import {GitLabUser} from "../gitlab/GitLabUser";
 import {CommitterRepository} from "../committers/CommitterRepository";
+import {CommitRepository} from "./CommitRepository";
 Bluebird.longStackTraces();
 
 GitLabService.desabilitarComentariosNoGitLab = true;
@@ -73,7 +74,7 @@ const commits = [
     /* 16 */ new Commit('sha16', 't16', '16\n @invalido',                         committers[2].email,  ''),
     /* 17 */ new Commit('sha17', 't17', '17\n @lelia @antonio . @marcos @afonso', committers[5].email,  '')
 ];
-Commit.findAll = () => Promise.resolve(commits);
+CommitRepository.findAllCommits = () => Promise.resolve(commits);
 
 describe("RevisoresService suite", function () {
     this.timeout(15000);

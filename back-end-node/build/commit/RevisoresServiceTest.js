@@ -11,6 +11,7 @@ const GitLabService_1 = require("../gitlab/GitLabService");
 const Email_1 = require("../geral/Email");
 const GitLabUser_1 = require("../gitlab/GitLabUser");
 const CommitterRepository_1 = require("../committers/CommitterRepository");
+const CommitRepository_1 = require("./CommitRepository");
 Bluebird.longStackTraces();
 GitLabService_1.GitLabService.desabilitarComentariosNoGitLab = true;
 arrayShuffle_1.ArrayShuffle.arrayShuffle = (arr) => arr.sort().reverse();
@@ -67,7 +68,7 @@ const commits = [
     /* 16 */ new Commit_1.Commit('sha16', 't16', '16\n @invalido', committers[2].email, ''),
     /* 17 */ new Commit_1.Commit('sha17', 't17', '17\n @lelia @antonio . @marcos @afonso', committers[5].email, '')
 ];
-Commit_1.Commit.findAll = () => Promise.resolve(commits);
+CommitRepository_1.CommitRepository.findAllCommits = () => Promise.resolve(commits);
 describe("RevisoresService suite", function () {
     this.timeout(15000);
     it("atribuirRevisores()", function () {
