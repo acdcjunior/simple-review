@@ -1,9 +1,9 @@
 import {expect} from "chai";
 import {atribuirRevisores} from "./RevisoresService";
-import {ArrayShuffle} from "../util/arrayShuffle";
+import {ArrayShuffle} from "../geral/arrayShuffle";
 import {Commit} from "./Commit";
 import {Committer} from "../committers/Committer";
-import {sesol2Repository} from "../domain/Sesol2Repository";
+import {sesol2Repository} from "../geral/Sesol2Repository";
 
 import * as Bluebird from 'bluebird';
 import {GitLabService} from "../gitlab/GitLabService";
@@ -75,7 +75,7 @@ const commits = [
 ];
 Commit.findAll = () => Promise.resolve(commits);
 
-describe("atribuirRevisores suite", function () {
+describe("RevisoresService suite", function () {
     this.timeout(15000);
 
     it("atribuirRevisores()", function () {

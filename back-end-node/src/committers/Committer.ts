@@ -1,4 +1,4 @@
-import {Sesol2} from "../domain/Sesol2";
+import {Sesol2} from "../geral/Sesol2";
 import {GitLabUser} from "../gitlab/GitLabUser";
 
 export class Committer extends Sesol2 {

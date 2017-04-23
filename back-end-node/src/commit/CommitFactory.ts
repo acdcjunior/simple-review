@@ -1,5 +1,4 @@
-import {Utils} from "../util/Utils";
-import {sesol2Repository} from "../domain/Sesol2Repository";
+import {sesol2Repository} from "../geral/Sesol2Repository";
 import {Commit} from "./Commit";
 import {atribuirRevisores} from "./RevisoresService";
 import {GitLabService} from "../gitlab/GitLabService";
@@ -28,8 +27,7 @@ export class CommitFactory {
                     console.log('\t\t' + resultadoDePromise);
                 }
             });
-            console.log(`\tJah existiam: ${jahExistiam}`);
-            Utils.printBar();
+            console.log(`\tJah existiam: ${jahExistiam}\n\n`);
 
             return atribuirRevisores();
         });

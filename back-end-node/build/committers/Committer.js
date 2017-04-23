@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const Sesol2_1 = require("../domain/Sesol2");
+const Sesol2_1 = require("../geral/Sesol2");
 const GitLabUser_1 = require("../gitlab/GitLabUser");
 class Committer extends Sesol2_1.Sesol2 {
     constructor(user, aliases = [], quota = 0, sexo) {

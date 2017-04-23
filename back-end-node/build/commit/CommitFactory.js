@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const Utils_1 = require("../util/Utils");
-const Sesol2Repository_1 = require("../domain/Sesol2Repository");
+const Sesol2Repository_1 = require("../geral/Sesol2Repository");
 const Commit_1 = require("./Commit");
 const RevisoresService_1 = require("./RevisoresService");
 const GitLabService_1 = require("../gitlab/GitLabService");
@@ -24,8 +23,7 @@ class CommitFactory {
                         console.log('\t\t' + resultadoDePromise);
                     }
                 });
-                console.log(`\tJah existiam: ${jahExistiam}`);
-                Utils_1.Utils.printBar();
+                console.log(`\tJah existiam: ${jahExistiam}\n\n`);
                 return RevisoresService_1.atribuirRevisores();
             });
         });

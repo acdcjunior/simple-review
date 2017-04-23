@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const Sesol2_1 = require("../domain/Sesol2");
+const Sesol2_1 = require("../geral/Sesol2");
 const Email_1 = require("../geral/Email");
 const GitLabService_1 = require("../gitlab/GitLabService");
-const Sesol2Repository_1 = require("../domain/Sesol2Repository");
+const Sesol2Repository_1 = require("../geral/Sesol2Repository");
 const COMMIT_TYPE = 'commit';
 class Commit extends Sesol2_1.Sesol2 {
     constructor(sha, title, message, author_email, created_at) {

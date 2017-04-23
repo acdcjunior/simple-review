@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const GitLabConfig_1 = require("../domain/GitLabConfig");
+const GitLabConfig_1 = require("./GitLabConfig");
 const rest_1 = require("../infra/rest");
 class GitLabService {
     static getCommits(perPage = 10) {

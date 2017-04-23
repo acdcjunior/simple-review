@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import {GitLabService} from "../gitlab/GitLabService";
 import {GitLabUser} from "../gitlab/GitLabUser";
-import {sesol2Repository} from "../domain/Sesol2Repository";
+import {sesol2Repository} from "../geral/Sesol2Repository";
 import {Committer} from "./Committer";
 import {Email} from "../geral/Email";
 import {GitLabCommit} from "../gitlab/GitLabCommit";
