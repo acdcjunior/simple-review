@@ -1,5 +1,5 @@
 import {sesol2Repository} from "../domain/Sesol2Repository";
-import {Committer} from "../domain/Committer";
+import {Committer} from "./Committer";
 
 export class CommitterRepository {
 

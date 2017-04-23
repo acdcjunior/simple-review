@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {atribuirRevisores} from "./atribuirRevisores";
 import {ArrayShuffle} from "../util/arrayShuffle";
 import {Commit} from "../domain/Commit";
-import {Committer} from "../domain/Committer";
+import {Committer} from "../committers/Committer";
 import {sesol2Repository} from "../domain/Sesol2Repository";
 
 import * as Bluebird from 'bluebird';

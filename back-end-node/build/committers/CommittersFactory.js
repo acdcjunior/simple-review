@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
 const GitLabService_1 = require("../gitlab/GitLabService");
 const Sesol2Repository_1 = require("../domain/Sesol2Repository");
-const Committer_1 = require("../domain/Committer");
+const Committer_1 = require("./Committer");
 const Email_1 = require("../geral/Email");
 class CommitterConfigStruct {
 }

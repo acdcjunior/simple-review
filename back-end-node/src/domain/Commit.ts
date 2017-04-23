@@ -2,7 +2,7 @@ import {Sesol2} from "./Sesol2";
 import {Email} from "../geral/Email";
 import {GitLabService} from "../gitlab/GitLabService";
 import {sesol2Repository} from "./Sesol2Repository";
-import {Committer} from "./Committer";
+import {Committer} from "../committers/Committer";
 
 const COMMIT_TYPE = 'commit';
 
