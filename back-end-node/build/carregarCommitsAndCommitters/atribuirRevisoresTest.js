@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const chai_1 = require("chai");
 const atribuirRevisores_1 = require("./atribuirRevisores");
 const arrayShuffle_1 = require("../util/arrayShuffle");
-const Commit_1 = require("../domain/Commit");
+const Commit_1 = require("../commit/Commit");
 const Committer_1 = require("../committers/Committer");
 const Sesol2Repository_1 = require("../domain/Sesol2Repository");
 const Bluebird = require("bluebird");

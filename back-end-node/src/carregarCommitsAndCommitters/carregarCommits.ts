@@ -1,6 +1,6 @@
 import {Utils} from "../util/Utils";
 import {sesol2Repository} from "../domain/Sesol2Repository";
-import {Commit} from "../domain/Commit";
+import {Commit} from "../commit/Commit";
 import {atribuirRevisores} from "./atribuirRevisores";
 import {GitLabService} from "../gitlab/GitLabService";
 
