@@ -67,6 +67,7 @@ services:
       - COUCHDB_HOST=couchdb
 
       - GITLAB_HOST=git
+      - GITLAB_HOST_PROJECT_BRANCH=desenvolvimento
 
       - GITLAB_HOST_PROJECT_ID=123
       # Token usuario comentador basta ter acesso [api]
