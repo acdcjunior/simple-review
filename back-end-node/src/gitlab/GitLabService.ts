@@ -5,6 +5,8 @@ import {GitLabCommit} from "./GitLabCommit";
 import {Email} from "../geral/Email";
 import {GitLabImpersonationToken} from "./GitLabImpersonationToken";
 
+const TEXTO_TOKEN_CRIADO_POR_CODEREVIEW = "Criado via CodeReview/GitLabService.criarImpersonationToken()";
+
 export class GitLabService {
 
     public static desabilitarComentariosNoGitLab = false;
@@ -41,13 +43,21 @@ export class GitLabService {
     }
 
     static criarImpersonationToken(user_id: number): Promise<GitLabImpersonationToken> {
-        let r = rest("POST", GitLabConfig.impersonationTokenUrl(user_id), GitLabConfig.tokenReadUsers) as any;
-        let form = r.form();
-        form.append('user_id', 'user_id');
-        form.append('name', "Criado via CodeReview/GitLabService.criarImpersonationToken()");
-        form.append('scopes[]', 'api');
-        form.append('scopes[]', 'read_user');
-        return r;
+        return rest("GET", GitLabConfig.impersonationTokenUrl(user_id) + "?state=active", GitLabConfig.tokenReadUsers).then((tokens: GitLabImpersonationToken[]) => {
+            const tokenJahCriadoPorNos = tokens.find(token => token.name === TEXTO_TOKEN_CRIADO_POR_CODEREVIEW);
+            if (tokenJahCriadoPorNos) {
+                return Promise.resolve(tokenJahCriadoPorNos);
+            } else {
+                // criamos um token novo
+                let r = rest("POST", GitLabConfig.impersonationTokenUrl(user_id), GitLabConfig.tokenReadUsers) as any;
+                let form = r.form();
+                form.append('user_id', 'user_id');
+                form.append('name', TEXTO_TOKEN_CRIADO_POR_CODEREVIEW);
+                form.append('scopes[]', 'api');
+                form.append('scopes[]', 'read_user');
+                return r;
+            }
+        });
     }
 
 }
