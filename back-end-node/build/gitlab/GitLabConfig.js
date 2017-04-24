@@ -1,17 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Email_1 = require("../geral/Email");
-let host = process.env.GITLAB_HOST || 'git6';
-let projectId = process.env.GITLAB_HOST_PROJECT_ID || 123;
-let projectBranch = process.env.GITLAB_HOST_PROJECT_BRANCH || 'desenvolvimento';
-let privateToken = process.env.GITLAB_HOST_PRIVATE_TOKEN || 'X_zfYU5k2VwDx2KegmdQ';
-let tokenReadUsers = process.env.GITLAB_HOST_PRIVATE_TOKEN_READ_USERS || 'Esj8Vxs__raBTUkX1Zns';
+let host = process.env.GITLAB_HOST;
+let projectId = process.env.GITLAB_HOST_PROJECT_ID;
+let projectBranch = process.env.GITLAB_HOST_PROJECT_BRANCH;
+let tokenUsuarioComentador = process.env.GITLAB_HOST_PRIVATE_TOKEN_USUARIO_COMENTADOR;
+let tokenAdmin = process.env.GITLAB_HOST_PRIVATE_TOKEN_ADMIN;
 if (require("os").hostname() === "delljr") {
     host = '127.0.0.1:8090';
     projectId = 3;
     projectBranch = 'desenvolvimento';
-    privateToken = 'iU_63HEeqBJG6gQXuQha';
-    tokenReadUsers = 'iU_63HEeqBJG6gQXuQha';
+    tokenUsuarioComentador = 'iU_63HEeqBJG6gQXuQha';
+    tokenAdmin = 'iU_63HEeqBJG6gQXuQha';
 }
 class GitLabConfig {
     static projectsUrl(perPage = 10) {
@@ -29,11 +29,11 @@ class GitLabConfig {
     static impersonationTokenUrl(user_id) {
         return `http://${host}/api/v4/users/${user_id}/impersonation_tokens`;
     }
-    static get privateToken() {
-        return privateToken;
+    static get tokenUsuarioComentador() {
+        return tokenUsuarioComentador;
     }
-    static get tokenReadUsers() {
-        return tokenReadUsers;
+    static get tokenAdmin() {
+        return tokenAdmin;
     }
 }
 exports.GitLabConfig = GitLabConfig;
@@ -44,11 +44,14 @@ console.log(`
     projectId: ${projectId}
     projectBranch: ${projectBranch}
     
-    privateToken: ${privateToken}
-    tokenReadUsers: ${tokenReadUsers}
+    privateToken: ${tokenUsuarioComentador}
+    tokenAdmin: ${tokenAdmin}
     
     projectsUrl: ${GitLabConfig.projectsUrl()}
     usersUrl: ${GitLabConfig.usersUrlByEmail(new Email_1.Email('meu@email.com'))}
     commentsUrl: ${GitLabConfig.commentsUrl('sha1234')}
     ----------------------------------------------------
 `);
+if (!host || !projectId || !projectBranch || !tokenUsuarioComentador || !tokenAdmin) {
+    throw new Error(`Variáveis de ambiente do GitLabConfig nao configuradas!`);
+}

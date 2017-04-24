@@ -12,11 +12,11 @@ export class GitLabService {
     public static desabilitarComentariosNoGitLab = false;
 
     static getCommits(perPage: number = 10): Promise<GitLabCommit[]> {
-        return rest("GET", GitLabConfig.projectsUrl(perPage), GitLabConfig.privateToken);
+        return rest("GET", GitLabConfig.projectsUrl(perPage), GitLabConfig.tokenUsuarioComentador);
     }
 
     static getUserByEmail(committerEmail: Email): Promise<GitLabUser> {
-        return rest("GET", GitLabConfig.usersUrlByEmail(committerEmail), GitLabConfig.privateToken).then(users => {
+        return rest("GET", GitLabConfig.usersUrlByEmail(committerEmail), GitLabConfig.tokenUsuarioComentador).then(users => {
             if (users.length === 0) {
                 throw new Error(`Usuario GitLab com email <${committerEmail.email}> não encontrado!`);
             }
@@ -28,7 +28,7 @@ export class GitLabService {
     }
 
     static getUserByUsername(username: string): Promise<GitLabUser> {
-        return rest("GET", GitLabConfig.usersUsernameUrl(username), GitLabConfig.tokenReadUsers).then(users => {
+        return rest("GET", GitLabConfig.usersUsernameUrl(username), GitLabConfig.tokenAdmin).then(users => {
             return Promise.resolve(users[0]);
         });
     }
@@ -37,19 +37,19 @@ export class GitLabService {
         if (this.desabilitarComentariosNoGitLab) {
             return Promise.resolve();
         }
-        return rest("POST", GitLabConfig.commentsUrl(commitSha), GitLabConfig.privateToken, {
+        return rest("POST", GitLabConfig.commentsUrl(commitSha), GitLabConfig.tokenUsuarioComentador, {
             note: comentario
         });
     }
 
     static criarImpersonationToken(user_id: number): Promise<GitLabImpersonationToken> {
-        return rest("GET", GitLabConfig.impersonationTokenUrl(user_id) + "?state=active", GitLabConfig.tokenReadUsers).then((tokens: GitLabImpersonationToken[]) => {
+        return rest("GET", GitLabConfig.impersonationTokenUrl(user_id) + "?state=active", GitLabConfig.tokenAdmin).then((tokens: GitLabImpersonationToken[]) => {
             const tokenJahCriadoPorNos = tokens.find(token => token.name === TEXTO_TOKEN_CRIADO_POR_CODEREVIEW);
             if (tokenJahCriadoPorNos) {
                 return Promise.resolve(tokenJahCriadoPorNos);
             } else {
                 // criamos um token novo
-                let r = rest("POST", GitLabConfig.impersonationTokenUrl(user_id), GitLabConfig.tokenReadUsers) as any;
+                let r = rest("POST", GitLabConfig.impersonationTokenUrl(user_id), GitLabConfig.tokenAdmin) as any;
                 let form = r.form();
                 form.append('user_id', 'user_id');
                 form.append('name', TEXTO_TOKEN_CRIADO_POR_CODEREVIEW);
