@@ -176,10 +176,10 @@ export default {
         return committers.commiterLogado;
     },
     carregarDadosPainelJenkins() {
-        window.$.getJSON('http://srv-ic-master:8089/view/Sesol-2/job/sagas2.dese.unit/api/json?pretty=true', function (data) {
+        window.$.getJSON(window.env.BACK_END_NODE + '/jenkins/ut', function (data) {
             window.$('ut').removeClass('avatar').attr('src', 'http://jenkins/static/48484716/images/32x32/' + data.color + '.gif')
         });
-        window.$.getJSON('http://srv-ic-master:8089/view/Sesol-2/job/sagas2.dese.integ/api/json?pretty=true', function (data) {
+        window.$.getJSON(window.env.BACK_END_NODE + '/jenkins/it', function (data) {
             window.$('it').removeClass('avatar').attr('src', 'http://jenkins/static/48484716/images/32x32/' + data.color + '.gif')
         });
     },

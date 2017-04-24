@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 
 const index = require('./routes/index');
 const committers = require('./routes/committers');
+const jenkins = require('./routes/jenkins');
 const inject = require('./routes/inject');
 const rpc = require('./routes/rpc');
 
@@ -26,6 +27,7 @@ app.use(cookieParser());
 const BACK_END_CONTEXT = '/back-end-review';
 app.use(`${BACK_END_CONTEXT}/index`, index);
 app.use(`${BACK_END_CONTEXT}/committers`, committers);
+app.use(`${BACK_END_CONTEXT}/jenkins`, jenkins);
 app.use(`${BACK_END_CONTEXT}/inject.js`, inject);
 app.use(`${BACK_END_CONTEXT}/rpc`, rpc);
 
