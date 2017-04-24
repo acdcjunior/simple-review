@@ -30,6 +30,15 @@ class GitLabService {
             note: comentario
         });
     }
+    static criarImpersonationToken(user_id) {
+        let r = rest_1.rest("POST", GitLabConfig_1.GitLabConfig.impersonationTokenUrl(user_id), GitLabConfig_1.GitLabConfig.tokenReadUsers);
+        let form = r.form();
+        form.append('user_id', 'user_id');
+        form.append('name', "Criado via CodeReview/GitLabService.criarImpersonationToken()");
+        form.append('scopes[]', 'api');
+        form.append('scopes[]', 'read_user');
+        return r;
+    }
 }
 GitLabService.desabilitarComentariosNoGitLab = false;
 exports.GitLabService = GitLabService;

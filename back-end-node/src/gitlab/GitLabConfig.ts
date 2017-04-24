@@ -30,6 +30,9 @@ export class GitLabConfig {
     static commentsUrl (sha: string): string {
         return `http://${host}/api/v4/projects/${projectId}/repository/commits/${sha}/comments`;
     }
+    static impersonationTokenUrl(user_id: number): string {
+        return `http://${host}/api/v4/users/${user_id}/impersonation_tokens`;
+    }
     static get privateToken () {
         return privateToken;
     }

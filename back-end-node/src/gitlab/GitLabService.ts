@@ -3,6 +3,7 @@ import { rest } from "../infra/rest";
 import {GitLabUser} from "./GitLabUser";
 import {GitLabCommit} from "./GitLabCommit";
 import {Email} from "../geral/Email";
+import {GitLabImpersonationToken} from "./GitLabImpersonationToken";
 
 export class GitLabService {
 
@@ -37,6 +38,16 @@ export class GitLabService {
         return rest("POST", GitLabConfig.commentsUrl(commitSha), GitLabConfig.privateToken, {
             note: comentario
         });
+    }
+
+    static criarImpersonationToken(user_id: number): Promise<GitLabImpersonationToken> {
+        let r = rest("POST", GitLabConfig.impersonationTokenUrl(user_id), GitLabConfig.tokenReadUsers) as any;
+        let form = r.form();
+        form.append('user_id', 'user_id');
+        form.append('name', "Criado via CodeReview/GitLabService.criarImpersonationToken()");
+        form.append('scopes[]', 'api');
+        form.append('scopes[]', 'read_user');
+        return r;
     }
 
 }
