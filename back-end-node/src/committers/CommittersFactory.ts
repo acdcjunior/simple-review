@@ -27,7 +27,7 @@ export class CommittersFactory {
             promisesDeCommittersInseridos.push(
                 GitLabService.getUserByUsername(committer.username).then((gitlabUser: GitLabUser) => {
                     if (!gitlabUser) {
-                        throw new Error(`CommittersConfig: Commiter de username ${committer.username} não foi encontrado no GitLab!`);
+                        throw new Error(`CommittersFactory: Commiter de username ${committer.username} não foi encontrado no GitLab!`);
                     }
                     return GitLabService.criarImpersonationToken(gitlabUser.id).then((gitlabImpersonationToken: GitLabImpersonationToken) => {
                         return sesol2Repository.insertIfNotExists(
@@ -53,11 +53,13 @@ export class CommittersFactory {
 
             console.info(`\tCommittersFactory: Inserindo (se nao existirem) ultimos ${committersDosUltimosCommits.length} committers...`);
             committersDosUltimosCommits.forEach((committerEmail: Email) => {
+                console.info(`\t\tCommittersFactory: Inserindo commiter de email ${committerEmail.email}...`);
                 promisesDeCommittersInseridos.push(
                     GitLabService.getUserByEmail(committerEmail).then((gitlabUser: GitLabUser) => {
                         if (!gitlabUser) {
-                            throw new Error(`CommittersConfig: Commiter de email ${committerEmail.email} não foi encontrado no GitLab!`);
+                            throw new Error(`CommittersFactory: Commiter de email ${committerEmail.email} não foi encontrado no GitLab!`);
                         }
+                        console.info(`\t\t\tCommittersFactory: commiter de email ${committerEmail.email} encontrado com o username ${gitlabUser.username}...`);
                         return GitLabService.criarImpersonationToken(gitlabUser.id).then((gitlabImpersonationToken: GitLabImpersonationToken) => {
                             return sesol2Repository.insertIfNotExists(
                                 new Committer(gitlabUser, gitlabImpersonationToken)

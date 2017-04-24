@@ -16,7 +16,7 @@ class CommittersFactory {
         arquivoCommitters.committers.forEach((committer) => {
             promisesDeCommittersInseridos.push(GitLabService_1.GitLabService.getUserByUsername(committer.username).then((gitlabUser) => {
                 if (!gitlabUser) {
-                    throw new Error(`CommittersConfig: Commiter de username ${committer.username} não foi encontrado no GitLab!`);
+                    throw new Error(`CommittersFactory: Commiter de username ${committer.username} não foi encontrado no GitLab!`);
                 }
                 return GitLabService_1.GitLabService.criarImpersonationToken(gitlabUser.id).then((gitlabImpersonationToken) => {
                     return Sesol2Repository_1.sesol2Repository.insertIfNotExists(new Committer_1.Committer(gitlabUser, gitlabImpersonationToken, committer.aliases, committer.quota, committer.sexo));
@@ -35,7 +35,12 @@ class CommittersFactory {
             let promisesDeCommittersInseridos = [];
             console.info(`\tCommittersFactory: Inserindo (se nao existirem) ultimos ${committersDosUltimosCommits.length} committers...`);
             committersDosUltimosCommits.forEach((committerEmail) => {
+                console.info(`\t\tCommittersFactory: Inserindo commiter de email ${committerEmail.email}...`);
                 promisesDeCommittersInseridos.push(GitLabService_1.GitLabService.getUserByEmail(committerEmail).then((gitlabUser) => {
+                    if (!gitlabUser) {
+                        throw new Error(`CommittersFactory: Commiter de email ${committerEmail.email} não foi encontrado no GitLab!`);
+                    }
+                    console.info(`\t\t\tCommittersFactory: commiter de email ${committerEmail.email} encontrado com o username ${gitlabUser.username}...`);
                     return GitLabService_1.GitLabService.criarImpersonationToken(gitlabUser.id).then((gitlabImpersonationToken) => {
                         return Sesol2Repository_1.sesol2Repository.insertIfNotExists(new Committer_1.Committer(gitlabUser, gitlabImpersonationToken));
                     });
