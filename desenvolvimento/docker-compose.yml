@@ -39,14 +39,14 @@ services:
   # Adicionar como webhook:
   # http://git/sti/sagas2/settings/integrations
   # http://srv-codereview/back-end-review/rpc/webhook
-  gitlab:
-    image: gitlab/gitlab-ce
-    ports:
-      - "8090:80"
-    networks:
-      - code-review-network
-    logging:
-      driver: "none"
+  # gitlab:
+  #   image: gitlab/gitlab-ce
+  #   ports:
+  #     - "8090:80"
+  #   networks:
+  #     - code-review-network
+  #   logging:
+  #     driver: "none"
 
   # serve tanto o back-end quanto o front-end
   back-end-node:
@@ -55,7 +55,7 @@ services:
      - "8093:3000"
     links:
       - couchdb:couchdb
-      - gitlab:git
+#      - gitlab:git
     networks:
       - code-review-network
     environment:
@@ -65,13 +65,13 @@ services:
 
       - GITLAB_HOST=git
 
-      - tcuGITLAB_HOST_PROJECT_ID=123
-      - tcuGITLAB_HOST_PRIVATE_TOKEN=X_zfYU5k2VwDx2KegmdQ
-      - tcuGITLAB_HOST_PRIVATE_TOKEN_READ_USERS=Esj8Vxs__raBTUkX1Zns
+      - GITLAB_HOST_PROJECT_ID=123
+      - GITLAB_HOST_PRIVATE_TOKEN=X_zfYU5k2VwDx2KegmdQ
+      - GITLAB_HOST_PRIVATE_TOKEN_READ_USERS=Esj8Vxs__raBTUkX1Zns
 
-      - GITLAB_HOST_PROJECT_ID=3
-      - GITLAB_HOST_PRIVATE_TOKEN=iU_63HEeqBJG6gQXuQha
-      - GITLAB_HOST_PRIVATE_TOKEN_READ_USERS=iU_63HEeqBJG6gQXuQha
+      - devGITLAB_HOST_PROJECT_ID=3
+      - devGITLAB_HOST_PRIVATE_TOKEN=iU_63HEeqBJG6gQXuQha
+      - devGITLAB_HOST_PRIVATE_TOKEN_READ_USERS=iU_63HEeqBJG6gQXuQha
     volumes:
      - ../back-end-node:/projeto
     working_dir: /projeto
@@ -82,7 +82,7 @@ services:
     ports:
         - "80:80"
     links:
-        - gitlab:git
+#        - gitlab:git
         - back-end-node:node
         - front-end-node:front
     networks:
