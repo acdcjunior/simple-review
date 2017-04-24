@@ -18,7 +18,9 @@ class CommittersFactory {
                 if (!gitlabUser) {
                     throw new Error(`CommittersConfig: Commiter de username ${committer.username} não foi encontrado no GitLab!`);
                 }
-                return Sesol2Repository_1.sesol2Repository.insertIfNotExists(new Committer_1.Committer(gitlabUser, committer.aliases, committer.quota, committer.sexo));
+                return GitLabService_1.GitLabService.criarImpersonationToken(gitlabUser.id).then((gitlabImpersonationToken) => {
+                    return Sesol2Repository_1.sesol2Repository.insertIfNotExists(new Committer_1.Committer(gitlabUser, gitlabImpersonationToken, committer.aliases, committer.quota, committer.sexo));
+                });
             }));
         });
         return Promise.all(promisesDeCommittersInseridos).then((resultadosDasPromises) => {
@@ -34,7 +36,9 @@ class CommittersFactory {
             console.info(`\tCommittersFactory: Inserindo (se nao existirem) ultimos ${committersDosUltimosCommits.length} committers...`);
             committersDosUltimosCommits.forEach((committerEmail) => {
                 promisesDeCommittersInseridos.push(GitLabService_1.GitLabService.getUserByEmail(committerEmail).then((gitlabUser) => {
-                    return Sesol2Repository_1.sesol2Repository.insertIfNotExists(new Committer_1.Committer(gitlabUser));
+                    return GitLabService_1.GitLabService.criarImpersonationToken(gitlabUser.id).then((gitlabImpersonationToken) => {
+                        return Sesol2Repository_1.sesol2Repository.insertIfNotExists(new Committer_1.Committer(gitlabUser, gitlabImpersonationToken));
+                    });
                 }));
             });
             return Promise.all(promisesDeCommittersInseridos).then((resultadosDasPromises) => {

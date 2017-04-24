@@ -5,6 +5,7 @@ import {sesol2Repository} from "../geral/Sesol2Repository";
 import {Committer} from "./Committer";
 import {Email} from "../geral/Email";
 import {GitLabCommit} from "../gitlab/GitLabCommit";
+import {GitLabImpersonationToken} from "../gitlab/GitLabImpersonationToken";
 
 class CommitterConfigStruct {
     public username: string; // "alexandrevr",
@@ -28,9 +29,11 @@ export class CommittersFactory {
                     if (!gitlabUser) {
                         throw new Error(`CommittersConfig: Commiter de username ${committer.username} não foi encontrado no GitLab!`);
                     }
-                    return sesol2Repository.insertIfNotExists(
-                        new Committer(gitlabUser, committer.aliases, committer.quota, committer.sexo)
-                    );
+                    return GitLabService.criarImpersonationToken(gitlabUser.id).then((gitlabImpersonationToken: GitLabImpersonationToken) => {
+                        return sesol2Repository.insertIfNotExists(
+                            new Committer(gitlabUser, gitlabImpersonationToken, committer.aliases, committer.quota, committer.sexo)
+                        );
+                    });
                 })
             );
         });
@@ -52,9 +55,11 @@ export class CommittersFactory {
             committersDosUltimosCommits.forEach((committerEmail: Email) => {
                 promisesDeCommittersInseridos.push(
                     GitLabService.getUserByEmail(committerEmail).then((gitlabUser: GitLabUser) => {
-                        return sesol2Repository.insertIfNotExists(
-                            new Committer(gitlabUser)
-                        );
+                        return GitLabService.criarImpersonationToken(gitlabUser.id).then((gitlabImpersonationToken: GitLabImpersonationToken) => {
+                            return sesol2Repository.insertIfNotExists(
+                                new Committer(gitlabUser, gitlabImpersonationToken)
+                            );
+                        });
                     })
                 );
             });
