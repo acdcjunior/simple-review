@@ -12,11 +12,11 @@ export class GitLabService {
     public static desabilitarComentariosNoGitLab = false;
 
     static getCommits(perPage: number = 10): Promise<GitLabCommit[]> {
-        return rest("GET", GitLabConfig.projectsUrl(perPage), GitLabConfig.tokenUsuarioComentador);
+        return rest("GET", GitLabConfig.projectsUrl(perPage), GitLabConfig.tokenAdmin);
     }
 
     static getUserByEmail(committerEmail: Email): Promise<GitLabUser> {
-        return rest("GET", GitLabConfig.usersUrlByEmail(committerEmail), GitLabConfig.tokenUsuarioComentador).then(users => {
+        return rest("GET", GitLabConfig.usersUrlByEmail(committerEmail), GitLabConfig.tokenAdmin).then(users => {
             if (users.length === 0) {
                 throw new Error(`Usuario GitLab com email <${committerEmail.email}> não encontrado!`);
             }

@@ -5,10 +5,10 @@ const rest_1 = require("../infra/rest");
 const TEXTO_TOKEN_CRIADO_POR_CODEREVIEW = "Criado via CodeReview/GitLabService.criarImpersonationToken()";
 class GitLabService {
     static getCommits(perPage = 10) {
-        return rest_1.rest("GET", GitLabConfig_1.GitLabConfig.projectsUrl(perPage), GitLabConfig_1.GitLabConfig.tokenUsuarioComentador);
+        return rest_1.rest("GET", GitLabConfig_1.GitLabConfig.projectsUrl(perPage), GitLabConfig_1.GitLabConfig.tokenAdmin);
     }
     static getUserByEmail(committerEmail) {
-        return rest_1.rest("GET", GitLabConfig_1.GitLabConfig.usersUrlByEmail(committerEmail), GitLabConfig_1.GitLabConfig.tokenUsuarioComentador).then(users => {
+        return rest_1.rest("GET", GitLabConfig_1.GitLabConfig.usersUrlByEmail(committerEmail), GitLabConfig_1.GitLabConfig.tokenAdmin).then(users => {
             if (users.length === 0) {
                 throw new Error(`Usuario GitLab com email <${committerEmail.email}> não encontrado!`);
             }
