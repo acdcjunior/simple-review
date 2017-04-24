@@ -151,7 +151,7 @@ export default {
                 if (commitParaScroll) { // ele pode ter sumido da lista, se o cara revisou e tah filtrando revisados, por exemplo
                     window.$('html, body, .layout-col_left').animate({
                         scrollTop: window.$(commitParaScroll).offset().top - 10
-                    }, 2000, () => {
+                    }, 1000, () => {
                         console.log('Done animating!');
                         let urlAtual = window.location.href;
                         let novaUrl = urlAtual.replace(new RegExp("scroll=" + to.query.scroll, "g"), "").replace(/\?$/g, "");

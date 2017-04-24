@@ -13,7 +13,7 @@
         <p style="margin: 10px 5px 0 0">
           Criado {{ timeAgo(commit.created_at) }}.
 
-          <span v-if="!commitRevisado()">Ainda não revisado.</span>
+          <span v-if="!commitRevisado()">Com revisões pendentes.</span>
           <span v-else style="font-weight: bold">Revisado {{ timeAgoRevisado() }}.</span>
         </p>
       </div>

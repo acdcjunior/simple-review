@@ -81,6 +81,10 @@
       </ul>
     </div>
 
+    <div class="col-md-12">
+      <a href="http://git/sti/sagas2/blob/desenvolvimento/CONTRIBUTING.md" target="_blank">Clique aqui para abrir a <strong>Checklist</strong> (em outra janela).</a>
+    </div>
+
     <div class="col-md-12"><br>&nbsp;<br>&nbsp;<br></div>
   </div>
   </div>
