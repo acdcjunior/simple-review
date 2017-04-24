@@ -1,5 +1,5 @@
 <template>
-  <div class="col-md-12">
+  <div class="col-md-12" id="{{ commit.sha }}">
     <div class="panel panel-default">
       <div class="panel-body">
         <a v-if="commitRevisado()" href="{{ gitlabLink() }}" target="diff" class="text-muted" style="word-wrap: break-word;"><h3>{{ commit.title }}</h3></a>
@@ -25,6 +25,7 @@
 import committers from '../committers'
 import utils from '../utils'
 import Committer from './Committer'
+import {CommitService} from "../servicos/CommitterService";
 
 export default {
   name: 'Commit',
@@ -51,14 +52,7 @@ export default {
       return utils.gitlabLink(this.commit.sha)
     },
     commitRevisado () {
-        let revisoresPendentes = this.commit.revisores.length;
-        this.commit.revisoes.forEach(revisao => {
-            if (this.commit.revisores.indexOf(revisao.revisor) !== -1) {
-                revisoresPendentes--;
-            }
-        });
-
-        return revisoresPendentes <= 0;
+        return CommitService.commitFoiRevisado(this.commit);
     },
     abrirRevisao () {
       utils.atualizarDiff(this.commit.sha)

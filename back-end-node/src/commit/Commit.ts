@@ -66,7 +66,7 @@ export class Commit extends Sesol2 {
     }
 
     private incluirHistorico(msgHistorico: string) {
-        this.historico.push(msgHistorico.replace(/`/g, ''));
+        this.historico.push(msgHistorico);
     }
 
     private comentarNoGitLab(msg) {

@@ -6,19 +6,20 @@
     <script>
         window.env = window.env || {};
         window.env.isDev = window.location.host === '127.0.0.1:8080';
-        window.env.BACK_END_NODE = window.env.isDev ? 'http://127.0.0.1:8093/back-end-review' : '/back-end-review';
+        window.env.FRONT_END_HOST = window.env.isDev ? 'http://127.0.0.1:5000/code-review/' : '';
+        window.env.BACK_END_NODE = window.env.isDev ? 'http://127.0.0.1/back-end-review' : '/back-end-review';
         window.env.GITLAB_PROTOCOL_HOST = window.env.isDev ? 'http://127.0.0.1' : '';
         window.env.COUCHDB_HOST = window.location.hostname;
 
         // https://code.jquery.com/jquery-3.2.1.min.js
         // https://cdn.rawgit.com/rmm5t/jquery-timeago/180864a9/jquery.timeago.js
         // https://cdn.rawgit.com/rmm5t/jquery-timeago/180864a9/locales/jquery.timeago.pt-br.js
-        document.write(`<script src="vendor/jquery-3.2.1.min.js"><\/script>
-                        <script src="vendor/jquery.timeago.js"><\/script>
-                        <script src="vendor/jquery.timeago.pt-br.js"><\/script>
-                        <script src="vendor/bootstrap-3.3.7/js/bootstrap.min.js"><\/script>
-                        <link rel="stylesheet" href="vendor/bootstrap-3.3.7/css/bootstrap.min.css"/>
-                        <link rel="stylesheet" href="vendor/bootstrap-3.3.7/css/bootstrap-theme.min.css"/>`);
+        document.write(`<script src="${window.env.FRONT_END_HOST}vendor/jquery-3.2.1.min.js"><\/script>
+                        <script src="${window.env.FRONT_END_HOST}vendor/jquery.timeago.js"><\/script>
+                        <script src="${window.env.FRONT_END_HOST}vendor/jquery.timeago.pt-br.js"><\/script>
+                        <script src="${window.env.FRONT_END_HOST}vendor/bootstrap-3.3.7/js/bootstrap.min.js"><\/script>
+                        <link  href="${window.env.FRONT_END_HOST}vendor/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
+                        <link  href="${window.env.FRONT_END_HOST}vendor/bootstrap-3.3.7/css/bootstrap-theme.min.css" rel="stylesheet"/>`);
     </script>
 
     <title>Sesol-2 Code Review</title>{% for (var css in o.htmlWebpackPlugin.files.css) { %}

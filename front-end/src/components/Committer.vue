@@ -15,10 +15,11 @@ export default {
     committerEmail: String
   },
 
+  route: {
+      canReuse: false
+  },
+
   data () {
-    if (this.committerEmail === 'commiterLogado') {
-      return {committer: committers.commiterLogado}
-    }
     return {committer: committers.get(this.committerEmail)}
   }
 }

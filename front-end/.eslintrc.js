@@ -1,4 +1,4 @@
-var production = process.env.NODE_ENV === 'production'
+const production = process.env.NODE_ENV === 'production';
 
 module.exports = {
   'root': true,
@@ -157,7 +157,6 @@ module.exports = {
     'padded-blocks': 0,
     'prefer-const': 0,
     'quote-props': 0,
-    'quotes': [2, 'single', 'avoid-escape'],
     'radix': 2,
     'semi-spacing': 0,
     'sort-vars': 0,
@@ -177,4 +176,4 @@ module.exports = {
     'wrap-regex': 0,
     'yoda': [2, 'never']
   }
-}
+};

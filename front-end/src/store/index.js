@@ -19,14 +19,18 @@ db.sync(remotedb, {
   live: true,
   retry: true
 }).on('change', function (change) {
-    dev('yo, something changed!', change);
+    dev('SYNC CHANGE: yo, something changed!', change);
     store.callListeners()
 }).on('paused', function (info) {
-    dev('replication was paused, usually because of a lost connection', info);
+    dev('SYNC PAUSED: replication was paused, (e.g. replication up to date, user went offline) usually because of a lost connection', info);
 }).on('active', function (info) {
-    dev('replication was resumed:', info);
+    dev('SYNC ACTIVE: replication was resumed e.g. new changes replicating, user went back online):', info);
+}).on('denied', function (err) {
+    dev('SYNC DENIED: a document failed to replicate (e.g. due to permissions):', err)
+}).on('complete', function (result) {
+    dev('SYNC COMPLETE: complete:', result)
 }).on('error', function (err) {
-    dev('totally unhandled error (shouldn\'t happen):', err)
+    dev('SYNC ERROR: totally unhandled error (shouldnt happen):', err)
 });
 
 if (!DEV_MODE) {
@@ -42,12 +46,16 @@ store.callListeners = () => {
     });
 };
 
+store.atualizar = data => {
+    return db.post(data)
+};
+
 store.create = data => {
     return db.post(data)
 };
 
-function queryView(nomeView) {
-    return db.query(nomeView, {include_docs: true}).then(result => {
+function queryView(nomeView, keysOpcional) {
+    return db.query(nomeView, Object.assign({include_docs: true}, keysOpcional || {})).then(result => {
         return new Promise(resolve => {
             resolve(result.rows.map(row => row.doc));
         })
@@ -56,29 +64,88 @@ function queryView(nomeView) {
 function findAllCommits() {
     return queryView('commits_index');
 }
-function findAllCommitsRevisadosNao() {
-    return queryView('commits_revisados_nao_index');
-}
 
 store.findById = (id) => {
     return db.get(id)
 };
 
-store.reloadCommits = (obj, prop, exibirSomenteCommitsEfetuadosPor, exibirSomenteCommitsEmQueSouRevisor, meuEmail, exibirSomenteCommitsNaoRevisados) => {
+function commitNaoTemNenhumaRevisaoEfetuadaPor(email) {
+    return commit => commit.revisoes.find(revisao => revisao.revisor === email) === undefined;
+}
+function commitDoAutor(autorEmail) {
+    return commit => commit.author_email === autorEmail;
+}
+function promiseRetornarSomenteCommitsDoAutor(autor) {
+    return commits => Promise.resolve(commits.filter(commitDoAutor(autor)));
+}
+function promiseRetornarSomenteCommitsSemNenhumaRevisaoEfetuadaPor(email) {
+    return commits => Promise.resolve(commits.filter(commitNaoTemNenhumaRevisaoEfetuadaPor(email)));
+}
+
+/**
+ * São 9 possibilidades.
+ * 000 last
+ * 001 last
+ * 010 last
+ * 011 first-if
+ * 100 last
+ * 101 last
+ * 110 last
+ * 111 first-if
+ */
+store.findAllCommitsThat = (meuEmail, exibirSomenteCommitsEfetuadosPor, exibirSomenteCommitsEmQueSouRevisor, exibirSomenteCommitsNaoRevisadosPorMim) => {
+    if (exibirSomenteCommitsEmQueSouRevisor && exibirSomenteCommitsNaoRevisadosPorMim) {
+        if (exibirSomenteCommitsEfetuadosPor === store.todos.email) {
+            // 111
+            return store.findAllCommitsPendentesDoRevisor(meuEmail);
+        } else {
+            // 011
+            return store.findAllCommitsPendentesDoRevisor(meuEmail).then(promiseRetornarSomenteCommitsDoAutor(exibirSomenteCommitsEfetuadosPor));
+        }
+    }
     let commitsPromise;
-    if (exibirSomenteCommitsNaoRevisados) {
-        commitsPromise = findAllCommitsRevisadosNao();
+    if (exibirSomenteCommitsEmQueSouRevisor) {
+        // x1x
+        commitsPromise = store.findAllCommitsAtribuidosAoRevisor(meuEmail);
     } else {
+        // x0x
         commitsPromise = findAllCommits();
     }
-    commitsPromise.then(commits => {
-        obj[prop] = commits.filter(commitTrazido => {
-            return (
-                (!exibirSomenteCommitsEmQueSouRevisor || commitTrazido.revisores.indexOf(meuEmail) !== -1) &&
-                (exibirSomenteCommitsEfetuadosPor === store.todos.email || commitTrazido.author_email === exibirSomenteCommitsEfetuadosPor)
-            )
-        });
-    })
+
+    if (exibirSomenteCommitsNaoRevisadosPorMim) {
+        // xx1
+        // x11
+        // x01
+        commitsPromise = commitsPromise.then(promiseRetornarSomenteCommitsSemNenhumaRevisaoEfetuadaPor(meuEmail));
+    } else {
+        // xx0
+        // x10
+        // x00
+        // commitsPromise = commitsPromise;
+    }
+
+    if (exibirSomenteCommitsEfetuadosPor === store.todos.email) {
+        // 1xx
+        // 111
+        // 101
+        // 110
+        // 100
+        return commitsPromise;
+    } else {
+        // 0xx
+        // 011
+        // 001
+        // 010
+        // 000
+        return commitsPromise.then(promiseRetornarSomenteCommitsDoAutor(exibirSomenteCommitsEfetuadosPor));
+    }
+};
+
+store.findAllCommitsPendentesDoRevisor = (email) => {
+    return queryView('commits_pendendo_revisao_do_revisor', {startkey: [email], endkey: [email, {}]});
+};
+store.findAllCommitsAtribuidosAoRevisor = (email) => {
+    return queryView('commits_atribuidos_para_revisao_do_revisor', {startkey: [email], endkey: [email, {}]});
 };
 
 export default store

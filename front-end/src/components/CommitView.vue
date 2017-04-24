@@ -22,29 +22,46 @@
         Commit realizado <strong style="color: black">{{ timeAgoCommittado() }}</strong>.
       </p>
       <p>
-        <strong style="color: black">Autor(a):</strong>
+        <strong style="color: black">Autor{{ committerEntity(commit.author_email).vazioOuA() }}:</strong>
         <committer v-if="commit.author_email" :committer-email="commit.author_email"></committer>
       </p>
       <br>
-      <p>
-        <strong style="color: black">Revisor(a) designado(a):</strong>
-        <committer v-if="commit.revisores[0]" :committer-email="commit.revisores[0]"></committer>
-      </p>
-      <p v-if="commit.revisores.length === 2">
-        <strong style="color: black">Segundo(a) revisor(a)  designado(a):</strong>
-        <committer v-if="commit.revisores[1]" :committer-email="commit.revisores[1]"></committer>
-      </p>
+        <strong v-if="commit.revisores.length===1" style="color: black">Revisor{{ committerEntity(commit.revisores[0]).vazioOuA() }} indicad{{ committerEntity(commit.revisores[0]).oOuA() }}:</strong>
+        <strong v-else="" style="color: black">Revisores indicados:</strong>
+        <div v-for="revisor in commit.revisores">
+          <committer :committer-email="revisor"></committer>
+        </div>
+
+      <div class="col-md-12" v-if="usuarioLogadoPodeRevisarEsteCommit()">
+        <hr>
+
+        <p><button class="btn btn-success" v-on:click="marcarComoFeitoEmPar()"><span class="glyphicon glyphicon-user"></span> Fizemos em Par</button></p>
+        <p><button class="btn btn-primary" v-on:click="marcarComoRevisadoComFollowUp()"><span class="glyphicon glyphicon-ok"></span> Marcar como Revisado, com <em>follow-up</em></button></p>
+        <p><button class="btn btn-info" v-on:click="marcarComoRevisadoSemFollowUp()"><span class="glyphicon glyphicon-ok"></span> Marcar como Revisado, sem <em>follow-up</em></button></p>
+
+        <hr>
+      </div>
+
+      <h2 class="col-md-12" v-if="usuarioLogadoEhAutorDesteCommit()">
+        <hr>
+        Você é {{ committerLogado().oOuA() }} autor{{ committerLogado().vazioOuA() }} deste commit.
+        <hr>
+      </h2>
+
+      <h2 v-show="!exibirLoadingRevisaoAlterada" class="col-md-12" v-if="!usuarioLogadoNuncaRevisouEsteCommit()">
+        <hr>
+        Você revisou este commit.
+        <hr>
+      </h2>
 
       <div v-show="!exibirLoadingRevisaoAlterada">
         <br>
         <hr>
-        <h4>Revisões concluídas: {{ commitRevisado() ? 'Sim' : 'Não' }}</h4>
+        <h4>Revisões indicadas realizadas: {{ commitRevisado() ? 'Sim' : 'Não' }}</h4>
         <div v-for="revisao in commit.revisoes">
           <br>
-          <strong style="margin-left: 1px" :class="tipoRevisaoClass(revisao)">Revisor(a) - {{ revisao.tipo === 'par' ? 'feito em par' : 'revisão comum' }}:</strong>
+          <strong style="margin-left: 1px" :class="tipoRevisaoClass(revisao)">Revisado ({{ tipoRevisaoTextoNaoItalico(revisao) }}<em>{{ tipoRevisaoTextoItalico(revisao) }}</em>) {{ timeAgoRevisado(revisao) }} por:</strong>
           <committer v-if="revisao.revisor" :committer-email="revisao.revisor"></committer>
-          <br>
-          Revisado <span :class="tipoRevisaoClass(revisao)">{{ timeAgoRevisado(revisao) }}</span>.
         </div>
       </div>
       <div class="col-md-12" v-if="exibirLoadingRevisaoAlterada">
@@ -53,10 +70,6 @@
 
       <hr>
     </div>
-    <div class="col-md-12" v-if="usuarioLogadoPodeRevisarEsteCommit()">
-      <p><button class="btn btn-primary" v-on:click="marcarComoRevisado()"><span class="glyphicon glyphicon-ok"></span> Marcar como Revisado</button></p>
-      <button class="btn btn-success" v-on:click="marcarComoFeitoEmPar()"><span class="glyphicon glyphicon-user"></span> Fizemos em Par</button>
-    </div>
 
     <div class="col-md-12">
       <br>
@@ -64,7 +77,7 @@
       Histórico:
       <ul>
         <li v-for="historico in commit.historico">{{ historico }}</li>
-        <li v-for="revisao in commit.revisoes">Revisado por {{ revisao.revisor }} {{ timeAgo(revisao.data) }}, com revisão do tipo {{ revisao.tipo }}.</li>
+        <li v-for="revisao in commit.revisoes">Revisado por {{ committerEntity(revisao.revisor).mencao() }} {{ timeAgo(revisao.data) }}, com revisão do tipo {{ revisao.tipoRevisao }}.</li>
       </ul>
     </div>
 
@@ -78,7 +91,7 @@ import store from '../store'
 import utils from '../utils'
 import committers from '../committers'
 import Committer from './Committer'
-import backEnd from '../servicos/backEnd'
+import {CommitService} from '../servicos/CommitterService'
 
 export default {
   components: {
@@ -113,8 +126,17 @@ export default {
   },
 
   methods: {
+    committerLogado() {
+        return committers.commiterLogado
+    },
     timeAgo (data) {
         return utils.timeago(data);
+    },
+    committerEntity(email) {
+        return committers.committerEntity(email);
+    },
+    mencaoCommitter(email) {
+        return committers.committerEntity(email).mencao();
     },
     timeAgoCommittado () {
       return utils.timeago(this.commit.created_at)
@@ -122,50 +144,61 @@ export default {
     timeAgoRevisado (revisao) {
       return utils.timeago(revisao.data)
     },
-    tipoRevisaoClass (revisao) {
-      return (revisao.tipo || '').indexOf('par') === -1 ? 'text-primary' : 'text-success'
+    tipoRevisaoClass(revisao) {
+      return (revisao.tipoRevisao || '').indexOf('par') === -1 ? 'text-primary' : 'text-success'
+    },
+    tipoRevisaoTextoNaoItalico(revisao) {
+      return revisao.tipoRevisao === 'par' ? 'feito em par' : revisao.tipoRevisao === 'com follow-up' ? 'com' : 'sem';
+    },
+    tipoRevisaoTextoItalico(revisao) {
+      return revisao.tipoRevisao === 'par' ? '' : ' follow-up';
+    },
+    sexoRevisorVaziouOuA(revisao) {
+      return revisao.sexoRevisor === 'f' ? 'a' : revisao.sexoRevisor ? '' : '(a)';
     },
     loadCommit (commitId) {
       return store.findById(commitId).then(commit => {
           this.commit = commit;
       });
     },
-    commitRevisado () {
-        let revisoresPendentes = this.commit.revisores.length;
-        this.commit.revisoes.forEach(revisao => {
-            if (this.commit.revisores.indexOf(revisao.revisor) !== -1) {
-                revisoresPendentes--;
-            }
-        });
-        return revisoresPendentes <= 0;
+    commitRevisado() {
+        return CommitService.commitFoiRevisado(this.commit);
     },
-    usuarioLogadoPodeRevisarEsteCommit () {
-        return this.commit.author_email !== committers.commiterLogado.email &&
-               !this.commitRevisado() &&
-               this.usuarioLogadoNuncaRevisouEsteCommit();
+    usuarioLogadoPodeRevisarEsteCommit() {
+        return !this.usuarioLogadoEhAutorDesteCommit() && this.usuarioLogadoNuncaRevisouEsteCommit();
     },
-    usuarioLogadoNuncaRevisouEsteCommit () {
-        return this.commit.revisoes.filter(revisao => revisao.revisor === committers.commiterLogado.email).length === 0;
+    usuarioLogadoEhAutorDesteCommit() {
+        return this.commit.author_email === committers.commiterLogado.email;
+    },
+    usuarioLogadoNuncaRevisouEsteCommit() {
+        return CommitService.usuarioLogadoNuncaRevisouCommit(this.commit);
+    },
+    usuarioLogadoEstaNaListaDeRevisoresDesteCommit() {
+        return CommitService.usuarioLogadoEstaNaListaDeRevisoresDoCommit(this.commit);
     },
     marcarComoFeitoEmPar () {
         this.marcarComoRevisado('par');
     },
-    marcarComoRevisado (status) {
+    marcarComoRevisadoComFollowUp () {
+        this.marcarComoRevisado('com follow-up');
+    },
+      marcarComoRevisadoSemFollowUp () {
+        this.marcarComoRevisado('sem follow-up');
+    },
+    marcarComoRevisado (tipoRevisao) {
         this.revisaoAlterada = true;
         this.exibirLoadingRevisaoAlterada = true;
         setTimeout(() => { this.exibirLoadingRevisaoAlterada = false }, 1000);
-        this.commit.revisoes.push({revisor: committers.commiterLogado.email, data: new Date().toISOString(), tipo: status || 'comum'});
-        store.create(this.commit).then(() => {
-            backEnd.marcarRevisado(this.commit.sha, committers.commiterLogado.email, status === 'par').then(() => {
-                window.diff.notes.refresh();
-            });
-            this.loadCommit(this.commit._id)
-        })
+
+        CommitService.marcarComoRevisado(this.commit, tipoRevisao, () => { window.diff.notes.refresh(); }).then(() => {
+            this.loadCommit(this.commit._id);
+        });
     },
     retornarParaCommits () {
         utils.limparDiff();
+        let shaDesteCommit = this.commit.sha;
         this.commit = undefined;
-        this.$router.go('/commits')
+        this.$router.go('/commits?scroll=' + shaDesteCommit)
     }
   }
 }

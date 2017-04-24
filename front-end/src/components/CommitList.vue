@@ -1,7 +1,7 @@
 <template>
 <div class="col-md-12">
   <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-12" style="margin-top: 5px">
       <div class="dropdown" style="float: right; margin-top: 5px">
         <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
           <span class="glyphicon glyphicon-option-vertical"></span>
@@ -22,13 +22,26 @@
     </div>
 
     <div class="col-md-12">
-      <committer :committer-email="'commiterLogado'"></committer>
+      <committer v-if="exibirUsuarioLogado" :committer-email="logado().email"></committer>
+
+      <div style="margin-top: 5px;">
+        <div class="col-md-5">
+          <button v-on:click="exibirMinhasRevisoesPendentes" class="btn btn-info" type="button" style="width: 100%" title="Você tem {{ qtdCommitsPendentesDoUsuarioLogado }} indicações de revisão pendentes.">
+            Revisões <span class="badge">{{ qtdCommitsPendentesDoUsuarioLogado }}</span>
+          </button>
+        </div>
+        <div class="col-md-7">
+          <button v-on:click="exibirMeusTodos" class="btn btn-info" type="button" style="width: 100%" title="Clique para exibir seus TODOs (comentários que te mencionam) no GitLab.">
+            Comentários/Menções <span class="badge"></span>
+          </button>
+        </div>
+      </div>
     </div>
 
     <div class="col-md-12">
       <hr>
       <label style="width: 100%">
-        Exibir somente commits do(a) autor(a):
+        Exibir somente commits realizados por:
         <select v-model="exibirSomenteCommitsEfetuadosPor" v-on:change="carregarCommits" class="form-control" style="display: inline-block; width: 85%">
         <option v-for="committer in committers" v-bind:value="committer.email">
           {{ committer.name }}
@@ -41,7 +54,7 @@
       <label><input type="checkbox" v-model="exibirSomenteCommitsEmQueSouRevisor" v-on:change="carregarCommits"> Exibir somente commits dos quais sou revisor(a)</label>
     </div>
     <div class="col-md-12">
-      <label><input type="checkbox" v-model="exibirSomenteCommitsNaoRevisados" v-on:change="carregarCommits"> Exibir somente commits ainda não revisados</label>
+      <label><input type="checkbox" v-model="exibirSomenteCommitsNaoRevisados" v-on:change="carregarCommits"> Exibir somente commits não revisados por mim</label>
       <br>
       Encontrados: {{ (commits || []).length }}
       <hr>
@@ -74,7 +87,7 @@ export default {
   },
 
   data () {
-    let opcoesCommitList = JSON.parse(this.$cookie.get('opcoesCommitList'))
+    let opcoesCommitList = JSON.parse(this.$cookie.get('opcoesCommitList'));
     if (!opcoesCommitList) {
       opcoesCommitList = {
         ocultarEspacosEmBranco: true,
@@ -84,8 +97,8 @@ export default {
         exibirSomenteCommitsEfetuadosPor: store.todos.email
       }
     }
-    utils.ocultarEspacosEmBranco = opcoesCommitList.ocultarEspacosEmBranco
-    utils.diffLadoALado = opcoesCommitList.diffLadoALado
+    utils.ocultarEspacosEmBranco = opcoesCommitList.ocultarEspacosEmBranco;
+    utils.diffLadoALado = opcoesCommitList.diffLadoALado;
     let data = {
       id: '',
       title: '',
@@ -93,6 +106,10 @@ export default {
       createdAt: '',
       type: '',
       commits: [],
+
+      exibirUsuarioLogado: true,
+      qtdCommitsPendentesDoUsuarioLogado: undefined,
+
       ocultarEspacosEmBranco: opcoesCommitList.ocultarEspacosEmBranco,
       diffLadoALado: opcoesCommitList.diffLadoALado,
       exibirSomenteCommitsEmQueSouRevisor: opcoesCommitList.exibirSomenteCommitsEmQueSouRevisor,
@@ -101,52 +118,94 @@ export default {
       committers: [
         store.todos
       ]
-    }
+    };
     Object.keys(committers.committers).forEach((c) => {
       data.committers.push(committers.get(c))
-    })
+    });
     return data
+  },
+
+  route: {
+      canReuse: false,
+      data ({ to }) {
+          // workaround pq o vue nao atualiza sozinho!! :|
+          this.exibirUsuarioLogado = false;
+          setTimeout(() => {
+              this.exibirUsuarioLogado = true;
+          }, 500);
+
+          this.carregarDadosPainelJenkins();
+          this.carregarCommits().then(() => {
+              if (to.query && to.query.scroll) {
+                const commitParaScroll = document.getElementById(to.query.scroll);
+                if (commitParaScroll) { // ele pode ter sumido da lista, se o cara revisou e tah filtrando revisados, por exemplo
+//                    commitParaScroll.scrollIntoView();
+                    window.$('html, body, .layout-col_left').animate({
+                        scrollTop: window.$(commitParaScroll).offset().top - 10
+                    }, 2000, () => {
+                        console.log('Done animating!');
+                        let urlAtual = window.location.href;
+                        let newurl = urlAtual.replace(new RegExp("scroll=" + to.query.scroll, "g"), "").replace(/\?$/g, "");
+                        window.history.pushState({path: newurl}, '', newurl);
+
+                    });
+                }
+              }
+          });
+      }
   },
 
   created () {
     if (committers.testLogin(this)) {
       return
     }
-    window.$('.dropdown-toggle').dropdown()
-    window.$.getJSON('http://srv-ic-master:8089/view/Sesol-2/job/sagas2.dese.unit/api/json?pretty=true', function (data) {
-      window.$('ut').removeClass('avatar').attr('src', 'http://jenkins/static/48484716/images/32x32/' + data.color + '.gif')
-    })
-    window.$.getJSON('http://srv-ic-master:8089/view/Sesol-2/job/sagas2.dese.integ/api/json?pretty=true', function (data) {
-      window.$('it').removeClass('avatar').attr('src', 'http://jenkins/static/48484716/images/32x32/' + data.color + '.gif')
-    })
+    window.$('.dropdown-toggle').dropdown();
+    this.carregarDadosPainelJenkins();
 
-    this.carregarCommits()
+    this.carregarCommits();
     store.registerListener('list', () => {
       this.carregarCommits()
     })
   },
 
   methods: {
-    logado () {
+    logado() {
         if (!committers.commiterLogado) {
             console.log('Não há committer logado! -> ', committers.commiterLogado);
         }
         return committers.commiterLogado;
     },
+    carregarDadosPainelJenkins() {
+        window.$.getJSON('http://srv-ic-master:8089/view/Sesol-2/job/sagas2.dese.unit/api/json?pretty=true', function (data) {
+            window.$('ut').removeClass('avatar').attr('src', 'http://jenkins/static/48484716/images/32x32/' + data.color + '.gif')
+        });
+        window.$.getJSON('http://srv-ic-master:8089/view/Sesol-2/job/sagas2.dese.integ/api/json?pretty=true', function (data) {
+            window.$('it').removeClass('avatar').attr('src', 'http://jenkins/static/48484716/images/32x32/' + data.color + '.gif')
+        });
+    },
+    exibirMinhasRevisoesPendentes() {
+        this.exibirSomenteCommitsEmQueSouRevisor = true;
+        this.exibirSomenteCommitsNaoRevisados = true;
+        this.exibirSomenteCommitsEfetuadosPor = store.todos.email;
+        this.carregarCommits();
+    },
+    exibirMeusTodos () {
+        utils.exibirTodosNoFrame();
+    },
     restaurarCommitsEfetuadosPor () {
-      this.exibirSomenteCommitsEfetuadosPor = store.todos.email
+      this.exibirSomenteCommitsEfetuadosPor = store.todos.email;
       this.carregarCommits()
     },
     emailTodos () {
       return store.todos.email
     },
     alterarOpcaoBooleana (nomeOpcao) {
-      this[nomeOpcao] = !this[nomeOpcao]
+      this[nomeOpcao] = !this[nomeOpcao];
       this.salvarCookieOpcoes()
     },
     salvarCookieOpcoes () {
-      utils.ocultarEspacosEmBranco = this.ocultarEspacosEmBranco
-      utils.diffLadoALado = this.diffLadoALado
+      utils.ocultarEspacosEmBranco = this.ocultarEspacosEmBranco;
+      utils.diffLadoALado = this.diffLadoALado;
       this.$cookie.set('opcoesCommitList', JSON.stringify({
         ocultarEspacosEmBranco: this.ocultarEspacosEmBranco,
         diffLadoALado: this.diffLadoALado,
@@ -156,34 +215,15 @@ export default {
       }), { expires: '1Y' })
     },
     carregarCommits () {
-      this.salvarCookieOpcoes()
-      this.commits = undefined
-      store.reloadCommits(this, 'commits', this.exibirSomenteCommitsEfetuadosPor, this.exibirSomenteCommitsEmQueSouRevisor, this.logado().email, this.exibirSomenteCommitsNaoRevisados)
-    },
-    submit () {
-      const data = {
-        'type': 'commit',
-        'title': this.title,
-        'content': this.content,
-        'createdAt': new Date().toJSON()
-      }
-      store.create(data).then(results => {
-        store.reloadCommits(this, 'commits')
-      })
-      this.title = ''
-      this.content = ''
+      this.salvarCookieOpcoes();
+      this.commits = undefined;
+      return store.findAllCommitsThat(this.logado().email, this.exibirSomenteCommitsEfetuadosPor, this.exibirSomenteCommitsEmQueSouRevisor, this.exibirSomenteCommitsNaoRevisados).then(commits => {
+          this.commits = commits;
+          return store.findAllCommitsPendentesDoRevisor(this.logado().email).then(commitsPendentesDoUsuarioLogado => {
+              this.qtdCommitsPendentesDoUsuarioLogado = commitsPendentesDoUsuarioLogado.length;
+          })
+      });
     }
   }
 }
 </script>
-
-<style>
-.panel {
-  -webkit-box-shadow: 0 0 0 rgba(0, 0, 0, 0);
-  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
-}
-
-.panel h3 {
-  margin-top: 0;
-}
-</style>

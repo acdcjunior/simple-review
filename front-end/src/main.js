@@ -7,12 +7,10 @@ import Login from './components/Login.vue'
 import VueCookie from 'vue-cookie'
 // Tell Vue to use the plugin
 
-Vue.use(Router)
-Vue.use(VueCookie)
+Vue.use(Router);
+Vue.use(VueCookie);
 
-require('bootstrap')
-
-const router = new Router()
+const router = new Router();
 
 router.map({
   '/login': {
@@ -26,14 +24,14 @@ router.map({
   '/commit/:id': {
     component: CommitView
   }
-})
+});
 
 router.beforeEach(function () {
   window.scrollTo(0, 0)
-})
+});
 
 router.redirect({
   '*': '/commits'
-})
+});
 
-router.start(App, '#app')
+router.start(App, '#app');

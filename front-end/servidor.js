@@ -15,4 +15,5 @@ app.use(`/code-review`, express.static(path.join(__dirname, 'dist')));
 app.use(`/static`, express.static(path.join(__dirname, 'dist', 'static')));
 app.use(`/code-review/vendor`, express.static(path.join(__dirname, 'vendor')));
 
+console.log(`Servidor executando na porta 5000!`);
 app.listen(5000);

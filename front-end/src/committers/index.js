@@ -1,9 +1,13 @@
 const imgInterrogacao = require('../assets/question_mark.png');
+import {CommitterEntity} from "../servicos/CommitterService";
 
 const committers = {
   commiterLogado: undefined,
   committers: {
-    'nada@erro.com': {email: 'nada@erro.com', name: 'Erro ao obter committers.', avatar_url: imgInterrogacao}
+    'nada@erro.com': {email: 'nada@erro.com', username: 'erro', name: 'Erro ao obter committers.', avatar_url: imgInterrogacao}
+  },
+  committerEntity: function (email) {
+      return new CommitterEntity(committers.committers[email]);
   }
 };
 
@@ -28,14 +32,14 @@ committers.get = (email) => {
   if (committers.committers[email]) {
     return committers.committers[email]
   }
-  return {email: email, name: email, avatar_url: imgInterrogacao}
+  return {email: email, username: email.replace(/@.*/g, ''), name: email, avatar_url: imgInterrogacao}
 };
 
 committers.testLogin = (component) => {
   if (!committers.commiterLogado) {
     let cookieLogado = component.$cookie.get('commiterLogado');
     if (cookieLogado) {
-      committers.commiterLogado = committers.committers[JSON.parse(cookieLogado).email]
+      committers.commiterLogado = committers.committerEntity(JSON.parse(cookieLogado).email)
     } else {
       component.$router.go('/login');
       return true
