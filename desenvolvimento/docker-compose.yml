@@ -3,6 +3,7 @@ services:
 
   couchdb:
     image: "couchdb"
+    restart: always
     environment:
       - COUCHDB_USER=root      # altere no node, abaixo, também
       - COUCHDB_PASSWORD=pass  # altere no node, abaixo, também
@@ -14,6 +15,7 @@ services:
      - code-review-network
   fauxton:
     image: 3apaxicom/fauxton
+    restart: always
     ports:
       - "8984:8000"
     links:
@@ -27,6 +29,7 @@ services:
 
   front-end-node:
     image: node:7
+    restart: always
     ports:
       - "5000:5000"
     networks:
@@ -54,6 +57,7 @@ services:
   # serve tanto o back-end quanto o front-end
   back-end-node:
     image: node:7
+    restart: always
     ports:
      - "8093:3000"
     links:
@@ -85,6 +89,7 @@ services:
 
   srv-codereview:
     build: ./nginx
+    restart: always
     ports:
         - "80:80"
     links:
