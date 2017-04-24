@@ -39,6 +39,9 @@ services:
   # Adicionar como webhook:
   # http://git/sti/sagas2/settings/integrations
   # http://srv-codereview/back-end-review/rpc/webhook
+  #
+  # Dispare manualmente usando $ curl -X POST http://srv-codereview/back-end-review/rpc/webhook
+  #
   # gitlab:
   #   image: gitlab/gitlab-ce
   #   ports:
