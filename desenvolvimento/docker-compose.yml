@@ -73,8 +73,8 @@ services:
       - devGITLAB_HOST_PRIVATE_TOKEN=iU_63HEeqBJG6gQXuQha
       - devGITLAB_HOST_PRIVATE_TOKEN_READ_USERS=iU_63HEeqBJG6gQXuQha
     volumes:
-     - ../back-end-node:/projeto
-    working_dir: /projeto
+     - ..:/fontes
+    working_dir: /fontes/back-end-node
     command: bash -c "npm install && npm run couchdb-setup && npm start"
 
   srv-codereview:
