@@ -1,6 +1,5 @@
 // executar isso num console com jQuery
 
-const privateToken = 'M3_6_x-z3HQEPc4Z4TYg';
 function criarUser(nome, username) {
     console.log('Criando username: ', username);
     let usuario = {
@@ -14,7 +13,7 @@ function criarUser(nome, username) {
         type: 'post',
         data: usuario,
         headers: {
-            "PRIVATE-TOKEN": privateToken
+            "PRIVATE-TOKEN": 'M3_6_x-z3HQEPc4Z4TYg'
         },
         dataType: 'json',
         success: function (data) {
