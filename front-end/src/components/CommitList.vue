@@ -32,7 +32,7 @@
         </div>
         <div class="col-md-7">
           <button v-on:click="exibirMeusTodos" class="btn btn-info" type="button" style="width: 100%" title="Clique para exibir seus TODOs (comentários que te mencionam) no GitLab.">
-            Comentários/Menções <span class="badge"></span>
+            Comentários/Menções <span class="badge">{{ qtdTodosPendentesDoUsuarioLogado }}</span>
           </button>
         </div>
       </div>
@@ -80,6 +80,7 @@ import store from '../store'
 import utils from '../utils'
 import committers from '../committers'
 import Committer from './Committer'
+import {CommitterService} from "../servicos/CommitterService";
 
 export default {
   components: {
@@ -109,6 +110,8 @@ export default {
 
       exibirUsuarioLogado: true,
       qtdCommitsPendentesDoUsuarioLogado: undefined,
+      qtdTodosPendentesDoUsuarioLogado: undefined,
+      qtdTodosPendentesDoUsuarioLogadoTimer: undefined,
 
       ocultarEspacosEmBranco: opcoesCommitList.ocultarEspacosEmBranco,
       diffLadoALado: opcoesCommitList.diffLadoALado,
@@ -134,20 +137,25 @@ export default {
               this.exibirUsuarioLogado = true;
           }, 500);
 
+          clearInterval(this.qtdTodosPendentesDoUsuarioLogadoTimer);
+          this.qtdTodosPendentesDoUsuarioLogadoTimer = setInterval(() => {
+              CommitterService.gitlabTodosDoUsuarioLogado().then(qtdTodosUsuarioLogado => {
+                  this.qtdTodosPendentesDoUsuarioLogado = qtdTodosUsuarioLogado;
+              });
+          }, 5000);
+
           this.carregarDadosPainelJenkins();
           this.carregarCommits().then(() => {
               if (to.query && to.query.scroll) {
                 const commitParaScroll = document.getElementById(to.query.scroll);
                 if (commitParaScroll) { // ele pode ter sumido da lista, se o cara revisou e tah filtrando revisados, por exemplo
-//                    commitParaScroll.scrollIntoView();
                     window.$('html, body, .layout-col_left').animate({
                         scrollTop: window.$(commitParaScroll).offset().top - 10
                     }, 2000, () => {
                         console.log('Done animating!');
                         let urlAtual = window.location.href;
-                        let newurl = urlAtual.replace(new RegExp("scroll=" + to.query.scroll, "g"), "").replace(/\?$/g, "");
-                        window.history.pushState({path: newurl}, '', newurl);
-
+                        let novaUrl = urlAtual.replace(new RegExp("scroll=" + to.query.scroll, "g"), "").replace(/\?$/g, "");
+                        window.history.pushState({path: novaUrl}, '', novaUrl);
                     });
                 }
               }

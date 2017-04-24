@@ -20,6 +20,28 @@ export class CommitterEntity {
 
 }
 
+export class CommitterService {
+
+    static gitlabTodosDoUsuarioLogado() {
+        return new Promise((resolve, reject) => {
+            window.$.ajax({
+                dataType: 'json',
+                url: `${window.env.GITLAB_PROTOCOL_HOST}/api/v4/todos`,
+                headers: {
+                    'PRIVATE-TOKEN': committers.commiterLogado.impersonationToken
+                },
+                success: todos => {
+                    resolve(todos.length);
+                },
+                error: (err) => {
+                    reject(err);
+                }
+            });
+        });
+    }
+
+}
+
 export class CommitService {
 
     static usuarioLogadoEstaNaListaDeRevisoresDoCommit(commit) {
