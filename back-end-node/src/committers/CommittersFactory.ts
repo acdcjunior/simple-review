@@ -55,6 +55,9 @@ export class CommittersFactory {
             committersDosUltimosCommits.forEach((committerEmail: Email) => {
                 promisesDeCommittersInseridos.push(
                     GitLabService.getUserByEmail(committerEmail).then((gitlabUser: GitLabUser) => {
+                        if (!gitlabUser) {
+                            throw new Error(`CommittersConfig: Commiter de email ${committerEmail.email} não foi encontrado no GitLab!`);
+                        }
                         return GitLabService.criarImpersonationToken(gitlabUser.id).then((gitlabImpersonationToken: GitLabImpersonationToken) => {
                             return sesol2Repository.insertIfNotExists(
                                 new Committer(gitlabUser, gitlabImpersonationToken)
