@@ -1,4 +1,5 @@
 import {Email} from "../geral/Email";
+import {arquivoProjeto} from "../geral/arquivoProjeto";
 
 declare let process: any;
 
@@ -18,8 +19,8 @@ if (require("os").hostname() === "delljr") {
 
 export class GitLabConfig {
 
-    static projectsUrl (perPage:number = 10) {
-        return `http://${host}/api/v4/projects/${projectId}/repository/commits/?ref_name=${projectBranch}&per_page=${perPage}`;
+    static projectsUrl (perPage:number = 10, projectBranch: string, since: string) {
+        return `http://${host}/api/v4/projects/${projectId}/repository/commits/?ref_name=${projectBranch}&per_page=${perPage}&since=${since}`;
     }
     static usersUrlByEmail(committerEmail: Email): string {
         return `http://${host}/api/v4/users/?search=${committerEmail.email}`;
@@ -52,7 +53,7 @@ console.log(`
     privateToken: ${tokenUsuarioComentador}
     tokenAdmin: ${tokenAdmin}
     
-    projectsUrl: ${GitLabConfig.projectsUrl()}
+    projectsUrl: ${GitLabConfig.projectsUrl(100, arquivoProjeto.branches[0], arquivoProjeto.dataCortePrimeiroCommit)}
     usersUrl: ${GitLabConfig.usersUrlByEmail(new Email('meu@email.com'))}
     commentsUrl: ${GitLabConfig.commentsUrl('sha1234')}
     ----------------------------------------------------

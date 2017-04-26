@@ -2,10 +2,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const GitLabConfig_1 = require("./GitLabConfig");
 const rest_1 = require("../infra/rest");
+const arquivoProjeto_1 = require("../geral/arquivoProjeto");
 const TEXTO_TOKEN_CRIADO_POR_CODEREVIEW = "Criado via CodeReview/GitLabService.criarImpersonationToken()";
 class GitLabService {
-    static getCommits(perPage = 10) {
-        return rest_1.rest("GET", GitLabConfig_1.GitLabConfig.projectsUrl(perPage), GitLabConfig_1.GitLabConfig.tokenAdmin);
+    static getCommits(perPage = 100) {
+        // TODO permitir mais de dois branches
+        return rest_1.rest("GET", GitLabConfig_1.GitLabConfig.projectsUrl(perPage, arquivoProjeto_1.arquivoProjeto.branches[0], arquivoProjeto_1.arquivoProjeto.dataCortePrimeiroCommit), GitLabConfig_1.GitLabConfig.tokenAdmin).then((commitsZero) => {
+            return rest_1.rest("GET", GitLabConfig_1.GitLabConfig.projectsUrl(perPage, arquivoProjeto_1.arquivoProjeto.branches[1], arquivoProjeto_1.arquivoProjeto.dataCortePrimeiroCommit), GitLabConfig_1.GitLabConfig.tokenAdmin).then((commitsUm) => {
+                return Promise.resolve(commitsZero.concat(commitsUm));
+            });
+        });
     }
     static getUserByEmail(committerEmail) {
         return rest_1.rest("GET", GitLabConfig_1.GitLabConfig.usersUrlByEmail(committerEmail), GitLabConfig_1.GitLabConfig.tokenAdmin).then(users => {
@@ -29,6 +35,14 @@ class GitLabService {
         }
         return rest_1.rest("POST", GitLabConfig_1.GitLabConfig.commentsUrl(commitSha), GitLabConfig_1.GitLabConfig.tokenUsuarioComentador, {
             note: comentario
+        }).then(naoSeiQualOTipo => {
+            console.log(`
+            
+            Resuldado da promise COMENTAR:
+            ${naoSeiQualOTipo}
+            
+            `);
+            return Promise.resolve();
         });
     }
     static criarImpersonationToken(user_id) {

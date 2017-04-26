@@ -1,19 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const fs = require("fs");
 const GitLabService_1 = require("../gitlab/GitLabService");
 const Sesol2Repository_1 = require("../geral/Sesol2Repository");
 const Committer_1 = require("./Committer");
 const Email_1 = require("../geral/Email");
-class CommitterConfigStruct {
-}
+const arquivoProjeto_1 = require("../geral/arquivoProjeto");
 class CommittersFactory {
     static carregarCommittersDoArquivo() {
-        console.log(`\n\nCommittersFactory: Iniciando carga dos committers do committers.json...`);
-        const arquivoCommitters = JSON.parse(fs.readFileSync('../config/committers.json', 'utf8'));
-        console.log(`\tCommittersFactory: Inserindo (se nao existirem) ${arquivoCommitters.committers.length} committers...`);
+        console.log(`\n\nCommittersFactory: Iniciando carga dos committers do projeto.json...`);
+        console.log(`\tCommittersFactory: Inserindo (se nao existirem) ${arquivoProjeto_1.arquivoProjeto.committers.length} committers...`);
         let promisesDeCommittersInseridos = [];
-        arquivoCommitters.committers.forEach((committer) => {
+        arquivoProjeto_1.arquivoProjeto.committers.forEach((committer) => {
             promisesDeCommittersInseridos.push(GitLabService_1.GitLabService.getUserByUsername(committer.username).then((gitlabUser) => {
                 if (!gitlabUser) {
                     throw new Error(`CommittersFactory: Commiter de username ${committer.username} não foi encontrado no GitLab!`);
@@ -25,7 +22,7 @@ class CommittersFactory {
         });
         return Promise.all(promisesDeCommittersInseridos).then((resultadosDasPromises) => {
             CommittersFactory.exibirQuantidadeQueJahExistia(resultadosDasPromises);
-            console.log(`CommittersFactory: committers.json processado por completo!\n`);
+            console.log(`CommittersFactory: projeto.json processado por completo!\n`);
             return Promise.resolve();
         });
     }

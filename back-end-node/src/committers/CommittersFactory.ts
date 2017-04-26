@@ -6,24 +6,16 @@ import {Committer} from "./Committer";
 import {Email} from "../geral/Email";
 import {GitLabCommit} from "../gitlab/GitLabCommit";
 import {GitLabImpersonationToken} from "../gitlab/GitLabImpersonationToken";
-
-class CommitterConfigStruct {
-    public username: string; // "alexandrevr",
-    public sexo: string; // "m",
-    public aliases: string[]; // ["alex", "alexandre"],
-    public quota: number; // 25
-}
+import {arquivoProjeto, CommitterConfigStruct} from "../geral/arquivoProjeto";
 
 export class CommittersFactory {
 
     static carregarCommittersDoArquivo() {
-        console.log(`\n\nCommittersFactory: Iniciando carga dos committers do committers.json...`);
-
-        const arquivoCommitters = JSON.parse(fs.readFileSync('../config/committers.json', 'utf8'));
-        console.log(`\tCommittersFactory: Inserindo (se nao existirem) ${arquivoCommitters.committers.length} committers...`);
+        console.log(`\n\nCommittersFactory: Iniciando carga dos committers do projeto.json...`);
+        console.log(`\tCommittersFactory: Inserindo (se nao existirem) ${arquivoProjeto.committers.length} committers...`);
 
         let promisesDeCommittersInseridos: Promise<string>[] = [];
-        arquivoCommitters.committers.forEach((committer: CommitterConfigStruct) => {
+        arquivoProjeto.committers.forEach((committer: CommitterConfigStruct) => {
             promisesDeCommittersInseridos.push(
                 GitLabService.getUserByUsername(committer.username).then((gitlabUser: GitLabUser) => {
                     if (!gitlabUser) {
@@ -39,7 +31,7 @@ export class CommittersFactory {
         });
         return Promise.all(promisesDeCommittersInseridos).then((resultadosDasPromises: string[]) => {
             CommittersFactory.exibirQuantidadeQueJahExistia(resultadosDasPromises);
-            console.log(`CommittersFactory: committers.json processado por completo!\n`);
+            console.log(`CommittersFactory: projeto.json processado por completo!\n`);
             return Promise.resolve();
         });
     }

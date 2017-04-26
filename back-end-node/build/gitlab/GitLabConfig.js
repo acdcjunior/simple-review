@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Email_1 = require("../geral/Email");
+const arquivoProjeto_1 = require("../geral/arquivoProjeto");
 let host = process.env.GITLAB_HOST;
 let projectId = process.env.GITLAB_HOST_PROJECT_ID;
 let projectBranch = process.env.GITLAB_HOST_PROJECT_BRANCH;
@@ -14,8 +15,8 @@ if (require("os").hostname() === "delljr") {
     tokenAdmin = 'iU_63HEeqBJG6gQXuQha';
 }
 class GitLabConfig {
-    static projectsUrl(perPage = 10) {
-        return `http://${host}/api/v4/projects/${projectId}/repository/commits/?ref_name=${projectBranch}&per_page=${perPage}`;
+    static projectsUrl(perPage = 10, projectBranch, since) {
+        return `http://${host}/api/v4/projects/${projectId}/repository/commits/?ref_name=${projectBranch}&per_page=${perPage}&since=${since}`;
     }
     static usersUrlByEmail(committerEmail) {
         return `http://${host}/api/v4/users/?search=${committerEmail.email}`;
@@ -47,7 +48,7 @@ console.log(`
     privateToken: ${tokenUsuarioComentador}
     tokenAdmin: ${tokenAdmin}
     
-    projectsUrl: ${GitLabConfig.projectsUrl()}
+    projectsUrl: ${GitLabConfig.projectsUrl(100, arquivoProjeto_1.arquivoProjeto.branches[0], arquivoProjeto_1.arquivoProjeto.dataCortePrimeiroCommit)}
     usersUrl: ${GitLabConfig.usersUrlByEmail(new Email_1.Email('meu@email.com'))}
     commentsUrl: ${GitLabConfig.commentsUrl('sha1234')}
     ----------------------------------------------------

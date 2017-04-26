@@ -1,4 +1,12 @@
 {
+  "dataCortePrimeiroCommit": "2017-04-20T18:01:38.000-03:00",
+
+  "TODO--atualmente o codigo soh permite dois branches abaixo": "TODO",
+  "branches":[
+    "master",
+    "desenvolvimento"
+  ],
+
   "committers": [
     {
       "username": "alexandrevr",

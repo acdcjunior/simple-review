@@ -4,15 +4,22 @@ import {GitLabUser} from "./GitLabUser";
 import {GitLabCommit} from "./GitLabCommit";
 import {Email} from "../geral/Email";
 import {GitLabImpersonationToken} from "./GitLabImpersonationToken";
+import {arquivoProjeto} from "../geral/arquivoProjeto";
 
 const TEXTO_TOKEN_CRIADO_POR_CODEREVIEW = "Criado via CodeReview/GitLabService.criarImpersonationToken()";
+
 
 export class GitLabService {
 
     public static desabilitarComentariosNoGitLab = false;
 
-    static getCommits(perPage: number = 10): Promise<GitLabCommit[]> {
-        return rest("GET", GitLabConfig.projectsUrl(perPage), GitLabConfig.tokenAdmin);
+    static getCommits(perPage: number = 100): Promise<GitLabCommit[]> {
+        // TODO permitir mais de dois branches
+        return rest("GET", GitLabConfig.projectsUrl(perPage, arquivoProjeto.branches[0], arquivoProjeto.dataCortePrimeiroCommit), GitLabConfig.tokenAdmin).then((commitsZero: GitLabCommit[]) => {
+            return rest("GET", GitLabConfig.projectsUrl(perPage, arquivoProjeto.branches[1], arquivoProjeto.dataCortePrimeiroCommit), GitLabConfig.tokenAdmin).then((commitsUm: GitLabCommit[]) => {
+                return Promise.resolve(commitsZero.concat(commitsUm))
+            });
+        });
     }
 
     static getUserByEmail(committerEmail: Email): Promise<GitLabUser> {
@@ -39,6 +46,14 @@ export class GitLabService {
         }
         return rest("POST", GitLabConfig.commentsUrl(commitSha), GitLabConfig.tokenUsuarioComentador, {
             note: comentario
+        }).then(naoSeiQualOTipo => {
+            console.log(`
+            
+            Resuldado da promise COMENTAR:
+            ${naoSeiQualOTipo}
+            
+            `);
+            return Promise.resolve();
         });
     }
 
