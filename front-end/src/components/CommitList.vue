@@ -32,7 +32,7 @@
         </div>
         <div class="col-md-7">
           <button v-on:click="exibirMeusTodos" class="btn btn-info" type="button" style="width: 100%" title="Clique para exibir seus TODOs (comentários que te mencionam) no GitLab.">
-            Comentários/Menções <span class="badge">{{ qtdTodosPendentesDoUsuarioLogado }}</span>
+            Menções <span class="badge">{{ qtdTodosPendentesDoUsuarioLogado }}</span>
           </button>
         </div>
       </div>

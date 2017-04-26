@@ -62,7 +62,7 @@
 }
 .layout-col_left {
     background-color: #f4f4f4;
-    width:21.5%;
+    width:22.5%;
     position:absolute;
     left:0;top:0;
     bottom:0;
@@ -71,7 +71,7 @@
     overflow-y: scroll;
 }
 .layout-col_right {
-    margin-left:21.5%;
+    margin-left:22.5%;
     height: 100%;
 }
 
