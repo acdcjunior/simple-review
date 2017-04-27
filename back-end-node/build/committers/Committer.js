@@ -32,6 +32,7 @@ class Committer extends Sesol2_1.Sesol2 {
     }
     static committerInvalido(username) {
         const gitLabUser = new GitLabUser_1.GitLabUser();
+        gitLabUser.email = username;
         gitLabUser.username = username;
         return new Committer(gitLabUser, null, [], 0, Committer.COMMITTER_INVALIDO);
     }

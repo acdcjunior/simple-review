@@ -53,6 +53,7 @@ export class Committer extends Sesol2 {
     private static readonly COMMITTER_INVALIDO = 'committer-invalido';
     public static committerInvalido(username): Committer {
         const gitLabUser = new GitLabUser();
+        gitLabUser.email = username;
         gitLabUser.username = username;
         return new Committer(gitLabUser, null, [], 0, Committer.COMMITTER_INVALIDO);
     }
