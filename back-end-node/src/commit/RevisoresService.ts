@@ -19,9 +19,12 @@ export class RevisoresService {
             console.log(`\n\nRevisoresService: Atribuindo Revisores...`);
             const tabelaProporcoesDeCadaRevisor = new TabelaProporcoesDeCadaRevisor(committers);
 
+            console.log(`\tRevisoresService: TabelaProporcoesDeCadaRevisor construida`);
             return CommitRepository.findAllCommits().then((commits: Commit[]) => {
+                console.log(`\tRevisoresService: Commits encontrados (${commits.length})`);
                 tabelaProporcoesDeCadaRevisor.atualizarContagemComRevisoresDosCommits(commits);
 
+                console.log(`\tRevisoresService: atualizarContagemComRevisoresDosCommits() feito`);
                 const commitsSemRevisores = commits.filter(commit => commit.revisores.length === 0);
                 console.log(`RevisoresService: Commits sem revisores encontrados: ${commitsSemRevisores.length}`);
 
@@ -137,6 +140,7 @@ class TabelaProporcoesDeCadaRevisor {
 
     atualizarContagemComRevisoresDoCommit(commit: Commit) {
         commit.revisores.forEach((emailRevisor: string) => {
+            console.log(`Incrementando para email: ${emailRevisor}: ${this.committersHash[emailRevisor]}`);
             this.incrementarContagemDoRevisor(this.committersHash[emailRevisor]);
         })
     }
