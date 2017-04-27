@@ -27,13 +27,16 @@
       <committer v-if="exibirUsuarioLogado" :committer-email="logado().email"></committer>
 
       <div style="margin-top: 5px;">
-        <div class="col-md-5">
+        <div class="col-md-12">
           <button v-on:click="exibirMinhasRevisoesPendentes" class="btn btn-info" type="button" title="Você tem {{ qtdCommitsPendentesDoUsuarioLogado }} indicações de revisão pendentes.">
             Revisões <span class="badge">{{ qtdCommitsPendentesDoUsuarioLogado }}</span>
           </button>
           <button v-on:click="exibirMeusTodos" class="btn btn-info" type="button" title="Clique para exibir seus TODOs (comentários que te mencionam) no GitLab.">
             Menções <span class="badge">{{ qtdTodosPendentesDoUsuarioLogado }}</span>
           </button>
+          <a href="https://trello.com/b/ty9DwoOK/sprint" class="btn btn-info" target="_blank" title="Clique para abrir o Trello Sesol-2 (outra aba)">
+            Trello
+          </a>
         </div>
       </div>
     </div>
