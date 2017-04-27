@@ -16,8 +16,10 @@
       </div>
       <h2 class="page-header">
         Sesol-2
-        UT: <a href="http://jenkins/view/Sesol-2/job/sagas2.dese.unit/"><img id="ut" src="../assets/question_mark.png" class="avatar"></a>
-        IT: <a href="http://jenkins/view/Sesol-2/job/sagas2.dese.integ/"><img id="it" src="../assets/question_mark.png" class="avatar"></a>
+        <a href="http://jenkins/view/Sesol-2/job/sagas2.pipeline/">
+            <img src="http://jenkins/static/9c3ef1de/images/headshot.png" style="height: 25px; margin: 0 0 8px 10px;">
+            <img id="jenkins" src="../assets/question_mark.png" class="avatar" style="height: 25px;width: 25px;margin-bottom: 8px;">
+        </a>
       </h2>
     </div>
 
@@ -181,11 +183,8 @@ export default {
         return committers.commiterLogado;
     },
     carregarDadosPainelJenkins() {
-        window.$.getJSON(window.env.BACK_END_NODE + '/jenkins/ut', function (data) {
-            window.$('ut').removeClass('avatar').attr('src', 'http://jenkins/static/48484716/images/32x32/' + data.color + '.gif')
-        });
-        window.$.getJSON(window.env.BACK_END_NODE + '/jenkins/it', function (data) {
-            window.$('it').removeClass('avatar').attr('src', 'http://jenkins/static/48484716/images/32x32/' + data.color + '.gif')
+        window.$.getJSON(window.env.BACK_END_NODE + '/jenkins/pipeline', function (cor) {
+            window.$('#jenkins').attr('src', 'http://jenkins/static/48484716/images/32x32/' + cor + '.gif')
         });
     },
     exibirMinhasRevisoesPendentes() {
