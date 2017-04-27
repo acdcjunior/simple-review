@@ -26,12 +26,10 @@
 
       <div style="margin-top: 5px;">
         <div class="col-md-5">
-          <button v-on:click="exibirMinhasRevisoesPendentes" class="btn btn-info" type="button" style="width: 100%" title="Você tem {{ qtdCommitsPendentesDoUsuarioLogado }} indicações de revisão pendentes.">
+          <button v-on:click="exibirMinhasRevisoesPendentes" class="btn btn-info" type="button" title="Você tem {{ qtdCommitsPendentesDoUsuarioLogado }} indicações de revisão pendentes.">
             Revisões <span class="badge">{{ qtdCommitsPendentesDoUsuarioLogado }}</span>
           </button>
-        </div>
-        <div class="col-md-7">
-          <button v-on:click="exibirMeusTodos" class="btn btn-info" type="button" style="width: 100%" title="Clique para exibir seus TODOs (comentários que te mencionam) no GitLab.">
+          <button v-on:click="exibirMeusTodos" class="btn btn-info" type="button" title="Clique para exibir seus TODOs (comentários que te mencionam) no GitLab.">
             Menções <span class="badge">{{ qtdTodosPendentesDoUsuarioLogado }}</span>
           </button>
         </div>
@@ -42,7 +40,7 @@
       <hr>
       <label style="width: 100%">
         Exibir somente commits realizados por:
-        <select v-model="exibirSomenteCommitsEfetuadosPor" v-on:change="carregarCommits" class="form-control" style="display: inline-block; width: 85%">
+        <select v-model="exibirSomenteCommitsEfetuadosPor" v-on:change="carregarCommits" class="form-control" style="display: inline-block; width: 80%">
         <option v-for="committer in committers" v-bind:value="committer.email">
           {{ committer.name }}
         </option>
@@ -51,10 +49,10 @@
       </label>
     </div>
     <div class="col-md-12">
-      <label><input type="checkbox" v-model="exibirSomenteCommitsEmQueSouRevisor" v-on:change="carregarCommits"> Exibir somente commits dos quais sou revisor(a)</label>
+      <label><input type="checkbox" v-model="exibirSomenteCommitsEmQueSouRevisor" v-on:change="carregarCommits"> Somente commits dos quais sou revisor(a)</label>
     </div>
     <div class="col-md-12">
-      <label><input type="checkbox" v-model="exibirSomenteCommitsNaoRevisados" v-on:change="carregarCommits"> Exibir somente commits não revisados por mim</label>
+      <label><input type="checkbox" v-model="exibirSomenteCommitsNaoRevisados" v-on:change="carregarCommits"> Somente commits não revisados por mim</label>
       <br>
       Encontrados: {{ (commits || []).length }}
       <hr>
