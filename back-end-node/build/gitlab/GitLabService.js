@@ -39,7 +39,7 @@ class GitLabService {
             console.log(`
             
             Resuldado da promise COMENTAR:
-            ${naoSeiQualOTipo}
+            ${JSON.stringify(naoSeiQualOTipo, null, '\t')}
             
             `);
             return Promise.resolve();

@@ -174,7 +174,7 @@ function assertJson(commits) {
                     data: removerFinal(new Date().toISOString()),
                     revisor: "nao-terah-revisor@srv-codereview.example.com",
                     sexoRevisor: undefined,
-                    tipoRevisao: "sem-revisao"
+                    tipoRevisao: "sem revisão"
                 }],
             historico: ["Commit não terá revisor: commit de merge sem conflito."]
         }

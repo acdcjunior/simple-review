@@ -63,13 +63,14 @@ export class Commit extends Sesol2 {
         return this.incluirRevisor(revisor, `Revisor${revisor.vazioOuA()} ${revisor.mencao()} atribuíd${revisor.oOuA()} automaticamente.`);
     }
 
+    // este email estah hardcoded na committers do front-end
     private static readonly EMAIL_NAO_TERAH_REVISOR: string = 'nao-terah-revisor@srv-codereview.tcu.gov.br';
     indicarCommitNaoTerahRevisor(razao: string): Promise<void> {
         this.revisoes.push({
             revisor: Commit.EMAIL_NAO_TERAH_REVISOR,
             sexoRevisor: undefined,
             data: new Date().toISOString(),
-            tipoRevisao: "sem-revisao"
+            tipoRevisao: "sem revisão"
         });
         return this.incluirRevisor({email: Commit.EMAIL_NAO_TERAH_REVISOR}, `Commit não terá revisor: ${razao}.`);
     }
