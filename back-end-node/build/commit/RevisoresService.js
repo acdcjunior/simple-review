@@ -116,7 +116,8 @@ class TabelaProporcoesDeCadaRevisor {
     }
     atualizarContagemComRevisoresDoCommit(commit) {
         commit.revisores.forEach((emailRevisor) => {
-            console.log(`Incrementando para email: ${emailRevisor}: ${this.committersHash[emailRevisor]}`);
+            console.log(`Incrementando para email: ${emailRevisor}: `, this.committersHash[emailRevisor]);
+            console.dir(this.committersHash);
             this.incrementarContagemDoRevisor(this.committersHash[emailRevisor]);
         });
     }
