@@ -6,7 +6,7 @@
     "start": "node ./bin/www",
     "webhook": "node ./build/codereview/up.js",
     "couchdb-setup": "node ./build/infra/couch-install/couchDbSetup.js",
-    "test": "./node_modules/.bin/mocha src/**/*Test.js --reporter spec"
+    "test": "./node_modules/.bin/mocha src/**/*Test.ts --require ts-node/register --reporter spec"
   },
   "dependencies": {
     "@types/bluebird": "^3.5.2",

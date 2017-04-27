@@ -12,7 +12,7 @@ describe("GitLabService", function () {
         return user.then((x) => console.log('ok', x)).catch((x) => console.log('err', x));
     });
 
-    it("criarImpersonationToken", function () {
+    xit("criarImpersonationToken", function () {
         return GitLabService.criarImpersonationToken(20).then(retorno => {
             console.log('retorno', retorno);
             return Promise.resolve('ok!');

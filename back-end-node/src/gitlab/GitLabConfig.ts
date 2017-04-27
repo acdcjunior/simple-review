@@ -16,6 +16,13 @@ if (require("os").hostname() === "delljr") {
     tokenUsuarioComentador = 'iU_63HEeqBJG6gQXuQha';
     tokenAdmin = 'iU_63HEeqBJG6gQXuQha';
 }
+if (require("os").hostname() === "E-098571") {
+    host = 'git';
+    projectId = 123;
+    projectBranch = 'desenvolvimento';
+    tokenUsuarioComentador = 'x';
+    tokenAdmin = 'yj2--5cKKCSqaDRoND7N';
+}
 
 export class GitLabConfig {
 
