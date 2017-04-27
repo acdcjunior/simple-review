@@ -116,6 +116,8 @@ export default {
       qtdTodosPendentesDoUsuarioLogado: undefined,
       qtdTodosPendentesDoUsuarioLogadoTimer: undefined,
 
+      painelJenkinsTimer: undefined,
+
       ocultarEspacosEmBranco: opcoesCommitList.ocultarEspacosEmBranco,
       diffLadoALado: opcoesCommitList.diffLadoALado,
       exibirSomenteCommitsEmQueSouRevisor: opcoesCommitList.exibirSomenteCommitsEmQueSouRevisor,
@@ -186,9 +188,12 @@ export default {
         return committers.commiterLogado;
     },
     carregarDadosPainelJenkins() {
-        window.$.getJSON(window.env.BACK_END_NODE + '/jenkins/pipeline', function (data) {
-            window.$('#jenkins').attr('src', 'http://jenkins/static/48484716/images/32x32/' + data.color + '.gif')
-        });
+        clearInterval(this.painelJenkinsTimer);
+        this.painelJenkinsTimer = setInterval(() => {
+            window.$.getJSON(window.env.BACK_END_NODE + '/jenkins/pipeline', function (data) {
+                window.$('#jenkins').attr('src', 'http://jenkins/static/48484716/images/32x32/' + data.color + '.gif')
+            });
+        }, 15 * 1000);
     },
     exibirMinhasRevisoesPendentes() {
         this.exibirSomenteCommitsEmQueSouRevisor = true;
