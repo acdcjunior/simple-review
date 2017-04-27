@@ -75,7 +75,10 @@ export class Commit extends Sesol2 {
         return this.incluirRevisor({email: Commit.EMAIL_NAO_TERAH_REVISOR}, `Commit não terá revisor: ${razao}.`);
     }
 
-    incluirRevisor(revisor: {email}, msg: string): Promise<void> {
+    private incluirRevisor(revisor: {email}, msg: string): Promise<void> {
+        if (!revisor) {
+            throw new Error("Revisor undefined: "+JSON.stringify(revisor, null, '\t'));
+        }
         this.revisores.push(revisor.email);
         this.comentarNoGitLab(msg);
         this.incluirHistorico(msg);
