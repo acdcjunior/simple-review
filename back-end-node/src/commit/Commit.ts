@@ -64,7 +64,7 @@ export class Commit extends Sesol2 {
     }
 
     // este email estah hardcoded na committers do front-end
-    private static readonly EMAIL_NAO_TERAH_REVISOR: string = 'nao-terah-revisor@srv-codereview.tcu.gov.br';
+    public static readonly EMAIL_NAO_TERAH_REVISOR: string = 'nao-terah-revisor@srv-codereview.tcu.gov.br';
     indicarCommitNaoTerahRevisor(razao: string): Promise<void> {
         this.revisoes.push({
             revisor: Commit.EMAIL_NAO_TERAH_REVISOR,
