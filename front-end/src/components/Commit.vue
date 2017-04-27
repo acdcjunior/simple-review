@@ -14,7 +14,7 @@
           Criado {{ timeAgo(commit.created_at) }}.
 
           <span v-if="!commitRevisado()" style="font-size: smaller">Com revisões pendentes.</span>
-          <span v-else style="font-weight: bold">Revisado {{ timeAgoRevisado() }}.</span>
+          <span v-else style="font-weight: bold">{{ revisadoHaTempos() }}.</span>
         </p>
       </div>
     </div>
@@ -45,8 +45,11 @@ export default {
     timeAgo (data) {
       return utils.timeago(data)
     },
-    timeAgoRevisado () {
-      return utils.timeago(this.commit.revisoes[this.commit.revisoes.length - 1].data)
+    revisadoHaTempos() {
+      if (this.commit.revisores.length === 0) {
+          return 'Sem revisores'
+      }
+      return 'Revisado ' + utils.timeago(this.commit.revisoes[this.commit.revisoes.length - 1].data)
     },
     gitlabLink () {
       return utils.gitlabLink(this.commit.sha)
