@@ -85,6 +85,10 @@
       <a href="http://git/sti/sagas2/blob/desenvolvimento/CONTRIBUTING.md" target="_blank">Clique aqui para abrir a <strong>Checklist</strong> (em outra janela).</a>
     </div>
 
+    <div class="col-md-12" v-if="['antonio.junior@tcu.gov.br', 'alexandrevr@tcu.gov.br', 'marcosps@tcu.gov.br'].indexOf(committerLogado().email) !== -1">
+      <a href="http://srv-codereview:5984/_utils/fauxton/#/database/sesol2/{{ commit.sha }}" target="_blank" class="btn btn-info"><span class="glyphicon glyphicon-cog"></span></a>
+    </div>
+
     <div class="col-md-12"><br>&nbsp;<br>&nbsp;<br></div>
   </div>
   </div>
