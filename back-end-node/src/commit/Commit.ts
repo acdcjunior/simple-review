@@ -3,6 +3,13 @@ import {Email} from "../geral/Email";
 import {GitLabService} from "../gitlab/GitLabService";
 import {Committer} from "../committers/Committer";
 
+class RevisaoCommit {
+    public readonly revisor: string; // "antonio.junior@tcu.gov.br"
+    public readonly sexoRevisor: string; // "m"
+    public readonly data: string; // "2017-04-25T23:06:31.702Z"
+    public readonly tipoRevisao: string; // "par"
+}
+
 export class Commit extends Sesol2 {
 
     public static readonly COMMIT_TYPE = 'commit';
@@ -12,9 +19,8 @@ export class Commit extends Sesol2 {
     public readonly message: string;
     public readonly author_email: string;
     public readonly created_at: string;
-    public revisado: boolean;
     public readonly revisores: any[];
-    public readonly revisoes: any[];
+    public readonly revisoes: RevisaoCommit[];
     public readonly historico: any[];
 
     constructor(sha, title, message, author_email, created_at) {
@@ -25,7 +31,6 @@ export class Commit extends Sesol2 {
         this.message = message;
         this.author_email = Email.corrigirEmail(author_email);
         this.created_at = created_at;
-        this.revisado = false;
         this.revisores = [];
         this.revisoes = [];
         this.historico = [];
@@ -58,7 +63,18 @@ export class Commit extends Sesol2 {
         return this.incluirRevisor(revisor, `Revisor${revisor.vazioOuA()} ${revisor.mencao()} atribuíd${revisor.oOuA()} automaticamente.`);
     }
 
-    incluirRevisor(revisor: Committer, msg: string): Promise<void> {
+    private static readonly EMAIL_NAO_TERAH_REVISOR: string = 'nao-terah-revisor@srv-codereview.tcu.gov.br';
+    indicarCommitNaoTerahRevisor(razao: string): Promise<void> {
+        this.revisoes.push({
+            revisor: Commit.EMAIL_NAO_TERAH_REVISOR,
+            sexoRevisor: undefined,
+            data: new Date().toISOString(),
+            tipoRevisao: "sem-revisao"
+        });
+        return this.incluirRevisor({email: Commit.EMAIL_NAO_TERAH_REVISOR}, `Commit não terá revisor: ${razao}.`);
+    }
+
+    incluirRevisor(revisor: {email}, msg: string): Promise<void> {
         this.revisores.push(revisor.email);
         this.comentarNoGitLab(msg);
         this.incluirHistorico(msg);
@@ -89,6 +105,11 @@ export class Commit extends Sesol2 {
 
     todosOsRevisoresSaoEstagiarios() {
         return this.revisores.filter(Commit.isEmailDeEstagiario).length === this.revisores.length;
+    }
+
+    private static regexMensagemMerge: RegExp = /^Merge( remote-tracking)? branch '[\w\/]+'( of http.*?\.git)? into [\w\/]+[\s\S]*$/;
+    isCommitDeMergeSemConflito() {
+        return Commit.regexMensagemMerge.test(this.message) && this.message.indexOf('Conflicts:') === -1;
     }
 
 }

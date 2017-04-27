@@ -3,6 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Sesol2_1 = require("../geral/Sesol2");
 const Email_1 = require("../geral/Email");
 const GitLabService_1 = require("../gitlab/GitLabService");
+class RevisaoCommit {
+}
 class Commit extends Sesol2_1.Sesol2 {
     constructor(sha, title, message, author_email, created_at) {
         super(sha, Commit.COMMIT_TYPE, title);
@@ -11,7 +13,6 @@ class Commit extends Sesol2_1.Sesol2 {
         this.message = message;
         this.author_email = Email_1.Email.corrigirEmail(author_email);
         this.created_at = created_at;
-        this.revisado = false;
         this.revisores = [];
         this.revisoes = [];
         this.historico = [];
@@ -40,6 +41,15 @@ class Commit extends Sesol2_1.Sesol2 {
     indicarRevisorViaSistema(revisor) {
         return this.incluirRevisor(revisor, `Revisor${revisor.vazioOuA()} ${revisor.mencao()} atribuíd${revisor.oOuA()} automaticamente.`);
     }
+    indicarCommitNaoTerahRevisor(razao) {
+        this.revisoes.push({
+            revisor: Commit.EMAIL_NAO_TERAH_REVISOR,
+            sexoRevisor: undefined,
+            data: new Date().toISOString(),
+            tipoRevisao: "sem-revisao"
+        });
+        return this.incluirRevisor({ email: Commit.EMAIL_NAO_TERAH_REVISOR }, `Commit não terá revisor: ${razao}.`);
+    }
     incluirRevisor(revisor, msg) {
         this.revisores.push(revisor.email);
         this.comentarNoGitLab(msg);
@@ -66,6 +76,11 @@ class Commit extends Sesol2_1.Sesol2 {
     todosOsRevisoresSaoEstagiarios() {
         return this.revisores.filter(Commit.isEmailDeEstagiario).length === this.revisores.length;
     }
+    isCommitDeMergeSemConflito() {
+        return Commit.regexMensagemMerge.test(this.message) && this.message.indexOf('Conflicts:') === -1;
+    }
 }
 Commit.COMMIT_TYPE = 'commit';
+Commit.EMAIL_NAO_TERAH_REVISOR = 'nao-terah-revisor@srv-codereview.tcu.gov.br';
+Commit.regexMensagemMerge = /^Merge( remote-tracking)? branch '[\w\/]+'( of http.*?\.git)? into [\w\/]+[\s\S]*$/;
 exports.Commit = Commit;

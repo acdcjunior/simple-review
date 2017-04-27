@@ -48,6 +48,10 @@ function atribuirRevisoresAosCommits(commitsSemRevisor: Commit[], tabelaProporco
 
 function atribuirRevisoresAoCommit(commitSemRevisor: Commit, tabelaProporcoesDeCadaRevisor: TabelaProporcoesDeCadaRevisor): Promise<any> {
 
+    if (commitSemRevisor.isCommitDeMergeSemConflito()) {
+        return commitSemRevisor.indicarCommitNaoTerahRevisor('commit de merge sem conflito');
+    }
+
     return incluirRevisoresMencionadosNaMensagem(commitSemRevisor).then(() => {
 
         tabelaProporcoesDeCadaRevisor.atualizarContagemComRevisoresDoCommit(commitSemRevisor);

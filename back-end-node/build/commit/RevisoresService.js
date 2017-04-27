@@ -39,6 +39,9 @@ function atribuirRevisoresAosCommits(commitsSemRevisor, tabelaProporcoesDeCadaRe
     });
 }
 function atribuirRevisoresAoCommit(commitSemRevisor, tabelaProporcoesDeCadaRevisor) {
+    if (commitSemRevisor.isCommitDeMergeSemConflito()) {
+        return commitSemRevisor.indicarCommitNaoTerahRevisor('commit de merge sem conflito');
+    }
     return incluirRevisoresMencionadosNaMensagem(commitSemRevisor).then(() => {
         tabelaProporcoesDeCadaRevisor.atualizarContagemComRevisoresDoCommit(commitSemRevisor);
         return incluirRevisorEstagiarioEmCommitDeEstagiario(commitSemRevisor, tabelaProporcoesDeCadaRevisor).then(() => {

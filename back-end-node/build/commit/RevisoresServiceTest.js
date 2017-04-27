@@ -66,7 +66,8 @@ const commits = [
     /* 14 */ new Commit_1.Commit('sha14', 't14', '14\n @leliakn', committers[7].email, ''),
     /* 15 */ new Commit_1.Commit('sha15', 't15', '15\n @lelia', committers[1].email, ''),
     /* 16 */ new Commit_1.Commit('sha16', 't16', '16\n @invalido', committers[2].email, ''),
-    /* 17 */ new Commit_1.Commit('sha17', 't17', '17\n @lelia @antonio . @marcos @afonso', committers[5].email, '')
+    /* 17 */ new Commit_1.Commit('sha17', 't17', '17\n @lelia @antonio . @marcos @afonso', committers[5].email, ''),
+    /* 18 */ new Commit_1.Commit('sha18', 't18', `Merge branch 'x' into x`, committers[1].email, ''),
 ];
 CommitRepository_1.CommitRepository.findAllCommits = () => Promise.resolve(commits);
 describe("RevisoresService suite", function () {
@@ -132,37 +133,50 @@ function assertJson(commits) {
         delete c.sha;
         delete c.title;
         delete c.created_at;
-        delete c.revisado;
-        delete c.revisoes;
     });
+    const removerFinal = (data) => data.replace(/:\d\d\.\d\d\dZ$/, ':SS.MMMZ');
+    commits[18].revisoes[0].data = removerFinal(commits[18].revisoes[0].data);
     let expected = [
-        { message: " 0\n ", author_email: "antonio.junior@example.com", revisores: ["alexandrevr@example.com"], historico: [] },
-        { message: " 1\n ", author_email: "antonio.junior@example.com", revisores: ["carlanm@example.com"], historico: [] },
-        { message: " 2\n ", author_email: "antonio.junior@example.com", revisores: ["marcosps@example.com"], historico: ["Revisor @marcosps [`Marcos Paulo Santos da Silva (MARCOSPS)`] atribuído automaticamente."] },
-        { message: " 3\n ", author_email: "x04992831131@example.com", revisores: ["x05068388213@example.com", "antonio.junior@example.com"], historico: ["Revisora @x05068388213 [`Rebeca Andrade Silva (X05068388213)`] atribuída automaticamente.", "Revisor @carvalhoj [`Antonio C. de Carvalho Junior (CARVALHOJ)`] atribuído automaticamente."] },
-        { message: " 4\n ", author_email: "antonio.junior@example.com", revisores: ["regiano@example.com"], historico: ["Revisor @regiano [`Regiano da Silva Santos (REGIANO)`] atribuído automaticamente."] },
-        { message: " 5\n ", author_email: "x05068388213@example.com", revisores: ["x04992831131@example.com", "antonio.junior@example.com"], historico: ["Revisor @x04992831131 [`Gabriel Mesquita de Araujo (X04992831131)`] atribuído automaticamente.", "Revisor @carvalhoj [`Antonio C. de Carvalho Junior (CARVALHOJ)`] atribuído automaticamente."] },
-        { message: " 6\n ", author_email: "antonio.junior@example.com", revisores: ["alexandrevr@example.com"], historico: ["Revisor @alexandrevr [`Alexandre Silva Santos (ALEXANDREVR)`] atribuído automaticamente."] },
-        { message: " 7\n ", author_email: "x05499033332@example.com", revisores: ["x05929988846@example.com", "marcosps@example.com"], historico: ["Revisor(a) @x05929988846 [`Bruno Silva Santos Souza (X05929988846)`] atribuído(a) automaticamente.", "Revisor @marcosps [`Marcos Paulo Santos da Silva (MARCOSPS)`] atribuído automaticamente."] },
-        { message: " 8\n ", author_email: "antonio.junior@example.com", revisores: ["alexandrevr@example.com"], historico: ["Revisor @alexandrevr [`Alexandre Silva Santos (ALEXANDREVR)`] atribuído automaticamente."] },
-        { message: " 9\n ", author_email: "x05929988846@example.com", revisores: ["x05499033332@example.com", "antonio.junior@example.com"], historico: ["Revisor @x05499033332 [`Afonso Santos de Souza Silva (X05499033332)`] atribuído automaticamente.", "Revisor @carvalhoj [`Antonio C. de Carvalho Junior (CARVALHOJ)`] atribuído automaticamente."] },
-        { message: "10\n ", author_email: "antonio.junior@example.com", revisores: ["marcosps@example.com"], historico: ["Revisor @marcosps [`Marcos Paulo Santos da Silva (MARCOSPS)`] atribuído automaticamente."] },
-        { message: "11\n ", author_email: "antonio.junior@example.com", revisores: ["regiano@example.com"], historico: ["Revisor @regiano [`Regiano da Silva Santos (REGIANO)`] atribuído automaticamente."] },
-        { message: "12\n ", author_email: "antonio.junior@example.com", revisores: ["alexandrevr@example.com"], historico: ["Revisor @alexandrevr [`Alexandre Silva Santos (ALEXANDREVR)`] atribuído automaticamente."] },
-        { message: "13\n @carlanm", author_email: "marcosps@example.com", revisores: ["carlanm@example.com"], historico: ["Revisora @CarlaNM [`Carla Souza (CARLANM)`] atribuída via menção em mensagem de commit."] },
-        { message: "14\n @leliakn", author_email: "x04992831131@example.com", revisores: ["leliakn@example.com", "x05068388213@example.com"], historico: ["Revisora @LELIAKN [`Lelia Silva (LELIAKN)`] atribuída via menção em mensagem de commit.", "Revisora @x05068388213 [`Rebeca Andrade Silva (X05068388213)`] atribuída automaticamente."] },
-        { message: "15\n @lelia", author_email: "antonio.junior@example.com", revisores: ["leliakn@example.com"], historico: ["Revisora @LELIAKN [`Lelia Silva (LELIAKN)`] atribuída via menção em mensagem de commit."] },
-        { message: "16\n @invalido", author_email: "marcosps@example.com", revisores: ["antonio.junior@example.com"], historico: ["Revisor(a) @invalido mencionado(a), mas não reconhecido(a) na base de usuários. Menção ignorada.", "Revisor @carvalhoj [`Antonio C. de Carvalho Junior (CARVALHOJ)`] atribuído automaticamente."] },
+        { message: " 0\n ", author_email: "antonio.junior@example.com", revisores: ["alexandrevr@example.com"], revisoes: [], historico: [] },
+        { message: " 1\n ", author_email: "antonio.junior@example.com", revisores: ["carlanm@example.com"], revisoes: [], historico: [] },
+        { message: " 2\n ", author_email: "antonio.junior@example.com", revisores: ["marcosps@example.com"], revisoes: [], historico: ["Revisor @marcosps [`Marcos Paulo Santos da Silva (MARCOSPS)`] atribuído automaticamente."] },
+        { message: " 3\n ", author_email: "x04992831131@example.com", revisores: ["x05068388213@example.com", "antonio.junior@example.com"], revisoes: [], historico: ["Revisora @x05068388213 [`Rebeca Andrade Silva (X05068388213)`] atribuída automaticamente.", "Revisor @carvalhoj [`Antonio C. de Carvalho Junior (CARVALHOJ)`] atribuído automaticamente."] },
+        { message: " 4\n ", author_email: "antonio.junior@example.com", revisores: ["regiano@example.com"], revisoes: [], historico: ["Revisor @regiano [`Regiano da Silva Santos (REGIANO)`] atribuído automaticamente."] },
+        { message: " 5\n ", author_email: "x05068388213@example.com", revisores: ["x04992831131@example.com", "antonio.junior@example.com"], revisoes: [], historico: ["Revisor @x04992831131 [`Gabriel Mesquita de Araujo (X04992831131)`] atribuído automaticamente.", "Revisor @carvalhoj [`Antonio C. de Carvalho Junior (CARVALHOJ)`] atribuído automaticamente."] },
+        { message: " 6\n ", author_email: "antonio.junior@example.com", revisores: ["alexandrevr@example.com"], revisoes: [], historico: ["Revisor @alexandrevr [`Alexandre Silva Santos (ALEXANDREVR)`] atribuído automaticamente."] },
+        { message: " 7\n ", author_email: "x05499033332@example.com", revisores: ["x05929988846@example.com", "marcosps@example.com"], revisoes: [], historico: ["Revisor(a) @x05929988846 [`Bruno Silva Santos Souza (X05929988846)`] atribuído(a) automaticamente.", "Revisor @marcosps [`Marcos Paulo Santos da Silva (MARCOSPS)`] atribuído automaticamente."] },
+        { message: " 8\n ", author_email: "antonio.junior@example.com", revisores: ["alexandrevr@example.com"], revisoes: [], historico: ["Revisor @alexandrevr [`Alexandre Silva Santos (ALEXANDREVR)`] atribuído automaticamente."] },
+        { message: " 9\n ", author_email: "x05929988846@example.com", revisores: ["x05499033332@example.com", "antonio.junior@example.com"], revisoes: [], historico: ["Revisor @x05499033332 [`Afonso Santos de Souza Silva (X05499033332)`] atribuído automaticamente.", "Revisor @carvalhoj [`Antonio C. de Carvalho Junior (CARVALHOJ)`] atribuído automaticamente."] },
+        { message: "10\n ", author_email: "antonio.junior@example.com", revisores: ["marcosps@example.com"], revisoes: [], historico: ["Revisor @marcosps [`Marcos Paulo Santos da Silva (MARCOSPS)`] atribuído automaticamente."] },
+        { message: "11\n ", author_email: "antonio.junior@example.com", revisores: ["regiano@example.com"], revisoes: [], historico: ["Revisor @regiano [`Regiano da Silva Santos (REGIANO)`] atribuído automaticamente."] },
+        { message: "12\n ", author_email: "antonio.junior@example.com", revisores: ["alexandrevr@example.com"], revisoes: [], historico: ["Revisor @alexandrevr [`Alexandre Silva Santos (ALEXANDREVR)`] atribuído automaticamente."] },
+        { message: "13\n @carlanm", author_email: "marcosps@example.com", revisores: ["carlanm@example.com"], revisoes: [], historico: ["Revisora @CarlaNM [`Carla Souza (CARLANM)`] atribuída via menção em mensagem de commit."] },
+        { message: "14\n @leliakn", author_email: "x04992831131@example.com", revisores: ["leliakn@example.com", "x05068388213@example.com"], revisoes: [], historico: ["Revisora @LELIAKN [`Lelia Silva (LELIAKN)`] atribuída via menção em mensagem de commit.", "Revisora @x05068388213 [`Rebeca Andrade Silva (X05068388213)`] atribuída automaticamente."] },
+        { message: "15\n @lelia", author_email: "antonio.junior@example.com", revisores: ["leliakn@example.com"], revisoes: [], historico: ["Revisora @LELIAKN [`Lelia Silva (LELIAKN)`] atribuída via menção em mensagem de commit."] },
+        { message: "16\n @invalido", author_email: "marcosps@example.com", revisores: ["antonio.junior@example.com"], revisoes: [], historico: ["Revisor(a) @invalido mencionado(a), mas não reconhecido(a) na base de usuários. Menção ignorada.", "Revisor @carvalhoj [`Antonio C. de Carvalho Junior (CARVALHOJ)`] atribuído automaticamente."] },
         {
             message: "17\n @lelia @antonio . @marcos @afonso",
             author_email: "leliakn@example.com",
             revisores: ["antonio.junior@example.com", "marcosps@example.com", "x05499033332@example.com"],
+            revisoes: [],
             historico: [
                 "Revisora @LELIAKN [`Lelia Silva (LELIAKN)`] mencionada é autora do commit. Menção ignorada.",
                 "Revisor @carvalhoj [`Antonio C. de Carvalho Junior (CARVALHOJ)`] atribuído via menção em mensagem de commit.",
                 "Revisor @marcosps [`Marcos Paulo Santos da Silva (MARCOSPS)`] atribuído via menção em mensagem de commit.",
                 "Revisor @x05499033332 [`Afonso Santos de Souza Silva (X05499033332)`] atribuído via menção em mensagem de commit."
             ]
+        },
+        {
+            message: "Merge branch 'x' into x",
+            author_email: "antonio.junior@example.com",
+            revisores: ["nao-terah-revisor@srv-codereview.example.com"],
+            revisoes: [{
+                    data: removerFinal(new Date().toISOString()),
+                    revisor: "nao-terah-revisor@srv-codereview.example.com",
+                    sexoRevisor: undefined,
+                    tipoRevisao: "sem-revisao"
+                }],
+            historico: ["Commit não terá revisor: commit de merge sem conflito."]
         }
     ];
     chai_1.expect(commits).to.deep.equal(expected);
