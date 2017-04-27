@@ -16,7 +16,7 @@
       </div>
       <h2 class="page-header">
         Sesol-2
-        <a href="http://jenkins/view/Sesol-2/job/sagas2.pipeline/" target="_blank">
+        <a href="http://jenkins/view/Sesol-2/job/sagas2.pipeline/" target="_blank" style="text-decoration: none">
             <img src="http://jenkins/static/9c3ef1de/images/headshot.png" style="height: 25px; margin: 0 0 8px 10px;">
             <img id="jenkins" src="../assets/question_mark.png" class="avatar" style="height: 25px;width: 25px;margin-bottom: 8px;">
         </a>

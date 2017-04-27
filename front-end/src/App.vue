@@ -35,7 +35,7 @@
             height:40px;
             z-index: 99999;
         "
-        onclick="window.$('.layout-col_left').show(); window.$('.layout-col_right').css('margin-left', '21.5%'); window.$('#botao-encolher').show(); window.$('#botao-expandir').hide();"
+        onclick="window.$('.layout-col_left').show(); window.$('.layout-col_right').css('margin-left', '22.5%'); window.$('#botao-encolher').show(); window.$('#botao-expandir').hide();"
         ><span class="glyphicon glyphicon-menu-right"></span></button>
     </div>
 </template>
