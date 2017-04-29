@@ -20,15 +20,15 @@ function criarView(nomeIndice, mapFunction) {
         console.log('Erro: ', err);
     }).then(function (viewFoiCriada) {
         if (viewFoiCriada) {
-            console.log('[' + nomeIndice + '] *** View foi criada.');
+            console.log('\t\tCRIAR-VIEW::[' + nomeIndice + '] *** View foi criada.');
         }
         else {
-            console.log('[' + nomeIndice + '] *** View jah existia.');
+            console.log('\t\tCRIAR-VIEW::[' + nomeIndice + '] *** View jah existia.');
         }
         // query the index (much faster now!)
         return couchdb_1.PouchDBService.query(nomeIndice, { include_docs: true });
     }).then(function (result) {
-        console.log('[' + nomeIndice + '] Resultado consulta index: ', result.rows.length);
+        console.log('\t\tCRIAR-VIEW::[' + nomeIndice + '] Resultado consulta index: ', result.rows.length);
     });
 }
 exports.criarView = criarView;
