@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const chai_1 = require("chai");
 const RevisoresService_1 = require("./RevisoresService");
-const arrayShuffle_1 = require("../geral/arrayShuffle");
+const ArrayUtils_1 = require("../geral/ArrayUtils");
 const Commit_1 = require("./Commit");
 const Committer_1 = require("../committers/Committer");
 const Sesol2Repository_1 = require("../geral/Sesol2Repository");
@@ -14,7 +14,7 @@ const CommitterRepository_1 = require("../committers/CommitterRepository");
 const CommitRepository_1 = require("./CommitRepository");
 Bluebird.longStackTraces();
 GitLabService_1.GitLabService.desabilitarComentariosNoGitLab = true;
-arrayShuffle_1.ArrayShuffle.arrayShuffle = (arr) => arr.sort().reverse();
+ArrayUtils_1.ArrayUtils.arrayShuffle = (arr) => arr.sort().reverse();
 Sesol2Repository_1.sesol2Repository.insert = () => Promise.resolve("mock");
 const assert = require('assert');
 function gu(email, name, username) {
@@ -74,8 +74,6 @@ describe("RevisoresService suite", function () {
     this.timeout(15000);
     it("atribuirRevisores()", function () {
         return RevisoresService_1.RevisoresService.atribuirRevisores().then(() => {
-            console.log('-- DENTRO DO TESTE - ATRIBUICAO CONCLUIDA --');
-            console.log('-- Era pra ter sido 16 commits sem revisores. Foram? --');
             assertCommitComRevisoresEHistorico(commits[2]);
             assertCommitDeEstagiario(commits[3]);
             assertCommitComRevisoresEHistorico(commits[4]);

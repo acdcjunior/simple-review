@@ -16,3 +16,12 @@ export function rest(method, url, token, formData?): Promise<any> {
 
     return requestPromise(options);
 }
+
+export class Rest {
+    public static get<T>(url: string, token: string): Promise<T> {
+        return rest("get", url, token);
+    }
+    public static post<T>(url: string, token: string, formData?: any): Promise<T> {
+        return rest("post", url, token, formData);
+    }
+}

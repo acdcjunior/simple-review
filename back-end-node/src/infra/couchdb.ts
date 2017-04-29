@@ -1,16 +1,16 @@
 import * as PouchDB from 'pouchdb';
-import {couchDbConfig} from './couchDbConfig';
+import {codeReviewConfig} from "../geral/CodeReviewConfig";
 
 const ajaxOpts = {
     ajax: {
         headers: {
-            Authorization: 'Basic ' + Buffer.from(`${couchDbConfig.couchdbUser}:${couchDbConfig.couchdbPassword}`).toString('base64')
+            Authorization: 'Basic ' + Buffer.from(`${codeReviewConfig.couchdb.user}:${codeReviewConfig.couchdb.password}`).toString('base64')
         },
         body: {
-            name: couchDbConfig.couchdbUser,
-            password: couchDbConfig.couchdbPassword
+            name: codeReviewConfig.couchdb.user,
+            password: codeReviewConfig.couchdb.password
         }
     }
 };
 
-export const PouchDBService = new PouchDB(`http://${couchDbConfig.couchdbHost}:${couchDbConfig.couchdbPort}/${couchDbConfig.couchdbDatabase}`, ajaxOpts);
+export const PouchDBService = new PouchDB(`http://${codeReviewConfig.couchdb.host}:${codeReviewConfig.couchdb.port}/${codeReviewConfig.couchdb.database}`, ajaxOpts);

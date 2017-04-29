@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Sesol2Repository_1 = require("../geral/Sesol2Repository");
-const arrayShuffle_1 = require("../geral/arrayShuffle");
+const ArrayUtils_1 = require("../geral/ArrayUtils");
 const Commit_1 = require("./Commit");
 const Email_1 = require("../geral/Email");
 const CommitterRepository_1 = require("../committers/CommitterRepository");
@@ -139,7 +139,7 @@ class TabelaProporcoesDeCadaRevisor {
     }
     calcularRevisorMaisVago(funcaoFiltragemPossiveisRevisores) {
         debug.log('--- calcularRevisorMaisVago ---');
-        const possiveisRevisores = arrayShuffle_1.ArrayShuffle.arrayShuffle(Object.keys(this.committersHash)
+        const possiveisRevisores = ArrayUtils_1.ArrayUtils.arrayShuffle(Object.keys(this.committersHash)
             .filter(funcaoFiltragemPossiveisRevisores)
             .filter(email => this.committersHash[email].quota > 0));
         debug.dir(this.contagemRevisoesAtribuidas);

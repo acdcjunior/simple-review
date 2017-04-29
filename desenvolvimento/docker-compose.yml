@@ -5,12 +5,12 @@ services:
     image: "couchdb"
     restart: always
     environment:
-      - COUCHDB_USER=root      # altere no node, abaixo, também
-      - COUCHDB_PASSWORD=pass  # altere no node, abaixo, também
+      - COUCHDB_USER=root      # altere no codereview.config.js também
+      - COUCHDB_PASSWORD=pass  # altere no codereview.config.js também
     volumes:
         - /dados/couchdb-dados:/usr/local/var/lib/couchdb
     ports:
-     - "5984:5984"
+     - "5984:5984"             # altere no codereview.config.js também
     networks:
      - code-review-network
   fauxton:
@@ -65,23 +65,6 @@ services:
 #      - gitlab:git
     networks:
       - code-review-network
-    environment:
-      - COUCHDB_USER=root
-      - COUCHDB_PASSWORD=pass
-      - COUCHDB_HOST=couchdb
-
-      - GITLAB_HOST=git
-      - GITLAB_HOST_PROJECT_BRANCH=desenvolvimento
-
-      - GITLAB_HOST_PROJECT_ID=123
-      # Token usuario comentador basta ter acesso [api]
-      - GITLAB_HOST_PRIVATE_TOKEN_USUARIO_COMENTADOR=X_zfYU5k2VwDx2KegmdQ
-      # Token Admin tem que ter acesso [api, read_user]
-      - GITLAB_HOST_PRIVATE_TOKEN_ADMIN=yj2--5cKKCSqaDRoND7N
-
-      - devGITLAB_HOST_PROJECT_ID=3
-      - devGITLAB_HOST_PRIVATE_TOKEN_USUARIO_COMENTADOR=iU_63HEeqBJG6gQXuQha
-      - devGITLAB_HOST_PRIVATE_TOKEN_ADMIN=iU_63HEeqBJG6gQXuQha
     volumes:
      - ..:/fontes
     working_dir: /fontes/back-end-node

@@ -17,3 +17,12 @@ function rest(method, url, token, formData) {
     return requestPromise(options);
 }
 exports.rest = rest;
+class Rest {
+    static get(url, token) {
+        return rest("get", url, token);
+    }
+    static post(url, token, formData) {
+        return rest("post", url, token, formData);
+    }
+}
+exports.Rest = Rest;

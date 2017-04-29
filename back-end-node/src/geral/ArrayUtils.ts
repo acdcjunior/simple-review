@@ -1,4 +1,4 @@
-export class ArrayShuffle {
+export class ArrayUtils {
 
     public static arrayShuffle<T>(array: T[]): T[] {
         for (let i = array.length - 1; i > 0; i--) {
@@ -8,6 +8,10 @@ export class ArrayShuffle {
             array[j] = temp;
         }
         return array;
+    }
+
+    public static flatten<T>(arrayDeArrays: T[][]): T[] {
+        return [].concat.apply([], arrayDeArrays);
     }
 
 }

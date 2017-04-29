@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import {RevisoresService} from "./RevisoresService";
-import {ArrayShuffle} from "../geral/arrayShuffle";
+import {ArrayUtils} from "../geral/ArrayUtils";
 import {Commit} from "./Commit";
 import {Committer} from "../committers/Committer";
 import {sesol2Repository} from "../geral/Sesol2Repository";
@@ -15,7 +15,7 @@ Bluebird.longStackTraces();
 
 GitLabService.desabilitarComentariosNoGitLab = true;
 
-ArrayShuffle.arrayShuffle = (arr) => arr.sort().reverse();
+ArrayUtils.arrayShuffle = (arr) => arr.sort().reverse();
 
 sesol2Repository.insert = () => Promise.resolve("mock");
 
@@ -82,9 +82,6 @@ describe("RevisoresService suite", function () {
 
     it("atribuirRevisores()", function () {
         return RevisoresService.atribuirRevisores().then(() => {
-            console.log('-- DENTRO DO TESTE - ATRIBUICAO CONCLUIDA --');
-            console.log('-- Era pra ter sido 16 commits sem revisores. Foram? --');
-
             assertCommitComRevisoresEHistorico(commits[2]);
             assertCommitDeEstagiario(commits[3]);
             assertCommitComRevisoresEHistorico(commits[4]);

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-class ArrayShuffle {
+class ArrayUtils {
     static arrayShuffle(array) {
         for (let i = array.length - 1; i > 0; i--) {
             let j = Math.floor(Math.random() * (i + 1));
@@ -10,5 +10,8 @@ class ArrayShuffle {
         }
         return array;
     }
+    static flatten(arrayDeArrays) {
+        return [].concat.apply([], arrayDeArrays);
+    }
 }
-exports.ArrayShuffle = ArrayShuffle;
+exports.ArrayUtils = ArrayUtils;

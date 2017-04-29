@@ -1,6 +1,6 @@
 import {Committer} from "../committers/Committer";
 import {sesol2Repository} from "../geral/Sesol2Repository";
-import {ArrayShuffle} from "../geral/arrayShuffle";
+import {ArrayUtils} from "../geral/ArrayUtils";
 import {Commit} from "./Commit";
 import {Email} from '../geral/Email';
 import {CommitterRepository} from "../committers/CommitterRepository";
@@ -171,7 +171,7 @@ class TabelaProporcoesDeCadaRevisor {
 
     calcularRevisorMaisVago(funcaoFiltragemPossiveisRevisores: (email: string) => boolean): Committer {
         debug.log('--- calcularRevisorMaisVago ---');
-        const possiveisRevisores = ArrayShuffle.arrayShuffle(
+        const possiveisRevisores = ArrayUtils.arrayShuffle(
             Object.keys(this.committersHash)
             .filter(funcaoFiltragemPossiveisRevisores)
             .filter(email => this.committersHash[email].quota > 0)

@@ -1,4 +1,3 @@
-import * as fs from "fs";
 import {GitLabService} from "../gitlab/GitLabService";
 import {GitLabUser} from "../gitlab/GitLabUser";
 import {sesol2Repository} from "../geral/Sesol2Repository";
@@ -6,16 +5,16 @@ import {Committer} from "./Committer";
 import {Email} from "../geral/Email";
 import {GitLabCommit} from "../gitlab/GitLabCommit";
 import {GitLabImpersonationToken} from "../gitlab/GitLabImpersonationToken";
-import {arquivoProjeto, CommitterConfigStruct} from "../geral/arquivoProjeto";
+import {codeReviewConfig, CodeReviewConfigCommitter} from "../geral/CodeReviewConfig";
 
 export class CommittersFactory {
 
     static carregarCommittersDoArquivo() {
         console.log(`\n\nCommittersFactory: Iniciando carga dos committers do projeto.json...`);
-        console.log(`\tCommittersFactory: Inserindo (se nao existirem) ${arquivoProjeto.committers.length} committers...`);
+        console.log(`\tCommittersFactory: Inserindo (se nao existirem) ${codeReviewConfig.committers.length} committers...`);
 
         let promisesDeCommittersInseridos: Promise<string>[] = [];
-        arquivoProjeto.committers.forEach((committer: CommitterConfigStruct) => {
+        codeReviewConfig.committers.forEach((committer: CodeReviewConfigCommitter) => {
             promisesDeCommittersInseridos.push(
                 GitLabService.getUserByUsername(committer.username).then((gitlabUser: GitLabUser) => {
                     if (!gitlabUser) {

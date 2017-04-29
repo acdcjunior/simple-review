@@ -4,13 +4,13 @@ const GitLabService_1 = require("../gitlab/GitLabService");
 const Sesol2Repository_1 = require("../geral/Sesol2Repository");
 const Committer_1 = require("./Committer");
 const Email_1 = require("../geral/Email");
-const arquivoProjeto_1 = require("../geral/arquivoProjeto");
+const CodeReviewConfig_1 = require("../geral/CodeReviewConfig");
 class CommittersFactory {
     static carregarCommittersDoArquivo() {
         console.log(`\n\nCommittersFactory: Iniciando carga dos committers do projeto.json...`);
-        console.log(`\tCommittersFactory: Inserindo (se nao existirem) ${arquivoProjeto_1.arquivoProjeto.committers.length} committers...`);
+        console.log(`\tCommittersFactory: Inserindo (se nao existirem) ${CodeReviewConfig_1.codeReviewConfig.committers.length} committers...`);
         let promisesDeCommittersInseridos = [];
-        arquivoProjeto_1.arquivoProjeto.committers.forEach((committer) => {
+        CodeReviewConfig_1.codeReviewConfig.committers.forEach((committer) => {
             promisesDeCommittersInseridos.push(GitLabService_1.GitLabService.getUserByUsername(committer.username).then((gitlabUser) => {
                 if (!gitlabUser) {
                     throw new Error(`CommittersFactory: Commiter de username ${committer.username} não foi encontrado no GitLab!`);

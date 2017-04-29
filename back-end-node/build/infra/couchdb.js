@@ -1,16 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const PouchDB = require("pouchdb");
-const couchDbConfig_1 = require("./couchDbConfig");
+const CodeReviewConfig_1 = require("../geral/CodeReviewConfig");
 const ajaxOpts = {
     ajax: {
         headers: {
-            Authorization: 'Basic ' + Buffer.from(`${couchDbConfig_1.couchDbConfig.couchdbUser}:${couchDbConfig_1.couchDbConfig.couchdbPassword}`).toString('base64')
+            Authorization: 'Basic ' + Buffer.from(`${CodeReviewConfig_1.codeReviewConfig.couchdb.user}:${CodeReviewConfig_1.codeReviewConfig.couchdb.password}`).toString('base64')
         },
         body: {
-            name: couchDbConfig_1.couchDbConfig.couchdbUser,
-            password: couchDbConfig_1.couchDbConfig.couchdbPassword
+            name: CodeReviewConfig_1.codeReviewConfig.couchdb.user,
+            password: CodeReviewConfig_1.codeReviewConfig.couchdb.password
         }
     }
 };
-exports.PouchDBService = new PouchDB(`http://${couchDbConfig_1.couchDbConfig.couchdbHost}:${couchDbConfig_1.couchDbConfig.couchdbPort}/${couchDbConfig_1.couchDbConfig.couchdbDatabase}`, ajaxOpts);
+exports.PouchDBService = new PouchDB(`http://${CodeReviewConfig_1.codeReviewConfig.couchdb.host}:${CodeReviewConfig_1.codeReviewConfig.couchdb.port}/${CodeReviewConfig_1.codeReviewConfig.couchdb.database}`, ajaxOpts);
