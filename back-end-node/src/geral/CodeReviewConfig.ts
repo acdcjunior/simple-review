@@ -7,7 +7,7 @@ export class CodeReviewConfig {
 
     public readonly usuarioComentador: CodeReviewConfigUsuarioComentador;
 
-    public readonly tokenAdmin: string; // "yj2--5cKKC4qaDRoND7N", // Token Admin tem que ter acesso [api, read_user]
+    public readonly tokenAdmin: string; // Token Admin tem que ter acesso [api, read_user]
 
     public readonly dataCortePrimeiroCommit: string; // 2017-04-20T18:01:38.000-03:00
     public readonly branchesIgnorados: string[];
@@ -30,7 +30,7 @@ export class CodeReviewConfigCouchDB {
 export class CodeReviewConfigUsuarioComentador {
 
     public readonly gitlab_userid: number; // 1
-    public readonly token: string; // "X_zfYU5k3VwDx2KegmdQ", // Token usuario comentador basta ter acesso [api]
+    public readonly token: string; // Token usuario comentador basta ter acesso [api]
 
 }
 export class CodeReviewConfigCommitter {
