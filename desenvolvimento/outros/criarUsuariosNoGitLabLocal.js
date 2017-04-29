@@ -13,7 +13,7 @@ function criarUser(nome, username) {
         type: 'post',
         data: usuario,
         headers: {
-            "PRIVATE-TOKEN": 'M3_6_x-z3HQEPc4Z4TYg'
+            "PRIVATE-TOKEN": 'mKRzDEyu_wsBVd-LCJAt'
         },
         dataType: 'json',
         success: function (data) {
@@ -29,8 +29,10 @@ criarUser("Rebeca Andrade Baldomir (X05068385107)", "x05068385107");
 
 criarUser("Alexandre Vaz Roriz (ALEXANDREVR)", "alexandrevr");
 criarUser("Antonio C. de Carvalho Junior (CARVALHOJ)", "antonio.junior");
-criarUser("Carla Nassif Nassif Cortez Marcomini (CARLANM)", "carlanm");
+criarUser("Carla Nassif Nassif Cortez Marcomini (CARLANM)", "CarlaNM");
 criarUser("Jose Mauricio Fernandes (FERNANDESM)", "fernandesm");
-criarUser("Lelia Karina Nunes (LELIAKN)", "leliakn");
+criarUser("Lelia Karina Nunes (LELIAKN)", "LELIAKN");
 criarUser("Marcos Paulo Pereira da Silva (MARCOSPS)", "marcosps");
-criarUser("Regiano da Silva Alves (REGIANO)", "regiano");
+criarUser("Regiano da Silva Alves (REGIANO)", "Regiano");
+
+criarUser("SonarQube GitLab", "sonarqube");

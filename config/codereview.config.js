@@ -20,7 +20,7 @@ const config = {
         token: 'X_zfYU5k2VwDx2KegmdQ' // Token usuario comentador basta ter acesso [api]
     },
 
-    tokenAdmin: "yj2--5cKKCSqaDRoND7N", // Token Admin tem que ter acesso [api, read_user]
+    tokenAdmin: 'mKRzDEyu_wsBVd-LCJAt', // Token Admin tem que ter acesso [api, read_user]
 
     dataCortePrimeiroCommit: "2017-04-20T18:01:38.000-03:00",
 
@@ -105,14 +105,26 @@ const config = {
     mensagemTokenCriadoPorCodeReview: "Criado via CodeReview"
 };
 
-if (require("os").hostname() === "delljr") { // desenvolvimento em casa
-    config.couchdb.host = '192.168.1.195';
-    config.host = '127.0.0.1:8090';
-    config.projectId = 3;
-    config.usuarioComentador.gitlab_userid = 1;
-    config.usuarioComentador.token = config.tokenAdmin = 'iU_63HEeqBJG6gQXuQha';
+// desenvolvimento em casa
+const rodandoBackEndViaNodeDiretamenteEmDellJR = require("os").hostname() === "delljr";
+// desenvolvimento no tcu
+const rodandoBackEndViaNodeDiretamenteEmTCU = require("os").hostname() === "E-098571";
+// backend rodando em docker, mas em casa
+let rodandoEmDockerEmDellJR = true;
+
+if (rodandoBackEndViaNodeDiretamenteEmDellJR || rodandoEmDockerEmDellJR) {
+    if (rodandoBackEndViaNodeDiretamenteEmDellJR) {
+        config.couchdb.host = '192.168.1.195';
+        config.host = '127.0.0.1:8090';
+    }
+    config.projectId = 1;
+    config.dataCortePrimeiroCommit = "2017-04-09T20:59:27.000-03:00";
+
+    config.usuarioComentador.gitlab_userid = 12;
+    config.usuarioComentador.token = 'VPmypjV-4QXt_PzKFsxo';
+    config.tokenAdmin = 'mKRzDEyu_wsBVd-LCJAt';
 }
-if (require("os").hostname() === "E-098571") { // desenvolvimento no tcu
+if (rodandoBackEndViaNodeDiretamenteEmTCU) {
     config.usuarioComentador.token = 'x';
 }
 

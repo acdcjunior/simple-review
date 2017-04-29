@@ -1,87 +1,76 @@
 version: '2'
-services:
-
-  couchdb:
-    image: "couchdb"
-    restart: always
-    environment:
-      - COUCHDB_USER=root      # altere no codereview.config.js também
-      - COUCHDB_PASSWORD=pass  # altere no codereview.config.js também
-    volumes:
-        - /dados/couchdb-dados:/usr/local/var/lib/couchdb
-    ports:
-     - "5984:5984"             # altere no codereview.config.js também
-    networks:
-     - code-review-network
-  fauxton:
-    image: 3apaxicom/fauxton
-    restart: always
-    ports:
-      - "8984:8000"
-    links:
-      - couchdb:db
-    networks:
-      - code-review-network
-    command:
-      - sh
-      - "-c"
-      - "fauxton -c http://db:5984"
-
-  front-end-node:
-    image: node:7
-    restart: always
-    ports:
-      - "5000:5000"
-    networks:
-      - code-review-network
-    volumes:
-     - ..:/fontes
-    working_dir: /fontes/front-end
-    command: bash -c "npm install && npm run build && npm run servir"
-
-  # Adicionar como webhook:
-  # http://git/sti/sagas2/settings/integrations
-  # http://srv-codereview/back-end-review/rpc/webhook
-  #
-  # Dispare manualmente usando $ curl -X POST http://srv-codereview/back-end-review/rpc/webhook
-  #
-  # gitlab:
-  #   image: gitlab/gitlab-ce
-  #   ports:
-  #     - "8090:80"
-  #   networks:
-  #     - code-review-network
-  #   logging:
-  #     driver: "none"
-
-  # serve tanto o back-end quanto o front-end
-  back-end-node:
-    image: node:7
-    restart: always
-    ports:
-     - "8093:3000"
-    links:
-      - couchdb:couchdb
-#      - gitlab:git
-    networks:
-      - code-review-network
-    volumes:
-     - ..:/fontes
-    working_dir: /fontes/back-end-node
-    command: bash -c "npm install && npm run couchdb-setup && npm start"
-
-  srv-codereview:
-    build: ./nginx
-    restart: always
-    ports:
-        - "80:80"
-    links:
-#        - gitlab:git
-        - back-end-node:node
-        - front-end-node:front
-    networks:
-        - code-review-network
 
 networks:
-  code-review-network:
-    driver: bridge
+    code-review-network:
+        driver: bridge
+
+services:
+
+    couchdb:
+        image: "couchdb"
+        restart: always
+        networks:
+            - code-review-network
+        ports:
+            - "5984:5984"              # altere no codereview.config.js também
+        environment:
+            - COUCHDB_USER=root        # altere no codereview.config.js também
+            - COUCHDB_PASSWORD=pass    # altere no codereview.config.js também
+        volumes:
+#            - ./couchdb-dados:/usr/local/var/lib/couchdb
+            - /dados/couchdb-dados:/usr/local/var/lib/couchdb
+
+    fauxton:
+        image: 3apaxicom/fauxton
+        restart: always
+        networks:
+            - code-review-network
+        ports:
+            - "8984:8000"
+        command: sh -c "fauxton -c http://couchdb:5984"
+
+
+    front-end:
+        image: node:7
+        restart: always
+        networks:
+            - code-review-network
+        ports:
+            - "5000:5000"
+        volumes:
+            - ..:/fontes
+        working_dir: /fontes/front-end
+        command: bash -c "npm install && npm run build && npm run servir"
+
+    back-end:
+        image: node:7
+        restart: always
+        networks:
+            - code-review-network
+        ports:
+            - "8093:3000"
+        volumes:
+            - ..:/fontes
+        working_dir: /fontes/back-end-node
+        command: bash -c "npm install && npm run couchdb-setup && npm start"
+
+    srv-codereview:
+        build: ./nginx
+        restart: always
+        networks:
+            - code-review-network
+        ports:
+            - "80:80"
+                
+    # Adicionar como webhook:
+    # http://git/sti/sagas2/settings/integrations
+    # http://srv-codereview/back-end-review/rpc/webhook
+    #
+    # Dispare manualmente usando $ curl -X POST http://srv-codereview/back-end-review/rpc/webhook
+    #
+    git:
+        image: gitlab/gitlab-ce
+        networks:
+            - code-review-network
+        ports:
+            - "8090:80"
