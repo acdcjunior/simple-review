@@ -31,7 +31,6 @@ export class CommittersFactory {
         return Promise.all(promisesDeCommittersInseridos).then((resultadosDasPromises: string[]) => {
             CommittersFactory.exibirQuantidadeQueJahExistia(resultadosDasPromises);
             console.log(`CommittersFactory: projeto.json processado por completo!\n`);
-            return Promise.resolve();
         });
     }
 
@@ -81,7 +80,6 @@ export class CommittersFactory {
 
     static getEmailsDosCommittersDosUltimosCommits(): Promise<Email[]> {
         return GitLabService.getCommits(100).then((commits: GitLabCommit[]) => {
-
             console.log(`\tCommittersFactory: Carregando committers de ${commits.length} commits...`);
 
             let committersHash = {};
@@ -89,9 +87,8 @@ export class CommittersFactory {
                 const emailCorrigido = Email.corrigirEmail(commit.author_email);
                 committersHash[emailCorrigido] = true;
             });
-            const committers = Object.keys(committersHash).map(c => new Email(c));
 
-            return Promise.resolve(committers);
+            return Object.keys(committersHash).map(c => new Email(c));
         });
     }
 

@@ -11,7 +11,7 @@ class Sesol2Repository {
     insertIfNotExists(sesol2: Sesol2): Promise<string> {
         return this.exists(sesol2).then(exists => {
             if (exists) {
-                return Promise.resolve(undefined as string);
+                return undefined as string;
             } else {
                 return this.insert(sesol2);
             }
@@ -20,15 +20,15 @@ class Sesol2Repository {
 
     insert(sesol2: Sesol2): Promise<string> {
         return this.db.put(sesol2).then(ignored => {
-            return Promise.resolve(`${sesol2.type} (inserido): ${sesol2.toString()}`);
+            return `${sesol2.type} (inserido): ${sesol2.toString()}`;
         });
     }
 
     exists(sesol2: Sesol2): Promise<boolean> {
         return this.db.get(sesol2._id).then(() => {
-            return Promise.resolve(true);
+            return true;
         }).catch(() => {
-            return Promise.resolve(false);
+            return false;
         });
     }
 
@@ -38,7 +38,7 @@ class Sesol2Repository {
 
     queryView<T>(viewName: string, prototype: object, viewKey?: string): Promise<T[]> {
         return this.db.query(viewName, {key: viewKey, include_docs: true}).then(result => {
-            return Promise.resolve(result.rows.map(row => Object.assign(Object.create(prototype), row.doc)));
+            return result.rows.map(row => Object.assign(Object.create(prototype), row.doc));
         });
     }
 

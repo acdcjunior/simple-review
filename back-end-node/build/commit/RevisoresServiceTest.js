@@ -94,7 +94,6 @@ describe("RevisoresService suite", function () {
             assertCommitComRevisoresEHistorico(commits[17]);
             chai_1.expect(commits[17].revisores[0]).to.not.equal("leliakn@example.com");
             assertJson(commits);
-            return Promise.resolve();
         });
     });
 });

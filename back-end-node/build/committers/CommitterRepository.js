@@ -6,9 +6,9 @@ class CommitterRepository {
     static findCommitterByUsernameOrAlias(usernameOrAlias) {
         return Sesol2Repository_1.sesol2Repository.queryView('committers_aliases_index', Committer_1.Committer.prototype, usernameOrAlias).then((committers) => {
             if (committers.length === 0) {
-                return Promise.resolve(Committer_1.Committer.committerInvalido(usernameOrAlias));
+                return Committer_1.Committer.committerInvalido(usernameOrAlias);
             }
-            return Promise.resolve(committers[0]);
+            return committers[0];
         });
     }
     static findAllCommitters() {

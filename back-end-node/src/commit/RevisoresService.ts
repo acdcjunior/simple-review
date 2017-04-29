@@ -75,7 +75,6 @@ function incluirRevisorEstagiarioEmCommitDeEstagiario(commitSemRevisor: Commit, 
             const estagiarioMaisVago = tabelaProporcoesDeCadaRevisor.calcularEstagiarioMaisVago(commitSemRevisor);
             return commitSemRevisor.indicarRevisorViaSistema(estagiarioMaisVago).then(() => {
                 tabelaProporcoesDeCadaRevisor.incrementarContagemDoRevisor(estagiarioMaisVago);
-                return Promise.resolve();
             });
         }
     }
@@ -88,7 +87,6 @@ function incluirRevisorServidorDoCommit(commit: Commit, tabelaProporcoesDeCadaRe
         const servidorMaisVago: Committer = tabelaProporcoesDeCadaRevisor.calcularServidorMaisVago(commit);
         return commit.indicarRevisorViaSistema(servidorMaisVago).then(() => {
             tabelaProporcoesDeCadaRevisor.incrementarContagemDoRevisor(servidorMaisVago);
-            return Promise.resolve();
         });
     }
     return Promise.resolve();

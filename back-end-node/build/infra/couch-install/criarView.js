@@ -12,10 +12,10 @@ function criarView(nomeIndice, mapFunction) {
     return couchdb_1.PouchDBService.put(index).then(function () {
         // kick off an initial build, return immediately
         couchdb_1.PouchDBService.query(nomeIndice, { stale: 'update_after' });
-        return Promise.resolve(true);
+        return true;
     }).catch(function (err) {
         if (err.status === 409) {
-            return Promise.resolve(false);
+            return false;
         }
         console.log('Erro: ', err);
     }).then(function (viewFoiCriada) {

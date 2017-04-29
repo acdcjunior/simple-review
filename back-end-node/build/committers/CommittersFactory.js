@@ -23,7 +23,6 @@ class CommittersFactory {
         return Promise.all(promisesDeCommittersInseridos).then((resultadosDasPromises) => {
             CommittersFactory.exibirQuantidadeQueJahExistia(resultadosDasPromises);
             console.log(`CommittersFactory: projeto.json processado por completo!\n`);
-            return Promise.resolve();
         });
     }
     static carregarCommittersDosUltimosCommits() {
@@ -69,8 +68,7 @@ class CommittersFactory {
                 const emailCorrigido = Email_1.Email.corrigirEmail(commit.author_email);
                 committersHash[emailCorrigido] = true;
             });
-            const committers = Object.keys(committersHash).map(c => new Email_1.Email(c));
-            return Promise.resolve(committers);
+            return Object.keys(committersHash).map(c => new Email_1.Email(c));
         });
     }
 }

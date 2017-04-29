@@ -13,10 +13,10 @@ export function criarView(nomeIndice, mapFunction) {
     return PouchDBService.put(index).then(function () {
         // kick off an initial build, return immediately
         PouchDBService.query(nomeIndice, {stale: 'update_after'});
-        return Promise.resolve(true);
+        return true;
     }).catch(function (err) {
         if (err.status === 409) {
-            return Promise.resolve(false);
+            return false;
         }
         console.log('Erro: ', err);
     }).then(function (viewFoiCriada) {

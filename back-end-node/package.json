@@ -7,7 +7,7 @@
     "webhook": "node ./build/codereview/up.js",
     "couchdb-setup": "node ./build/infra/couch-install/couchDbSetup.js",
     "test": "./node_modules/.bin/mocha src/**/*Test.ts --require ts-node/register --reporter spec",
-    "cleants": "rimraf build && tsc && git add -A ."
+    "ts4git": "rimraf build && tsc && git add -A ."
   },
   "dependencies": {
     "@types/bluebird": "^3.5.2",

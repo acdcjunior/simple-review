@@ -32,7 +32,7 @@ xdescribe("GitLabService integracao write", function () {
     it("criarImpersonationToken", function () {
         return GitLabService_1.GitLabService.criarImpersonationToken(20).then(retorno => {
             console.log('retorno', retorno);
-            return Promise.resolve('ok!');
+            return 'ok!';
         });
     });
     it("comentar", function () {
