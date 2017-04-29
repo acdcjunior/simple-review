@@ -49,18 +49,18 @@ export class Commit extends Sesol2 {
 
     private indicarRevisorViaMencao(revisor: Committer): Promise<void> {
         if (revisor.isInvalido()) {
-            this.incluirHistorico(`Revisor(a) @${revisor.username} mencionado(a), mas não reconhecido(a) na base de usuários. Menção ignorada.`);
+            this.incluirHistorico(`:interrobang: Revisor(a) @${revisor.username} mencionado(a), mas não reconhecido(a) na base de usuários. Menção ignorada.`);
             return Promise.resolve();
         }
         if (revisor.email == this.author_email) {
-            this.incluirHistorico(`Revisor${revisor.vazioOuA()} ${revisor.mencao()} mencionad${revisor.oOuA()} é autor${revisor.vazioOuA()} do commit. Menção ignorada.`);
+            this.incluirHistorico(`:interrobang: Revisor${revisor.vazioOuA()} ${revisor.mencao()} mencionad${revisor.oOuA()} é autor${revisor.vazioOuA()} do commit. Menção ignorada.`);
             return Promise.resolve();
         }
-        return this.incluirRevisor(revisor, `Revisor${revisor.vazioOuA()} ${revisor.mencao()} atribuíd${revisor.oOuA()} via menção em mensagem de commit.`);
+        return this.incluirRevisor(revisor, `:heavy_plus_sign: :point_right: Revisor${revisor.vazioOuA()} ${revisor.mencao()} atribuíd${revisor.oOuA()} via menção em mensagem de commit.`);
     }
 
     indicarRevisorViaSistema(revisor: Committer): Promise<void> {
-        return this.incluirRevisor(revisor, `Revisor${revisor.vazioOuA()} ${revisor.mencao()} atribuíd${revisor.oOuA()} automaticamente.`);
+        return this.incluirRevisor(revisor, `:heavy_plus_sign: :gear: Revisor${revisor.vazioOuA()} ${revisor.mencao()} atribuíd${revisor.oOuA()} automaticamente.`);
     }
 
     // este email estah hardcoded na committers do front-end
@@ -72,7 +72,7 @@ export class Commit extends Sesol2 {
             data: new Date().toISOString(),
             tipoRevisao: "sem revisão"
         });
-        return this.incluirRevisor({email: Commit.EMAIL_NAO_TERAH_REVISOR}, `Commit não terá revisor: ${razao}.`);
+        return this.incluirRevisor({email: Commit.EMAIL_NAO_TERAH_REVISOR}, `:ok: Commit não terá revisor: ${razao}.`);
     }
 
     private incluirRevisor(revisor: {email}, msg: string): Promise<void> {
@@ -91,7 +91,7 @@ export class Commit extends Sesol2 {
 
     private comentarNoGitLab(msg) {
         //noinspection JSIgnoredPromiseFromCall
-        GitLabService.comentar(this.sha, ':loud_sound: ' + msg);
+        GitLabService.comentar(this.sha, msg);
     }
 
     isCommitDeEstagiario() {

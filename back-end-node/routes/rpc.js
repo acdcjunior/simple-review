@@ -19,7 +19,7 @@ router.post('/comentar-revisado', function(req, res) {
     const usernameRevisor = req.body.usernameRevisor;
     const tipoRevisao = req.body.tipoRevisao;
 
-    CommitterRepository.findCommittersByUsernameOrAlias(usernameRevisor).then((committer) => {
+    CommitterRepository.findCommitterByUsernameOrAlias(usernameRevisor).then((committer) => {
         switch (tipoRevisao) {
             case "par":
                 return GitLabService.comentar(sha, `:white_check_mark: Commit marcado como **feito em par** por ${committer.mencao()}.`);

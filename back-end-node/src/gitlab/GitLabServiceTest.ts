@@ -5,12 +5,19 @@ const sinonChai = require("sinon-chai");
 chai.use(sinonChai);
 
 import {Rest} from "../infra/rest";
-import {GitLabConfig, GitLabService} from "./GitLabService";
+import {GitLabURLs, GitLabService} from "./GitLabService";
 import {Email} from "../geral/Email";
 import {codeReviewConfig} from "../geral/CodeReviewConfig";
 
+function printResults(prefixo, promise) {
+    return promise.then((x) => {
+        console.log(prefixo + ' >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+        console.dir(x);
+        console.log(prefixo + ' <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
+    }).catch((x) => console.log('err todos!!!!', x));
+}
 
-describe("GitLabService", function () {
+describe("GitLabService integracao readonly", function () {
     this.timeout(15000);
 
     it("getUserByEmail", function () {
@@ -18,12 +25,37 @@ describe("GitLabService", function () {
         return user.then((x) => console.log('ok', x)).catch((x) => console.log('err', x));
     });
 
-    xit("criarImpersonationToken", function () {
+    it("getTodosCodeReviewPendentes", function () {
+        const user = GitLabService.getTodosCodeReviewPendentes(`GuXQqswBa4TrqhxPeeaN`); // fernandesm @ delljr
+        return printResults(`getTodosCodeReviewPendentes`, user);
+    });
+
+});
+
+xdescribe("GitLabService integracao write", function () {
+    this.timeout(15000);
+
+    it("criarImpersonationToken", function () {
         return GitLabService.criarImpersonationToken(20).then(retorno => {
             console.log('retorno', retorno);
             return Promise.resolve('ok!');
         });
     });
+
+    it("comentar", function () {
+        const user = GitLabService.comentar(`14b6cfadee9055567071f2cae1d969bbeceb28c4`, `via IT`);
+        return user.then((x) => console.log('ok', x)).catch((x) => console.log('err', x));
+    });
+
+    it("limparTodosRelativosACodeReviewGeradosPeloUsuarioComentador", function () {
+        return printResults(`antes limpeza`, GitLabService.getTodosCodeReviewPendentes(`GuXQqswBa4TrqhxPeeaN`)).then(() => {
+            const user = GitLabService.limparTodosRelativosACodeReviewGeradosPeloUsuarioComentador({impersonationToken: `GuXQqswBa4TrqhxPeeaN`}); // fernandesm @ delljr
+            return user.then(() => {
+                return printResults(`depois limpeza`, GitLabService.getTodosCodeReviewPendentes(`GuXQqswBa4TrqhxPeeaN`)); // fernandesm @ delljr
+            });
+        });
+    });
+
 
 });
 
@@ -43,9 +75,9 @@ describe("GitLabService com mocks", function () {
     let stub_GitLabConfig_projectsUrl: any;
     let stub_GitLabConfig_branchesUrl: any;
     beforeEach(() => {
-        stub_GitLabConfig_projectsUrl = sandbox.stub(GitLabConfig, 'projectsUrl').returns('projectsUrl');
-        stub_GitLabConfig_branchesUrl = sandbox.stub(GitLabConfig, 'branchesUrl').returns('branchesUrl');
-        (GitLabConfig as any).tokenAdmin = 'tokenAdmin';
+        stub_GitLabConfig_projectsUrl = sandbox.stub(GitLabURLs, 'projectsUrl').returns('projectsUrl');
+        stub_GitLabConfig_branchesUrl = sandbox.stub(GitLabURLs, 'branchesUrl').returns('branchesUrl');
+        (codeReviewConfig as any).tokenAdmin = 'tokenAdmin';
 
         stub_Rest_get = sandbox.stub(Rest, 'get')
             .onFirstCall().returns(Promise.resolve([{name: 'branch-um'}, {name: 'branch-dois'}]));

@@ -6,6 +6,7 @@ const Commit_1 = require("./Commit");
 const Email_1 = require("../geral/Email");
 const CommitterRepository_1 = require("../committers/CommitterRepository");
 const CommitRepository_1 = require("./CommitRepository");
+const MencoesExtractor_1 = require("../geral/MencoesExtractor");
 //noinspection JSUnusedLocalSymbols
 let debug = {
     log: ((x) => { }) || console.log,
@@ -78,27 +79,8 @@ function incluirRevisorServidorDoCommit(commit, tabelaProporcoesDeCadaRevisor) {
     return Promise.resolve();
 }
 function incluirRevisoresMencionadosNaMensagem(commitSemRevisor) {
-    return extrairCommittersMencionadosNaMsgDoCommit(commitSemRevisor).then((revisoresIndicados) => {
+    return MencoesExtractor_1.MencoesExtractor.extrairCommittersMencionadosNaMensagemDoCommit(commitSemRevisor).then((revisoresIndicados) => {
         return commitSemRevisor.indicarRevisoresViaMencao(revisoresIndicados);
-    });
-}
-function extrairCommittersMencionadosNaMsgDoCommit(commitSemRevisor) {
-    const message = commitSemRevisor.message;
-    const mencoes = message.match(/@[a-zA-Z.0-9]+/g);
-    if (mencoes) {
-        return extrairCommittersDeMencoes(mencoes, []);
-    }
-    return Promise.resolve([]);
-}
-function extrairCommittersDeMencoes(mencoes, committers) {
-    if (mencoes.length === 0) {
-        return Promise.resolve(committers);
-    }
-    const mencao = mencoes[0].substring(1); // tirar a @
-    const mencoesRestantes = mencoes.slice(1);
-    return CommitterRepository_1.CommitterRepository.findCommittersByUsernameOrAlias(mencao).then((committer) => {
-        committers.push(committer);
-        return Promise.resolve(extrairCommittersDeMencoes(mencoesRestantes, committers));
     });
 }
 class TabelaProporcoesDeCadaRevisor {

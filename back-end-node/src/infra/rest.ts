@@ -1,6 +1,6 @@
 import * as requestPromise from 'request-promise';
 
-export function rest(method, url, token, formData?): Promise<any> {
+function rest(method, url, token, formData?): Promise<any> {
     let options = {
         url: url,
         headers: {
@@ -19,9 +19,9 @@ export function rest(method, url, token, formData?): Promise<any> {
 
 export class Rest {
     public static get<T>(url: string, token: string): Promise<T> {
-        return rest("get", url, token);
+        return rest("GET", url, token);
     }
     public static post<T>(url: string, token: string, formData?: any): Promise<T> {
-        return rest("post", url, token, formData);
+        return rest("POST", url, token, formData);
     }
 }

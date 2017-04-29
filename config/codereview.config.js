@@ -11,7 +11,14 @@ const config = {
     host: "git",
     projectId: 123,
 
-    tokenUsuarioComentador: "X_zfYU5k2VwDx2KegmdQ", // Token usuario comentador basta ter acesso [api]
+    usuarioComentador: {
+        // consulte em
+        // $ curl --header "PRIVATE-TOKEN: <TOKEN ADMIN SEM ASPAS>" http://git/api/v4/users?username=<USERNAME DO COMENTADOR>
+        // exemplo:
+        // $ curl --header PRIVATE-TOKEN: iU_63HEeqBJG6gQXuQha http://127.0.0.1:8090/api/v4/users?username=root
+        gitlab_userid: 1, // importante para podermos fechar o todos abertos por ele
+        token: 'X_zfYU5k2VwDx2KegmdQ' // Token usuario comentador basta ter acesso [api]
+    },
 
     tokenAdmin: "yj2--5cKKCSqaDRoND7N", // Token Admin tem que ter acesso [api, read_user]
 
@@ -102,10 +109,11 @@ if (require("os").hostname() === "delljr") { // desenvolvimento em casa
     config.couchdb.host = '192.168.1.195';
     config.host = '127.0.0.1:8090';
     config.projectId = 3;
-    config.tokenUsuarioComentador = config.tokenAdmin = 'iU_63HEeqBJG6gQXuQha';
+    config.usuarioComentador.gitlab_userid = 1;
+    config.usuarioComentador.token = config.tokenAdmin = 'iU_63HEeqBJG6gQXuQha';
 }
 if (require("os").hostname() === "E-098571") { // desenvolvimento no tcu
-    config.tokenUsuarioComentador = 'x';
+    config.usuarioComentador.token = 'x';
 }
 
 module.exports = config;

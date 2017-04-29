@@ -3,12 +3,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class CodeReviewConfig {
 }
 exports.CodeReviewConfig = CodeReviewConfig;
-class CodeReviewConfigCommitter {
-}
-exports.CodeReviewConfigCommitter = CodeReviewConfigCommitter;
 class CodeReviewConfigCouchDB {
 }
 exports.CodeReviewConfigCouchDB = CodeReviewConfigCouchDB;
+class CodeReviewConfigUsuarioComentador {
+}
+exports.CodeReviewConfigUsuarioComentador = CodeReviewConfigUsuarioComentador;
+class CodeReviewConfigCommitter {
+}
+exports.CodeReviewConfigCommitter = CodeReviewConfigCommitter;
 exports.codeReviewConfig = require('./../../../config/codereview.config');
 console.log(`
     BACKEND --> CODEREVIEW CONFIG (codereview.config.js)
@@ -16,7 +19,7 @@ console.log(`
     GITLAB
             host: ${exports.codeReviewConfig.host}
             projectId: ${exports.codeReviewConfig.projectId}
-            privateToken: ${exports.codeReviewConfig.tokenUsuarioComentador}
+            usuarioComentador.token: ${exports.codeReviewConfig.usuarioComentador.token}
             tokenAdmin: ${exports.codeReviewConfig.tokenAdmin}
     
     COUCHDB
@@ -27,6 +30,6 @@ console.log(`
             couchdb.password: ${exports.codeReviewConfig.couchdb.password}
     ----------------------------------------------------
 `);
-if (!exports.codeReviewConfig.host || !exports.codeReviewConfig.projectId || !exports.codeReviewConfig.tokenUsuarioComentador || !exports.codeReviewConfig.tokenAdmin) {
+if (!exports.codeReviewConfig.host || !exports.codeReviewConfig.projectId || !exports.codeReviewConfig.usuarioComentador.token || !exports.codeReviewConfig.tokenAdmin) {
     throw new Error(`Variáveis do codereview.config.js nao configuradas!`);
 }

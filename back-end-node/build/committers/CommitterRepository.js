@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Sesol2Repository_1 = require("../geral/Sesol2Repository");
 const Committer_1 = require("./Committer");
 class CommitterRepository {
-    static findCommittersByUsernameOrAlias(usernameOrAlias) {
+    static findCommitterByUsernameOrAlias(usernameOrAlias) {
         return Sesol2Repository_1.sesol2Repository.queryView('committers_aliases_index', Committer_1.Committer.prototype, usernameOrAlias).then((committers) => {
             if (committers.length === 0) {
                 return Promise.resolve(Committer_1.Committer.committerInvalido(usernameOrAlias));

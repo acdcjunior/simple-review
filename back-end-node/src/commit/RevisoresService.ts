@@ -5,6 +5,7 @@ import {Commit} from "./Commit";
 import {Email} from '../geral/Email';
 import {CommitterRepository} from "../committers/CommitterRepository";
 import {CommitRepository} from "./CommitRepository";
+import {MencoesExtractor} from "../geral/MencoesExtractor";
 
 //noinspection JSUnusedLocalSymbols
 let debug = {
@@ -94,29 +95,8 @@ function incluirRevisorServidorDoCommit(commit: Commit, tabelaProporcoesDeCadaRe
 }
 
 function incluirRevisoresMencionadosNaMensagem(commitSemRevisor: Commit): Promise<void> {
-    return extrairCommittersMencionadosNaMsgDoCommit(commitSemRevisor).then((revisoresIndicados: Committer[]) => {
+    return MencoesExtractor.extrairCommittersMencionadosNaMensagemDoCommit(commitSemRevisor).then((revisoresIndicados: Committer[]) => {
         return commitSemRevisor.indicarRevisoresViaMencao(revisoresIndicados);
-    });
-}
-
-function extrairCommittersMencionadosNaMsgDoCommit(commitSemRevisor): Promise<Committer[]> {
-    const message = commitSemRevisor.message;
-    const mencoes = message.match(/@[a-zA-Z.0-9]+/g);
-    if (mencoes) {
-        return extrairCommittersDeMencoes(mencoes, []);
-    }
-    return Promise.resolve([]);
-}
-
-function extrairCommittersDeMencoes(mencoes, committers: Committer[]): Promise<Committer[]> {
-    if (mencoes.length === 0) {
-        return Promise.resolve(committers);
-    }
-    const mencao = mencoes[0].substring(1); // tirar a @
-    const mencoesRestantes = mencoes.slice(1);
-    return CommitterRepository.findCommittersByUsernameOrAlias(mencao).then((committer: Committer) => {
-        committers.push(committer);
-        return Promise.resolve(extrairCommittersDeMencoes(mencoesRestantes, committers));
     });
 }
 

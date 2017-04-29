@@ -5,7 +5,7 @@ export class CodeReviewConfig {
     public readonly host: string; // "git",
     public readonly projectId: number; // 123,
 
-    public readonly tokenUsuarioComentador: string; // "X_zfYU5k3VwDx2KegmdQ", // Token usuario comentador basta ter acesso [api]
+    public readonly usuarioComentador: CodeReviewConfigUsuarioComentador;
 
     public readonly tokenAdmin: string; // "yj2--5cKKC4qaDRoND7N", // Token Admin tem que ter acesso [api, read_user]
 
@@ -17,14 +17,7 @@ export class CodeReviewConfig {
     public readonly mensagemTokenCriadoPorCodeReview: string;
 }
 
-export class CodeReviewConfigCommitter {
 
-    public readonly username: string; // "alexandrevr",
-    public readonly sexo: string; // "m",
-    public readonly aliases: string[]; // ["alex", "alexandre"],
-    public readonly quota: number; // 25
-
-}
 export class CodeReviewConfigCouchDB {
 
     public readonly user: string;
@@ -32,6 +25,20 @@ export class CodeReviewConfigCouchDB {
     public readonly host: string;
     public readonly port: number;
     public readonly database: string;
+
+}
+export class CodeReviewConfigUsuarioComentador {
+
+    public readonly gitlab_userid: number; // 1
+    public readonly token: string; // "X_zfYU5k3VwDx2KegmdQ", // Token usuario comentador basta ter acesso [api]
+
+}
+export class CodeReviewConfigCommitter {
+
+    public readonly username: string; // "alexandrevr",
+    public readonly sexo: string; // "m",
+    public readonly aliases: string[]; // ["alex", "alexandre"],
+    public readonly quota: number; // 25
 
 }
 
@@ -43,7 +50,7 @@ console.log(`
     GITLAB
             host: ${codeReviewConfig.host}
             projectId: ${codeReviewConfig.projectId}
-            privateToken: ${codeReviewConfig.tokenUsuarioComentador}
+            usuarioComentador.token: ${codeReviewConfig.usuarioComentador.token}
             tokenAdmin: ${codeReviewConfig.tokenAdmin}
     
     COUCHDB
@@ -54,6 +61,6 @@ console.log(`
             couchdb.password: ${codeReviewConfig.couchdb.password}
     ----------------------------------------------------
 `);
-if (!codeReviewConfig.host || !codeReviewConfig.projectId || !codeReviewConfig.tokenUsuarioComentador || !codeReviewConfig.tokenAdmin) {
+if (!codeReviewConfig.host || !codeReviewConfig.projectId || !codeReviewConfig.usuarioComentador.token || !codeReviewConfig.tokenAdmin) {
     throw new Error(`Variáveis do codereview.config.js nao configuradas!`);
 }

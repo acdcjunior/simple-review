@@ -1,4 +1,4 @@
-import {rest, Rest} from "../infra/rest";
+import {Rest} from "../infra/rest";
 import {GitLabUser} from "./GitLabUser";
 import {GitLabCommit} from "./GitLabCommit";
 import {Email} from "../geral/Email";
@@ -6,8 +6,11 @@ import {GitLabImpersonationToken} from "./GitLabImpersonationToken";
 import {ArrayUtils} from "../geral/ArrayUtils";
 import {GitLabBranch} from "./GitLabBranch";
 import {codeReviewConfig} from "../geral/CodeReviewConfig";
+import {GitLabTodo} from "./GitLabTodo";
+import {MencoesExtractor} from "../geral/MencoesExtractor";
+import {Committer} from "../committers/Committer";
 
-export class GitLabConfig {
+export class GitLabURLs {
 
     static branchesUrl(): string {
         return `http://${codeReviewConfig.host}/api/v4/projects/${codeReviewConfig.projectId}/repository/branches`;
@@ -27,15 +30,19 @@ export class GitLabConfig {
     static impersonationTokenUrl(user_id: number): string {
         return `http://${codeReviewConfig.host}/api/v4/users/${user_id}/impersonation_tokens`;
     }
-    public static readonly tokenUsuarioComentador = codeReviewConfig.tokenUsuarioComentador;
-    public static readonly tokenAdmin = codeReviewConfig.tokenAdmin;
+    static todosPendentesGeradosPeloUsuarioComentadorUrl(): string {
+        return `http://${codeReviewConfig.host}/api/v4/todos?state=pending&author_id=${codeReviewConfig.usuarioComentador.gitlab_userid}&project_id=${codeReviewConfig.projectId}`;
+    }
+    static todoMarkAsDoneUrl(todo: GitLabTodo): string {
+        return `http://${codeReviewConfig.host}/api/v4/todos/${todo.id}/mark_as_done`;
+    }
 
 }
 console.log(`
-    BACKEND --> GITLAB urls exemplo
+    BACKEND --> GITLAB :: GitLabURLs
     ----------------------------------------------------
-    usersUrl: ${GitLabConfig.usersUrlByEmail(new Email('meu@email.com'))}
-    commentsUrl: ${GitLabConfig.commentsUrl('sha1234')}
+    usersUrl: ${GitLabURLs.usersUrlByEmail(new Email('meu@email.com'))}
+    commentsUrl: ${GitLabURLs.commentsUrl('sha1234')}
     ----------------------------------------------------
 `);
 
@@ -45,8 +52,8 @@ export class GitLabService {
     public static desabilitarComentariosNoGitLab = false;
 
     static getBranches(): Promise<GitLabBranch[]> {
-        return Rest.get(GitLabConfig.branchesUrl(), GitLabConfig.tokenAdmin).then((branches: GitLabBranch[]) => {
-            return Promise.resolve(branches.filter((branch: GitLabBranch) => codeReviewConfig.branchesIgnorados.indexOf(branch.name) === -1));
+        return Rest.get(GitLabURLs.branchesUrl(), codeReviewConfig.tokenAdmin).then((branches: GitLabBranch[]) => {
+            return branches.filter((branch: GitLabBranch) => codeReviewConfig.branchesIgnorados.indexOf(branch.name) === -1);
         });
     }
 
@@ -55,56 +62,53 @@ export class GitLabService {
             const branchNames: string[] = branches.map((gitLabBranch: GitLabBranch) => gitLabBranch.name);
 
             return Promise.all(branchNames.map((branch: string) => {
-                return Rest.get<GitLabCommit[]>(GitLabConfig.projectsUrl(perPage, branch, codeReviewConfig.dataCortePrimeiroCommit), GitLabConfig.tokenAdmin);
+                return Rest.get<GitLabCommit[]>(GitLabURLs.projectsUrl(perPage, branch, codeReviewConfig.dataCortePrimeiroCommit), codeReviewConfig.tokenAdmin);
             })).then((commitsDeCadaBranch: GitLabCommit[][]) => {
-                return Promise.resolve(ArrayUtils.flatten(commitsDeCadaBranch));
+                return ArrayUtils.flatten(commitsDeCadaBranch);
             });
         });
     }
 
     static getUserByEmail(committerEmail: Email): Promise<GitLabUser> {
-        return rest("GET", GitLabConfig.usersUrlByEmail(committerEmail), GitLabConfig.tokenAdmin).then(users => {
+        return Rest.get<GitLabUser[]>(GitLabURLs.usersUrlByEmail(committerEmail), codeReviewConfig.tokenAdmin).then((users: GitLabUser[]) => {
             if (users.length === 0) {
                 throw new Error(`Usuario GitLab com email <${committerEmail.email}> não encontrado!`);
             }
             if (users.length > 1) {
                 throw new Error(`Encontrado MAIS DE UM (${users.length}) usuario GitLab com email <${committerEmail.email}>:\n${JSON.stringify(users)}`);
             }
-            return Promise.resolve(users[0]);
+            return users[0];
         });
     }
 
     static getUserByUsername(username: string): Promise<GitLabUser> {
-        return rest("GET", GitLabConfig.usersUsernameUrl(username), GitLabConfig.tokenAdmin).then(users => {
-            return Promise.resolve(users[0]);
+        return Rest.get(GitLabURLs.usersUsernameUrl(username), codeReviewConfig.tokenAdmin).then(users => {
+            return users[0];
         });
     }
 
-    static comentar(commitSha: string, comentario: string): Promise<any> {
+    private static readonly PREFIXO_COMMITS_CODEREVIEW = ':loud_sound: ';
+    static comentar(commitSha: string, comentario: string): Promise<void> {
         if (this.desabilitarComentariosNoGitLab) {
-            return Promise.resolve();
+            return;
         }
-        return Rest.post(GitLabConfig.commentsUrl(commitSha), GitLabConfig.tokenUsuarioComentador, {
-            note: comentario
-        }).then(naoSeiQualOTipo => {
-            console.log(`
-            
-            Resuldado da promise COMENTAR:
-            ${JSON.stringify(naoSeiQualOTipo, null, '\t')}
-            
-            `);
-            return Promise.resolve();
+        return Rest.post(GitLabURLs.commentsUrl(commitSha), codeReviewConfig.usuarioComentador.token, {
+            note: GitLabService.PREFIXO_COMMITS_CODEREVIEW + comentario
+        }).then(() => {
+            MencoesExtractor.extrairCommittersMencionadosNoTexto(comentario).then((mencionados: Committer[]) => {
+                mencionados.map((mencionado: Committer) => GitLabService.limparTodosRelativosACodeReviewGeradosPeloUsuarioComentador(mencionado));
+            });
         });
     }
 
     static criarImpersonationToken(user_id: number): Promise<GitLabImpersonationToken> {
-        return rest("GET", GitLabConfig.impersonationTokenUrl(user_id) + "?state=active", GitLabConfig.tokenAdmin).then((tokens: GitLabImpersonationToken[]) => {
+        return Rest.get(GitLabURLs.impersonationTokenUrl(user_id) + "?state=active", codeReviewConfig.tokenAdmin).then((tokens: GitLabImpersonationToken[]) => {
             const tokenJahCriadoPorNos = tokens.find(token => token.name === codeReviewConfig.mensagemTokenCriadoPorCodeReview);
             if (tokenJahCriadoPorNos) {
-                return Promise.resolve(tokenJahCriadoPorNos);
+                return tokenJahCriadoPorNos;
             } else {
                 // criamos um token novo
-                let r = Rest.post(GitLabConfig.impersonationTokenUrl(user_id), GitLabConfig.tokenAdmin);
+                let r = Rest.post(GitLabURLs.impersonationTokenUrl(user_id), codeReviewConfig.tokenAdmin);
                 let form = (r as any).form();
                 form.append('user_id', 'user_id');
                 form.append('name', codeReviewConfig.mensagemTokenCriadoPorCodeReview);
@@ -112,6 +116,20 @@ export class GitLabService {
                 form.append('scopes[]', 'read_user');
                 return r;
             }
+        });
+    }
+
+    static getTodosCodeReviewPendentes(impersonationToken: string): Promise<GitLabTodo[]> {
+        return Rest.get(GitLabURLs.todosPendentesGeradosPeloUsuarioComentadorUrl(), impersonationToken).then((todosPendentes: GitLabTodo[]) => {
+            return todosPendentes.filter((todo: GitLabTodo) => todo.body.startsWith(GitLabService.PREFIXO_COMMITS_CODEREVIEW));
+        });
+    }
+
+    static limparTodosRelativosACodeReviewGeradosPeloUsuarioComentador({impersonationToken: impTokenDoUserCujosTodosDevemSerApagados}): Promise<any> {
+        return GitLabService.getTodosCodeReviewPendentes(impTokenDoUserCujosTodosDevemSerApagados).then((todosCodeReviewPendentes: GitLabTodo[]) => {
+            return Promise.all(todosCodeReviewPendentes.map(
+                (todoCodeReviewPendente: GitLabTodo) => Rest.post(GitLabURLs.todoMarkAsDoneUrl(todoCodeReviewPendente), impTokenDoUserCujosTodosDevemSerApagados)
+            ));
         });
     }
 
