@@ -86,5 +86,5 @@ class Commit extends Sesol2_1.Sesol2 {
 Commit.COMMIT_TYPE = 'commit';
 // este email estah hardcoded na committers do front-end
 Commit.EMAIL_NAO_TERAH_REVISOR = 'nao-terah-revisor@srv-codereview.tcu.gov.br';
-Commit.regexMensagemMerge = /^Merge( remote-tracking)? branch '[\w\/]+'( of http.*?\.git)? into [\w\/]+[\s\S]*$/;
+Commit.regexMensagemMerge = /^Merge( remote-tracking)? branch '[\w\/-]+'( of http.*?\.git)? into [\w\/]+[\s\S]*$/;
 exports.Commit = Commit;

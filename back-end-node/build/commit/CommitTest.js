@@ -8,6 +8,8 @@ describe("Commit", function () {
         { message: `Merge branch 'desenvolvimento' of http://srv-scm.example.com/sti/sagas2.git into desenvolvimento`, ehMergeSemConflito: true },
         { message: `Merge remote-tracking branch 'origin/desenvolvimento' into desenvolvimento`, ehMergeSemConflito: true },
         { message: `Merge remote-tracking branch 'origin/master' into desenvolvimento`, ehMergeSemConflito: true },
+        { message: `Merge branch 'terceiro-branch' into desenvolvimento\n`, ehMergeSemConflito: true },
+        { message: `Merge branch 'terceiro_branch' into desenvolvimento\n`, ehMergeSemConflito: true },
         { message: `Merge remote-tracking branch 'origin/master' into desenvolvimento
             
              blablabla:
@@ -17,8 +19,8 @@ describe("Commit", function () {
              Conflicts:
 	            sagas2Negocio/src/main/java/br/gov/tcu/sagas/negocio/instrucaogabinete/oficializarinstrucao/ServicoOficializarInstrucao.java`, ehMergeSemConflito: false }
     ];
-    msgsMerges.forEach((msgMerge, b) => {
-        it("isCommitDeMergeSemConflito " + b, function () {
+    msgsMerges.forEach((msgMerge, index) => {
+        it(`isCommitDeMergeSemConflito ${index}: ${msgMerge.message}`, function () {
             const commit = new Commit_1.Commit('sha', 'title', msgMerge.message, 'email@autor.com', 'created_at');
             expect(commit.isCommitDeMergeSemConflito()).to.equal(msgMerge.ehMergeSemConflito);
         });
