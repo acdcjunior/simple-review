@@ -49,11 +49,11 @@ export class Commit extends Sesol2 {
 
     private indicarRevisorViaMencao(revisor: Committer): Promise<void> {
         if (revisor.isInvalido()) {
-            this.incluirHistorico(`:interrobang: Revisor(a) @${revisor.username} mencionado(a), mas não reconhecido(a) na base de usuários. Menção ignorada.`);
+            this.incluirHistorico(`Revisor(a) @${revisor.username} mencionado(a), mas não reconhecido(a) na base de usuários. Menção ignorada.`);
             return Promise.resolve();
         }
         if (revisor.email == this.author_email) {
-            this.incluirHistorico(`:interrobang: Revisor${revisor.vazioOuA()} ${revisor.mencao()} mencionad${revisor.oOuA()} é autor${revisor.vazioOuA()} do commit. Menção ignorada.`);
+            this.incluirHistorico(`Revisor${revisor.vazioOuA()} ${revisor.mencao()} mencionad${revisor.oOuA()} é autor${revisor.vazioOuA()} do commit. Menção ignorada.`);
             return Promise.resolve();
         }
         return this.incluirRevisor(revisor, `:heavy_plus_sign: :point_right: Revisor${revisor.vazioOuA()} ${revisor.mencao()} atribuíd${revisor.oOuA()} via menção em mensagem de commit.`);
