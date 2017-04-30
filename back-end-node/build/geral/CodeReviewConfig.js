@@ -6,6 +6,9 @@ exports.CodeReviewConfig = CodeReviewConfig;
 class CodeReviewConfigCouchDB {
 }
 exports.CodeReviewConfigCouchDB = CodeReviewConfigCouchDB;
+class CodeReviewConfigProjeto {
+}
+exports.CodeReviewConfigProjeto = CodeReviewConfigProjeto;
 class CodeReviewConfigUsuarioComentador {
 }
 exports.CodeReviewConfigUsuarioComentador = CodeReviewConfigUsuarioComentador;
@@ -17,10 +20,13 @@ console.log(`
     BACKEND --> CODEREVIEW CONFIG (codereview.config.js)
     ----------------------------------------------------
     GITLAB
-            host: ${exports.codeReviewConfig.host}
-            projectId: ${exports.codeReviewConfig.projectId}
+            gitlabHost: ${exports.codeReviewConfig.gitlabHost}
+            
             usuarioComentador.token: ${exports.codeReviewConfig.usuarioComentador.token}
             tokenAdmin: ${exports.codeReviewConfig.tokenAdmin}
+            
+            projeto.projectId: ${exports.codeReviewConfig.projeto.projectId}
+            projeto.branchesIgnorados: ${exports.codeReviewConfig.projeto.branchesIgnorados}
     
     COUCHDB
             couchdb.host: ${exports.codeReviewConfig.couchdb.host}
@@ -30,6 +36,6 @@ console.log(`
             couchdb.password: ${exports.codeReviewConfig.couchdb.password}
     ----------------------------------------------------
 `);
-if (!exports.codeReviewConfig.host || !exports.codeReviewConfig.projectId || !exports.codeReviewConfig.usuarioComentador.token || !exports.codeReviewConfig.tokenAdmin) {
+if (!exports.codeReviewConfig.gitlabHost || !exports.codeReviewConfig.projeto.projectId || !exports.codeReviewConfig.usuarioComentador.token || !exports.codeReviewConfig.tokenAdmin) {
     throw new Error(`Variáveis do codereview.config.js nao configuradas!`);
 }

@@ -7,28 +7,28 @@ const CodeReviewConfig_1 = require("../geral/CodeReviewConfig");
 const MencoesExtractor_1 = require("../geral/MencoesExtractor");
 class GitLabURLs {
     static branchesUrl() {
-        return `http://${CodeReviewConfig_1.codeReviewConfig.host}/api/v4/projects/${CodeReviewConfig_1.codeReviewConfig.projectId}/repository/branches`;
+        return `http://${CodeReviewConfig_1.codeReviewConfig.gitlabHost}/api/v4/projects/${CodeReviewConfig_1.codeReviewConfig.projeto.projectId}/repository/branches`;
     }
     static projectsUrl(perPage = 10, projectBranch, since) {
-        return `http://${CodeReviewConfig_1.codeReviewConfig.host}/api/v4/projects/${CodeReviewConfig_1.codeReviewConfig.projectId}/repository/commits/?ref_name=${projectBranch}&per_page=${perPage}&since=${since}`;
+        return `http://${CodeReviewConfig_1.codeReviewConfig.gitlabHost}/api/v4/projects/${CodeReviewConfig_1.codeReviewConfig.projeto.projectId}/repository/commits/?ref_name=${projectBranch}&per_page=${perPage}&since=${since}`;
     }
     static usersUrlByEmail(committerEmail) {
-        return `http://${CodeReviewConfig_1.codeReviewConfig.host}/api/v4/users/?search=${committerEmail.email}`;
+        return `http://${CodeReviewConfig_1.codeReviewConfig.gitlabHost}/api/v4/users/?search=${committerEmail.email}`;
     }
     static usersUsernameUrl(username) {
-        return `http://${CodeReviewConfig_1.codeReviewConfig.host}/api/v4/users/?username=${username}`;
+        return `http://${CodeReviewConfig_1.codeReviewConfig.gitlabHost}/api/v4/users/?username=${username}`;
     }
     static commentsUrl(sha) {
-        return `http://${CodeReviewConfig_1.codeReviewConfig.host}/api/v4/projects/${CodeReviewConfig_1.codeReviewConfig.projectId}/repository/commits/${sha}/comments`;
+        return `http://${CodeReviewConfig_1.codeReviewConfig.gitlabHost}/api/v4/projects/${CodeReviewConfig_1.codeReviewConfig.projeto.projectId}/repository/commits/${sha}/comments`;
     }
     static impersonationTokenUrl(user_id) {
-        return `http://${CodeReviewConfig_1.codeReviewConfig.host}/api/v4/users/${user_id}/impersonation_tokens`;
+        return `http://${CodeReviewConfig_1.codeReviewConfig.gitlabHost}/api/v4/users/${user_id}/impersonation_tokens`;
     }
     static todosPendentesGeradosPeloUsuarioComentadorUrl() {
-        return `http://${CodeReviewConfig_1.codeReviewConfig.host}/api/v4/todos?state=pending&author_id=${CodeReviewConfig_1.codeReviewConfig.usuarioComentador.gitlab_userid}&project_id=${CodeReviewConfig_1.codeReviewConfig.projectId}`;
+        return `http://${CodeReviewConfig_1.codeReviewConfig.gitlabHost}/api/v4/todos?state=pending&author_id=${CodeReviewConfig_1.codeReviewConfig.usuarioComentador.gitlab_userid}&project_id=${CodeReviewConfig_1.codeReviewConfig.projeto.projectId}`;
     }
     static todoMarkAsDoneUrl(todo) {
-        return `http://${CodeReviewConfig_1.codeReviewConfig.host}/api/v4/todos/${todo.id}/mark_as_done`;
+        return `http://${CodeReviewConfig_1.codeReviewConfig.gitlabHost}/api/v4/todos/${todo.id}/mark_as_done`;
     }
 }
 exports.GitLabURLs = GitLabURLs;
@@ -42,14 +42,14 @@ console.log(`
 class GitLabService {
     static getBranches() {
         return rest_1.Rest.get(GitLabURLs.branchesUrl(), CodeReviewConfig_1.codeReviewConfig.tokenAdmin).then((branches) => {
-            return branches.filter((branch) => CodeReviewConfig_1.codeReviewConfig.branchesIgnorados.indexOf(branch.name) === -1);
+            return branches.filter((branch) => CodeReviewConfig_1.codeReviewConfig.projeto.branchesIgnorados.indexOf(branch.name) === -1);
         });
     }
     static getCommits(perPage = 100) {
         return GitLabService.getBranches().then((branches) => {
             const branchNames = branches.map((gitLabBranch) => gitLabBranch.name);
             return Promise.all(branchNames.map((branch) => {
-                return rest_1.Rest.get(GitLabURLs.projectsUrl(perPage, branch, CodeReviewConfig_1.codeReviewConfig.dataCortePrimeiroCommit), CodeReviewConfig_1.codeReviewConfig.tokenAdmin);
+                return rest_1.Rest.get(GitLabURLs.projectsUrl(perPage, branch, CodeReviewConfig_1.codeReviewConfig.projeto.dataCortePrimeiroCommit), CodeReviewConfig_1.codeReviewConfig.tokenAdmin);
             })).then((commitsDeCadaBranch) => {
                 return ArrayUtils_1.ArrayUtils.flatten(commitsDeCadaBranch);
             });

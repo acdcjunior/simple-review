@@ -13,28 +13,28 @@ import {Committer} from "../committers/Committer";
 export class GitLabURLs {
 
     static branchesUrl(): string {
-        return `http://${codeReviewConfig.host}/api/v4/projects/${codeReviewConfig.projectId}/repository/branches`;
+        return `http://${codeReviewConfig.gitlabHost}/api/v4/projects/${codeReviewConfig.projeto.projectId}/repository/branches`;
     }
     static projectsUrl(perPage:number = 10, projectBranch: string, since: string): string {
-        return `http://${codeReviewConfig.host}/api/v4/projects/${codeReviewConfig.projectId}/repository/commits/?ref_name=${projectBranch}&per_page=${perPage}&since=${since}`;
+        return `http://${codeReviewConfig.gitlabHost}/api/v4/projects/${codeReviewConfig.projeto.projectId}/repository/commits/?ref_name=${projectBranch}&per_page=${perPage}&since=${since}`;
     }
     static usersUrlByEmail(committerEmail: Email): string {
-        return `http://${codeReviewConfig.host}/api/v4/users/?search=${committerEmail.email}`;
+        return `http://${codeReviewConfig.gitlabHost}/api/v4/users/?search=${committerEmail.email}`;
     }
     static usersUsernameUrl (username: string): string {
-        return `http://${codeReviewConfig.host}/api/v4/users/?username=${username}`;
+        return `http://${codeReviewConfig.gitlabHost}/api/v4/users/?username=${username}`;
     }
     static commentsUrl (sha: string): string {
-        return `http://${codeReviewConfig.host}/api/v4/projects/${codeReviewConfig.projectId}/repository/commits/${sha}/comments`;
+        return `http://${codeReviewConfig.gitlabHost}/api/v4/projects/${codeReviewConfig.projeto.projectId}/repository/commits/${sha}/comments`;
     }
     static impersonationTokenUrl(user_id: number): string {
-        return `http://${codeReviewConfig.host}/api/v4/users/${user_id}/impersonation_tokens`;
+        return `http://${codeReviewConfig.gitlabHost}/api/v4/users/${user_id}/impersonation_tokens`;
     }
     static todosPendentesGeradosPeloUsuarioComentadorUrl(): string {
-        return `http://${codeReviewConfig.host}/api/v4/todos?state=pending&author_id=${codeReviewConfig.usuarioComentador.gitlab_userid}&project_id=${codeReviewConfig.projectId}`;
+        return `http://${codeReviewConfig.gitlabHost}/api/v4/todos?state=pending&author_id=${codeReviewConfig.usuarioComentador.gitlab_userid}&project_id=${codeReviewConfig.projeto.projectId}`;
     }
     static todoMarkAsDoneUrl(todo: GitLabTodo): string {
-        return `http://${codeReviewConfig.host}/api/v4/todos/${todo.id}/mark_as_done`;
+        return `http://${codeReviewConfig.gitlabHost}/api/v4/todos/${todo.id}/mark_as_done`;
     }
 
 }
@@ -53,7 +53,7 @@ export class GitLabService {
 
     static getBranches(): Promise<GitLabBranch[]> {
         return Rest.get(GitLabURLs.branchesUrl(), codeReviewConfig.tokenAdmin).then((branches: GitLabBranch[]) => {
-            return branches.filter((branch: GitLabBranch) => codeReviewConfig.branchesIgnorados.indexOf(branch.name) === -1);
+            return branches.filter((branch: GitLabBranch) => codeReviewConfig.projeto.branchesIgnorados.indexOf(branch.name) === -1);
         });
     }
 
@@ -62,7 +62,7 @@ export class GitLabService {
             const branchNames: string[] = branches.map((gitLabBranch: GitLabBranch) => gitLabBranch.name);
 
             return Promise.all(branchNames.map((branch: string) => {
-                return Rest.get<GitLabCommit[]>(GitLabURLs.projectsUrl(perPage, branch, codeReviewConfig.dataCortePrimeiroCommit), codeReviewConfig.tokenAdmin);
+                return Rest.get<GitLabCommit[]>(GitLabURLs.projectsUrl(perPage, branch, codeReviewConfig.projeto.dataCortePrimeiroCommit), codeReviewConfig.tokenAdmin);
             })).then((commitsDeCadaBranch: GitLabCommit[][]) => {
                 return ArrayUtils.flatten(commitsDeCadaBranch);
             });

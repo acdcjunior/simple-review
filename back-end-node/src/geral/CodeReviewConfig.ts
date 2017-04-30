@@ -2,15 +2,13 @@ export class CodeReviewConfig {
 
     public readonly couchdb: CodeReviewConfigCouchDB;
 
-    public readonly host: string; // "git",
-    public readonly projectId: number; // 123,
+    public readonly gitlabHost: string; // "git",
 
     public readonly usuarioComentador: CodeReviewConfigUsuarioComentador;
 
     public readonly tokenAdmin: string; // Token Admin tem que ter acesso [api, read_user]
 
-    public readonly dataCortePrimeiroCommit: string; // 2017-04-20T18:01:38.000-03:00
-    public readonly branchesIgnorados: string[];
+    public readonly projeto: CodeReviewConfigProjeto;
 
     public readonly committers: CodeReviewConfigCommitter[];
 
@@ -25,6 +23,13 @@ export class CodeReviewConfigCouchDB {
     public readonly host: string;
     public readonly port: number;
     public readonly database: string;
+
+}
+export class CodeReviewConfigProjeto {
+
+    public readonly projectId: number; // 123
+    public readonly dataCortePrimeiroCommit: string; // 2017-04-20T18:01:38.000-03:00
+    public readonly branchesIgnorados: string[];
 
 }
 export class CodeReviewConfigUsuarioComentador {
@@ -48,10 +53,13 @@ console.log(`
     BACKEND --> CODEREVIEW CONFIG (codereview.config.js)
     ----------------------------------------------------
     GITLAB
-            host: ${codeReviewConfig.host}
-            projectId: ${codeReviewConfig.projectId}
+            gitlabHost: ${codeReviewConfig.gitlabHost}
+            
             usuarioComentador.token: ${codeReviewConfig.usuarioComentador.token}
             tokenAdmin: ${codeReviewConfig.tokenAdmin}
+            
+            projeto.projectId: ${codeReviewConfig.projeto.projectId}
+            projeto.branchesIgnorados: ${codeReviewConfig.projeto.branchesIgnorados}
     
     COUCHDB
             couchdb.host: ${codeReviewConfig.couchdb.host}
@@ -61,6 +69,6 @@ console.log(`
             couchdb.password: ${codeReviewConfig.couchdb.password}
     ----------------------------------------------------
 `);
-if (!codeReviewConfig.host || !codeReviewConfig.projectId || !codeReviewConfig.usuarioComentador.token || !codeReviewConfig.tokenAdmin) {
+if (!codeReviewConfig.gitlabHost || !codeReviewConfig.projeto.projectId || !codeReviewConfig.usuarioComentador.token || !codeReviewConfig.tokenAdmin) {
     throw new Error(`Variáveis do codereview.config.js nao configuradas!`);
 }
