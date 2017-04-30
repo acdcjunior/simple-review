@@ -7,13 +7,9 @@ const GitLabService_1 = require("../gitlab/GitLabService");
 class CommitFactory {
     static carregarCommits() {
         return GitLabService_1.GitLabService.getCommits().then(commits => {
-            const promisesDeCommitsInseridos = [];
-            console.log(`\n\n\tCommitFactory: Processando COMMITS...`);
-            console.log(`\t\tCommitFactory: Processando ${commits.length} commits...`);
-            commits.forEach(commit => {
-                promisesDeCommitsInseridos.push(Sesol2Repository_1.sesol2Repository.insertIfNotExists(new Commit_1.Commit(commit.id, commit.title, commit.message, commit.author_email, commit.created_at)));
-            });
-            return Promise.all(promisesDeCommitsInseridos).then((resultadosDasPromises) => {
+            console.log(`\n\n\tCommitFactory: Processando Commits...`);
+            console.log(`\t\tCommitFactory: Inserindo (se nao existirem) ${commits.length} commits...`);
+            return Promise.all(commits.map(commit => Sesol2Repository_1.sesol2Repository.insertIfNotExists(new Commit_1.Commit(commit.id, commit.title, commit.message, commit.author_email, commit.created_at)))).then((resultadosDasPromises) => {
                 let jahExistiam = 0;
                 resultadosDasPromises.forEach(resultadoDePromise => {
                     if (!resultadoDePromise) {
