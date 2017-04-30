@@ -2,12 +2,38 @@ import {Sesol2} from "../geral/Sesol2";
 import {Email} from "../geral/Email";
 import {GitLabService} from "../gitlab/GitLabService";
 import {Committer} from "../committers/Committer";
+import {CommitterRepository} from "../committers/CommitterRepository";
 
-class RevisaoCommit {
-    public readonly revisor: string; // "antonio.junior@tcu.gov.br"
-    public readonly sexoRevisor: string; // "m"
-    public readonly data: string; // "2017-04-25T23:06:31.702Z"
-    public readonly tipoRevisao: string; // "par"
+export class TipoRevisaoCommit {
+
+    //noinspection JSUnusedGlobalSymbols
+    public static readonly SEM_FOLLOW_UP: string = "sem follow-up";
+    public static readonly COM_FOLLOW_UP: string = "com follow-up";
+    public static readonly SEM_REVISAO: string = "sem revisão";
+    public static readonly PAR: string = "par";
+
+    static comentar(usernameRevisor, sha, tipoRevisao): Promise<void> {
+        return CommitterRepository.findCommitterByUsernameOrAlias(usernameRevisor).then((committer: Committer) => {
+            switch (tipoRevisao) {
+                case TipoRevisaoCommit.PAR:
+                    return GitLabService.comentar(sha, `:white_check_mark: Commit marcado como **feito em par** por ${committer.mencao()}.`);
+                case TipoRevisaoCommit.COM_FOLLOW_UP:
+                    return GitLabService.comentar(sha, `:ballot_box_with_check: Commit marcado como **revisado com** ***follow-up*** por ${committer.mencao()}.`);
+                case TipoRevisaoCommit.SEM_REVISAO:
+                    return GitLabService.comentar(sha, `:ok: Commit marcado como **não terá revisor** por ${committer.mencao()}.`);
+                default:
+                    return GitLabService.comentar(sha, `:ballot_box_with_check: Commit marcado como **revisado sem** ***follow-up*** por ${committer.mencao()}.`);
+            }
+        });
+    }
+
+}
+
+interface RevisaoCommit {
+    readonly revisor: string; // "antonio.junior@tcu.gov.br"
+    readonly sexoRevisor: string; // "m"
+    readonly data: string; // "2017-04-25T23:06:31.702Z"
+    readonly tipoRevisao: string; // "par"
 }
 
 export class Commit extends Sesol2 {
@@ -63,19 +89,19 @@ export class Commit extends Sesol2 {
         return this.incluirRevisor(revisor, `:heavy_plus_sign: :gear: Revisor${revisor.vazioOuA()} ${revisor.mencao()} atribuíd${revisor.oOuA()} automaticamente.`);
     }
 
-    // este email estah hardcoded na committers do front-end
-    public static readonly EMAIL_NAO_TERAH_REVISOR: string = 'nao-terah-revisor@srv-codereview.tcu.gov.br';
     indicarCommitNaoTerahRevisor(razao: string): Promise<void> {
-        this.revisoes.push({
-            revisor: Commit.EMAIL_NAO_TERAH_REVISOR,
-            sexoRevisor: undefined,
-            data: new Date().toISOString(),
-            tipoRevisao: "sem revisão"
+        return CommitterRepository.findBotComentador().then((botComentador: Committer) => {
+            this.revisoes.push({
+                revisor: botComentador.email,
+                sexoRevisor: botComentador.sexo,
+                data: new Date().toISOString(),
+                tipoRevisao: TipoRevisaoCommit.SEM_REVISAO
+            });
+            return this.incluirRevisor(botComentador, `:ok: Commit não terá revisão: ${razao}.`);
         });
-        return this.incluirRevisor({email: Commit.EMAIL_NAO_TERAH_REVISOR}, `:ok: Commit não terá revisor: ${razao}.`);
     }
 
-    private incluirRevisor(revisor: {email}, msg: string): Promise<void> {
+    private incluirRevisor(revisor: Committer, msg: string): Promise<void> {
         if (!revisor) {
             throw new Error("Revisor undefined: "+JSON.stringify(revisor, null, '\t'));
         }

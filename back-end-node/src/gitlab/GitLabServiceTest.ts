@@ -14,7 +14,11 @@ function printResults(prefixo, promise) {
         console.log(prefixo + ' >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
         console.dir(x);
         console.log(prefixo + ' <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
-    }).catch((x) => console.log('err todos!!!!', x));
+    }).catch((x) => {
+        console.log(prefixo + 'ERRO!!!!!!!!!!!!!!!!! >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+        console.dir(x);
+        console.log(prefixo + 'ERRO!!!!!!!!!!!!!!!!! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
+    });
 }
 
 describe("GitLabService integracao readonly", function () {
@@ -25,17 +29,16 @@ describe("GitLabService integracao readonly", function () {
         return user.then((x) => console.log('ok', x)).catch((x) => console.log('err', x));
     });
 
-    it("getTodosCodeReviewPendentes", function () {
-        const user = GitLabService.getTodosCodeReviewPendentes(`GuXQqswBa4TrqhxPeeaN`); // fernandesm @ delljr
-        return printResults(`getTodosCodeReviewPendentes`, user);
+    it("getTODOsCodeReviewPendentes", function () {
+        return printResults(`getTodosCodeReviewPendentes`, GitLabService.getTODOsCodeReviewPendentes(`qSFmVvy6wDMfnsugRuAp`));          // CarlaNM @ delljr
     });
 
 });
 
-xdescribe("GitLabService integracao write", function () {
+describe("GitLabService integracao write", function () {
     this.timeout(15000);
 
-    it("criarImpersonationToken", function () {
+    xit("criarImpersonationToken", function () {
         return GitLabService.criarImpersonationToken(20).then(retorno => {
             console.log('retorno', retorno);
             return 'ok!';
@@ -43,19 +46,17 @@ xdescribe("GitLabService integracao write", function () {
     });
 
     it("comentar", function () {
-        const user = GitLabService.comentar(`14b6cfadee9055567071f2cae1d969bbeceb28c4`, `via IT`);
-        return user.then((x) => console.log('ok', x)).catch((x) => console.log('err', x));
+        return printResults(`comentar`, GitLabService.comentar(`14b6cfadee9055567071f2cae1d969bbeceb28c4`, `via IT`));
     });
 
     it("limparTodosRelativosACodeReviewGeradosPeloUsuarioComentador", function () {
-        return printResults(`antes limpeza`, GitLabService.getTodosCodeReviewPendentes(`GuXQqswBa4TrqhxPeeaN`)).then(() => {
-            const user = GitLabService.limparTodosRelativosACodeReviewGeradosPeloUsuarioComentador({impersonationToken: `GuXQqswBa4TrqhxPeeaN`}); // fernandesm @ delljr
+        return printResults(`antes limpeza`, GitLabService.getTODOsCodeReviewPendentes(`qSFmVvy6wDMfnsugRuAp`)).then(() => {
+            const user = GitLabService.limparTodosRelativosACodeReviewGeradosPeloUsuarioComentador({impersonationToken: `qSFmVvy6wDMfnsugRuAp`}); // CarlaNM @ delljr
             return user.then(() => {
-                return printResults(`depois limpeza`, GitLabService.getTodosCodeReviewPendentes(`GuXQqswBa4TrqhxPeeaN`)); // fernandesm @ delljr
+                return printResults(`depois limpeza`, GitLabService.getTODOsCodeReviewPendentes(`qSFmVvy6wDMfnsugRuAp`)); // CarlaNM @ delljr
             });
         });
     });
-
 
 });
 
@@ -100,7 +101,7 @@ describe("GitLabService com mocks", function () {
     });
 
     it("getBranches() deve ignorar branches ignorados", function () {
-        (codeReviewConfig as any).branchesIgnorados = ['branch-um'];
+        (codeReviewConfig.projeto as any).branchesIgnorados = ['branch-um'];
 
         return GitLabService.getBranches().then((branchesTrazidos) => {
             expect(stub_GitLabConfig_branchesUrl).to.have.been.callCount(1);

@@ -8,19 +8,18 @@ const CodeReviewConfig_1 = require("../geral/CodeReviewConfig");
 class CommittersFactory {
     static carregarCommittersDoArquivo() {
         console.log(`\n\n\tCommittersFactory: Iniciando carga dos committers do projeto.json...`);
-        console.log(`\t\tCommittersFactory: Inserindo (se nao existirem) ${CodeReviewConfig_1.codeReviewConfig.committers.length} committers...`);
-        let promisesDeCommittersInseridos = [];
-        CodeReviewConfig_1.codeReviewConfig.committers.forEach((committer) => {
-            promisesDeCommittersInseridos.push(GitLabService_1.GitLabService.getUserByUsername(committer.username).then((gitlabUser) => {
+        const botMaisCommitters = CodeReviewConfig_1.codeReviewConfig.committers.concat(CodeReviewConfig_1.codeReviewConfig.botComentador);
+        console.log(`\t\tCommittersFactory: Inserindo (se nao existirem) bot + ${CodeReviewConfig_1.codeReviewConfig.committers.length} committers...`);
+        return Promise.all(botMaisCommitters.map((committer) => {
+            return GitLabService_1.GitLabService.getUserByUsername(committer.username).then((gitlabUser) => {
                 if (!gitlabUser) {
                     throw new Error(`CommittersFactory: Commiter de username ${committer.username} não foi encontrado no GitLab!`);
                 }
                 return GitLabService_1.GitLabService.criarImpersonationToken(gitlabUser.id).then((gitlabImpersonationToken) => {
                     return Sesol2Repository_1.sesol2Repository.insertIfNotExists(new Committer_1.Committer(gitlabUser, gitlabImpersonationToken, committer.aliases, committer.quota, committer.sexo));
                 });
-            }));
-        });
-        return Promise.all(promisesDeCommittersInseridos).then((resultadosDasPromises) => {
+            });
+        })).then((resultadosDasPromises) => {
             CommittersFactory.exibirQuantidadeQueJahExistia(resultadosDasPromises);
             console.log(`\tCommittersFactory: projeto.json processado por completo!\n`);
         });

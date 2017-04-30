@@ -9,6 +9,7 @@ import {codeReviewConfig} from "../geral/CodeReviewConfig";
 import {GitLabTodo} from "./GitLabTodo";
 import {MencoesExtractor} from "../geral/MencoesExtractor";
 import {Committer} from "../committers/Committer";
+import {CommitterRepository} from "../committers/CommitterRepository";
 
 export class GitLabURLs {
 
@@ -30,8 +31,8 @@ export class GitLabURLs {
     static impersonationTokenUrl(user_id: number): string {
         return `http://${codeReviewConfig.gitlabHost}/api/v4/users/${user_id}/impersonation_tokens`;
     }
-    static todosPendentesGeradosPeloUsuarioComentadorUrl(): string {
-        return `http://${codeReviewConfig.gitlabHost}/api/v4/todos?state=pending&author_id=${codeReviewConfig.usuarioComentador.gitlab_userid}&project_id=${codeReviewConfig.projeto.projectId}`;
+    static todosPendentesGeradosPeloBotComentadorUrl(botComentador: Committer): string {
+        return `http://${codeReviewConfig.gitlabHost}/api/v4/todos?state=pending&author_id=${botComentador.user_id}&project_id=${codeReviewConfig.projeto.projectId}`;
     }
     static todoMarkAsDoneUrl(todo: GitLabTodo): string {
         return `http://${codeReviewConfig.gitlabHost}/api/v4/todos/${todo.id}/mark_as_done`;
@@ -52,7 +53,7 @@ export class GitLabService {
     public static desabilitarComentariosNoGitLab = false;
 
     static getBranches(): Promise<GitLabBranch[]> {
-        return Rest.get(GitLabURLs.branchesUrl(), codeReviewConfig.tokenAdmin).then((branches: GitLabBranch[]) => {
+        return Rest.get<GitLabBranch[]>(GitLabURLs.branchesUrl(), codeReviewConfig.tokenAdmin).then((branches: GitLabBranch[]) => {
             return branches.filter((branch: GitLabBranch) => codeReviewConfig.projeto.branchesIgnorados.indexOf(branch.name) === -1);
         });
     }
@@ -82,7 +83,7 @@ export class GitLabService {
     }
 
     static getUserByUsername(username: string): Promise<GitLabUser> {
-        return Rest.get(GitLabURLs.usersUsernameUrl(username), codeReviewConfig.tokenAdmin).then(users => {
+        return Rest.get<GitLabUser[]>(GitLabURLs.usersUsernameUrl(username), codeReviewConfig.tokenAdmin).then((users: GitLabUser[]) => {
             return users[0];
         });
     }
@@ -90,19 +91,21 @@ export class GitLabService {
     private static readonly PREFIXO_COMMITS_CODEREVIEW = ':loud_sound: ';
     static comentar(commitSha: string, comentario: string): Promise<void> {
         if (this.desabilitarComentariosNoGitLab) {
-            return;
+            return Promise.resolve();
         }
-        return Rest.post(GitLabURLs.commentsUrl(commitSha), codeReviewConfig.usuarioComentador.token, {
-            note: GitLabService.PREFIXO_COMMITS_CODEREVIEW + comentario
-        }).then(() => {
-            MencoesExtractor.extrairCommittersMencionadosNoTexto(comentario).then((mencionados: Committer[]) => {
-                mencionados.map((mencionado: Committer) => GitLabService.limparTodosRelativosACodeReviewGeradosPeloUsuarioComentador(mencionado));
+        return CommitterRepository.findBotComentador().then((botComentador: Committer) => {
+            return Rest.post(GitLabURLs.commentsUrl(commitSha), botComentador.impersonationToken, {
+                note: GitLabService.PREFIXO_COMMITS_CODEREVIEW + comentario
+            }).then(() => {
+                MencoesExtractor.extrairCommittersMencionadosNoTexto(comentario).then((mencionados: Committer[]) => {
+                    mencionados.map((mencionado: Committer) => GitLabService.limparTodosRelativosACodeReviewGeradosPeloUsuarioComentador(mencionado));
+                });
             });
         });
     }
 
     static criarImpersonationToken(user_id: number): Promise<GitLabImpersonationToken> {
-        return Rest.get(GitLabURLs.impersonationTokenUrl(user_id) + "?state=active", codeReviewConfig.tokenAdmin).then((tokens: GitLabImpersonationToken[]) => {
+        return Rest.get<GitLabImpersonationToken[]>(GitLabURLs.impersonationTokenUrl(user_id) + "?state=active", codeReviewConfig.tokenAdmin).then((tokens: GitLabImpersonationToken[]) => {
             const tokenJahCriadoPorNos = tokens.find(token => token.name === codeReviewConfig.mensagemTokenCriadoPorCodeReview);
             if (tokenJahCriadoPorNos) {
                 return tokenJahCriadoPorNos;
@@ -119,14 +122,16 @@ export class GitLabService {
         });
     }
 
-    static getTodosCodeReviewPendentes(impersonationToken: string): Promise<GitLabTodo[]> {
-        return Rest.get(GitLabURLs.todosPendentesGeradosPeloUsuarioComentadorUrl(), impersonationToken).then((todosPendentes: GitLabTodo[]) => {
+    static getTODOsCodeReviewPendentes(impersonationToken: string): Promise<GitLabTodo[]> {
+        return CommitterRepository.findBotComentador().then((botComentador: Committer) => {
+            return Rest.get<GitLabTodo[]>(GitLabURLs.todosPendentesGeradosPeloBotComentadorUrl(botComentador), impersonationToken);
+        }).then((todosPendentes: GitLabTodo[]) => {
             return todosPendentes.filter((todo: GitLabTodo) => todo.body.startsWith(GitLabService.PREFIXO_COMMITS_CODEREVIEW));
         });
     }
 
     static limparTodosRelativosACodeReviewGeradosPeloUsuarioComentador({impersonationToken: impTokenDoUserCujosTodosDevemSerApagados}): Promise<any> {
-        return GitLabService.getTodosCodeReviewPendentes(impTokenDoUserCujosTodosDevemSerApagados).then((todosCodeReviewPendentes: GitLabTodo[]) => {
+        return GitLabService.getTODOsCodeReviewPendentes(impTokenDoUserCujosTodosDevemSerApagados).then((todosCodeReviewPendentes: GitLabTodo[]) => {
             return Promise.all(todosCodeReviewPendentes.map(
                 (todoCodeReviewPendente: GitLabTodo) => Rest.post(GitLabURLs.todoMarkAsDoneUrl(todoCodeReviewPendente), impTokenDoUserCujosTodosDevemSerApagados)
             ));

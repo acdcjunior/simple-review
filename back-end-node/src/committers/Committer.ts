@@ -1,6 +1,7 @@
 import {Sesol2} from "../geral/Sesol2";
 import {GitLabUser} from "../gitlab/GitLabUser";
 import {GitLabImpersonationToken} from "../gitlab/GitLabImpersonationToken";
+import {codeReviewConfig} from "../geral/CodeReviewConfig";
 
 export class Committer extends Sesol2 {
 
@@ -17,6 +18,9 @@ export class Committer extends Sesol2 {
     public readonly aliases: string[];
     public readonly quota: number;
     public readonly sexo: string;
+
+    public readonly isBotComentador: boolean;
+    public readonly invalido: boolean;
 
     constructor(user: GitLabUser, impersonationToken: GitLabImpersonationToken, aliases: string[] = [], quota: number = 0, sexo?: string) {
         super(user.email, Committer.COMMITTER_TYPE, user.email);
@@ -38,6 +42,9 @@ export class Committer extends Sesol2 {
         this.aliases = aliases;
         this.quota = quota;
         this.sexo = sexo;
+
+        this.isBotComentador = user.username === codeReviewConfig.botComentador.username;
+        this.invalido = user.invalido;
     }
 
     vazioOuA() {
@@ -50,15 +57,21 @@ export class Committer extends Sesol2 {
         return `@${this.username} [\`${this.name}\`]`;
     }
 
-    private static readonly COMMITTER_INVALIDO = 'committer-invalido';
     public static committerInvalido(username): Committer {
-        const gitLabUser = new GitLabUser();
-        gitLabUser.email = username;
-        gitLabUser.username = username;
-        return new Committer(gitLabUser, null, [], 0, Committer.COMMITTER_INVALIDO);
+        const gitLabUser:GitLabUser = {
+            username: username,
+            email: username,
+            name: username,
+            avatar_url: undefined,
+            id: undefined,
+            state: undefined,
+            web_url: undefined,
+            invalido: true,
+        };
+        return new Committer(gitLabUser, null);
     }
     isInvalido() {
-        return this.sexo === Committer.COMMITTER_INVALIDO;
+        return this.invalido;
     }
 
 }

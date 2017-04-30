@@ -3,8 +3,29 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Sesol2_1 = require("../geral/Sesol2");
 const Email_1 = require("../geral/Email");
 const GitLabService_1 = require("../gitlab/GitLabService");
-class RevisaoCommit {
+const CommitterRepository_1 = require("../committers/CommitterRepository");
+class TipoRevisaoCommit {
+    static comentar(usernameRevisor, sha, tipoRevisao) {
+        return CommitterRepository_1.CommitterRepository.findCommitterByUsernameOrAlias(usernameRevisor).then((committer) => {
+            switch (tipoRevisao) {
+                case TipoRevisaoCommit.PAR:
+                    return GitLabService_1.GitLabService.comentar(sha, `:white_check_mark: Commit marcado como **feito em par** por ${committer.mencao()}.`);
+                case TipoRevisaoCommit.COM_FOLLOW_UP:
+                    return GitLabService_1.GitLabService.comentar(sha, `:ballot_box_with_check: Commit marcado como **revisado com** ***follow-up*** por ${committer.mencao()}.`);
+                case TipoRevisaoCommit.SEM_REVISAO:
+                    return GitLabService_1.GitLabService.comentar(sha, `:ok: Commit marcado como **não terá revisor** por ${committer.mencao()}.`);
+                default:
+                    return GitLabService_1.GitLabService.comentar(sha, `:ballot_box_with_check: Commit marcado como **revisado sem** ***follow-up*** por ${committer.mencao()}.`);
+            }
+        });
+    }
 }
+//noinspection JSUnusedGlobalSymbols
+TipoRevisaoCommit.SEM_FOLLOW_UP = "sem follow-up";
+TipoRevisaoCommit.COM_FOLLOW_UP = "com follow-up";
+TipoRevisaoCommit.SEM_REVISAO = "sem revisão";
+TipoRevisaoCommit.PAR = "par";
+exports.TipoRevisaoCommit = TipoRevisaoCommit;
 class Commit extends Sesol2_1.Sesol2 {
     constructor(sha, title, message, author_email, created_at) {
         super(sha, Commit.COMMIT_TYPE, title);
@@ -42,13 +63,15 @@ class Commit extends Sesol2_1.Sesol2 {
         return this.incluirRevisor(revisor, `:heavy_plus_sign: :gear: Revisor${revisor.vazioOuA()} ${revisor.mencao()} atribuíd${revisor.oOuA()} automaticamente.`);
     }
     indicarCommitNaoTerahRevisor(razao) {
-        this.revisoes.push({
-            revisor: Commit.EMAIL_NAO_TERAH_REVISOR,
-            sexoRevisor: undefined,
-            data: new Date().toISOString(),
-            tipoRevisao: "sem revisão"
+        return CommitterRepository_1.CommitterRepository.findBotComentador().then((botComentador) => {
+            this.revisoes.push({
+                revisor: botComentador.email,
+                sexoRevisor: botComentador.sexo,
+                data: new Date().toISOString(),
+                tipoRevisao: TipoRevisaoCommit.SEM_REVISAO
+            });
+            return this.incluirRevisor(botComentador, `:ok: Commit não terá revisão: ${razao}.`);
         });
-        return this.incluirRevisor({ email: Commit.EMAIL_NAO_TERAH_REVISOR }, `:ok: Commit não terá revisor: ${razao}.`);
     }
     incluirRevisor(revisor, msg) {
         if (!revisor) {
@@ -84,7 +107,5 @@ class Commit extends Sesol2_1.Sesol2 {
     }
 }
 Commit.COMMIT_TYPE = 'commit';
-// este email estah hardcoded na committers do front-end
-Commit.EMAIL_NAO_TERAH_REVISOR = 'nao-terah-revisor@srv-codereview.tcu.gov.br';
 Commit.regexMensagemMerge = /^Merge( remote-tracking)? branch '[\w\/-]+'( of http.*?\.git)? into [\w\/]+[\s\S]*$/;
 exports.Commit = Commit;

@@ -1,8 +1,6 @@
 const addCors = require('./addCors');
 //noinspection JSUnresolvedVariable
-const CommitterRepository = require('../build/committers/CommitterRepository').CommitterRepository;
-//noinspection JSUnresolvedVariable
-const GitLabService = require('../build/gitlab/GitLabService').GitLabService;
+const TipoRevisaoCommit = require('../build/commit/Commit').TipoRevisaoCommit;
 //noinspection JSUnresolvedVariable
 const carregarCommitsAndCommitters = require("../build/codereview").carregarCommitsAndCommitters;
 
@@ -19,16 +17,7 @@ router.post('/comentar-revisado', function(req, res) {
     const usernameRevisor = req.body.usernameRevisor;
     const tipoRevisao = req.body.tipoRevisao;
 
-    CommitterRepository.findCommitterByUsernameOrAlias(usernameRevisor).then((committer) => {
-        switch (tipoRevisao) {
-            case "par":
-                return GitLabService.comentar(sha, `:white_check_mark: Commit marcado como **feito em par** por ${committer.mencao()}.`);
-            case "com follow-up":
-                return GitLabService.comentar(sha, `:ballot_box_with_check: Commit marcado como **revisado com** ***follow-up*** por ${committer.mencao()}.`);
-            default:
-                return GitLabService.comentar(sha, `:ballot_box_with_check: Commit marcado como **revisado sem** ***follow-up*** por ${committer.mencao()}.`);
-        }
-    }).then(() => {
+    TipoRevisaoCommit.comentar(usernameRevisor, sha, tipoRevisao).then(() => {
         res.send({resultado:"sucesso!"});
     }).catch((err, a) => {
         res.status(500).send({ erroPromise: err, a: a });

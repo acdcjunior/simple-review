@@ -11,29 +11,25 @@ export class CommittersFactory {
 
     static carregarCommittersDoArquivo() {
         console.log(`\n\n\tCommittersFactory: Iniciando carga dos committers do projeto.json...`);
-        console.log(`\t\tCommittersFactory: Inserindo (se nao existirem) ${codeReviewConfig.committers.length} committers...`);
 
-        let promisesDeCommittersInseridos: Promise<string>[] = [];
-        codeReviewConfig.committers.forEach((committer: CodeReviewConfigCommitter) => {
-            promisesDeCommittersInseridos.push(
-                GitLabService.getUserByUsername(committer.username).then((gitlabUser: GitLabUser) => {
-                    if (!gitlabUser) {
-                        throw new Error(`CommittersFactory: Commiter de username ${committer.username} não foi encontrado no GitLab!`);
-                    }
-                    return GitLabService.criarImpersonationToken(gitlabUser.id).then((gitlabImpersonationToken: GitLabImpersonationToken) => {
-                        return sesol2Repository.insertIfNotExists(
-                            new Committer(gitlabUser, gitlabImpersonationToken, committer.aliases, committer.quota, committer.sexo)
-                        );
-                    });
-                })
-            );
-        });
-        return Promise.all(promisesDeCommittersInseridos).then((resultadosDasPromises: string[]) => {
+        const botMaisCommitters = codeReviewConfig.committers.concat(codeReviewConfig.botComentador);
+        console.log(`\t\tCommittersFactory: Inserindo (se nao existirem) bot + ${codeReviewConfig.committers.length} committers...`);
+        return Promise.all(botMaisCommitters.map((committer: CodeReviewConfigCommitter) => {
+            return GitLabService.getUserByUsername(committer.username).then((gitlabUser: GitLabUser) => {
+                if (!gitlabUser) {
+                    throw new Error(`CommittersFactory: Commiter de username ${committer.username} não foi encontrado no GitLab!`);
+                }
+                return GitLabService.criarImpersonationToken(gitlabUser.id).then((gitlabImpersonationToken: GitLabImpersonationToken) => {
+                    return sesol2Repository.insertIfNotExists(
+                        new Committer(gitlabUser, gitlabImpersonationToken, committer.aliases, committer.quota, committer.sexo)
+                    );
+                });
+            });
+        })).then((resultadosDasPromises: string[]) => {
             CommittersFactory.exibirQuantidadeQueJahExistia(resultadosDasPromises);
             console.log(`\tCommittersFactory: projeto.json processado por completo!\n`);
         });
     }
-
 
     static carregarCommittersDosUltimosCommits() {
         console.log(`\n\n\tCommittersFactory: Iniciando carga dos committers dos ultimos commits...`);

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Sesol2_1 = require("../geral/Sesol2");
-const GitLabUser_1 = require("../gitlab/GitLabUser");
+const CodeReviewConfig_1 = require("../geral/CodeReviewConfig");
 class Committer extends Sesol2_1.Sesol2 {
     constructor(user, impersonationToken, aliases = [], quota = 0, sexo) {
         super(user.email, Committer.COMMITTER_TYPE, user.email);
@@ -20,6 +20,8 @@ class Committer extends Sesol2_1.Sesol2 {
         this.aliases = aliases;
         this.quota = quota;
         this.sexo = sexo;
+        this.isBotComentador = user.username === CodeReviewConfig_1.codeReviewConfig.botComentador.username;
+        this.invalido = user.invalido;
     }
     vazioOuA() {
         return !this.sexo ? "(a)" : this.sexo === "m" ? "" : "a";
@@ -31,15 +33,21 @@ class Committer extends Sesol2_1.Sesol2 {
         return `@${this.username} [\`${this.name}\`]`;
     }
     static committerInvalido(username) {
-        const gitLabUser = new GitLabUser_1.GitLabUser();
-        gitLabUser.email = username;
-        gitLabUser.username = username;
-        return new Committer(gitLabUser, null, [], 0, Committer.COMMITTER_INVALIDO);
+        const gitLabUser = {
+            username: username,
+            email: username,
+            name: username,
+            avatar_url: undefined,
+            id: undefined,
+            state: undefined,
+            web_url: undefined,
+            invalido: true,
+        };
+        return new Committer(gitLabUser, null);
     }
     isInvalido() {
-        return this.sexo === Committer.COMMITTER_INVALIDO;
+        return this.invalido;
     }
 }
 Committer.COMMITTER_TYPE = 'committer';
-Committer.COMMITTER_INVALIDO = 'committer-invalido';
 exports.Committer = Committer;

@@ -117,9 +117,6 @@ class TabelaProporcoesDeCadaRevisor {
 
     atualizarContagemComRevisoresDoCommit(commit: Commit) {
         commit.revisores.forEach((emailRevisor: string) => {
-            if (emailRevisor === Commit.EMAIL_NAO_TERAH_REVISOR) {
-                return;
-            }
             this.incrementarContagemDoRevisor(this.committersHash[emailRevisor]);
         })
     }

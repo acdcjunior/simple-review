@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const Sesol2Repository_1 = require("../geral/Sesol2Repository");
 const ArrayUtils_1 = require("../geral/ArrayUtils");
-const Commit_1 = require("./Commit");
 const Email_1 = require("../geral/Email");
 const CommitterRepository_1 = require("../committers/CommitterRepository");
 const CommitRepository_1 = require("./CommitRepository");
@@ -96,9 +95,6 @@ class TabelaProporcoesDeCadaRevisor {
     }
     atualizarContagemComRevisoresDoCommit(commit) {
         commit.revisores.forEach((emailRevisor) => {
-            if (emailRevisor === Commit_1.Commit.EMAIL_NAO_TERAH_REVISOR) {
-                return;
-            }
             this.incrementarContagemDoRevisor(this.committersHash[emailRevisor]);
         });
     }

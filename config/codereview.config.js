@@ -9,16 +9,6 @@ const config = {
     },
 
     gitlabHost: "git",
-
-    usuarioComentador: {
-        // consulte em
-        // $ curl --header "PRIVATE-TOKEN: <TOKEN ADMIN SEM ASPAS>" http://git/api/v4/users?username=<USERNAME DO COMENTADOR>
-        // exemplo:
-        // $ curl --header "PRIVATE-TOKEN: XXXXXXXXXXXXXXXXXX" http://127.0.0.1:8090/api/v4/users?username=root
-        gitlab_userid: 1, // importante para podermos fechar o todos abertos por ele
-        token: 'X_zfYU5k2VwDx2KegmdQ' // Token usuario comentador basta ter acesso [api]
-    },
-
     tokenAdmin: 'mKRzDEyu_wsBVd-LCJAt', // Token Admin tem que ter acesso [api, read_user]
 
     projeto: {
@@ -27,6 +17,13 @@ const config = {
         branchesIgnorados: [
             "nomeDeBranchesQueDevemSerIgnorados"
         ],
+    },
+
+    botComentador: {
+        username: 'sonarqube',
+        sexo: "m",
+        aliases: [], // aliases nao fazem sentido para o bot, jah q ninguem deve mencionah-lo
+        quota: 0 // tem que ser 0, zenao o bot vai ganhar revisoes!
     },
 
     // usuarios abaixo somente serao carregados SOMENTE se nao jah existirem na base; caso jah existam, voce tem que altera-los direto no banco
@@ -103,7 +100,8 @@ const config = {
 
     // quando a ferramenta cadastra um usuario, ela cria um token para poder acessar os dados desse usuario no
     // gitlab. a criacao desse token requer uma msg de justificativa. eh o valor abaixo.
-    mensagemTokenCriadoPorCodeReview: "Criado via CodeReview"
+    mensagemTokenCriadoPorCodeReview: "Criado via CodeReview",
+
 };
 
 // desenvolvimento em casa
@@ -121,12 +119,14 @@ if (rodandoBackEndViaNodeDiretamenteEmDellJR || rodandoEmDockerEmDellJR) {
     config.projeto.projectId = 1;
     config.projeto.dataCortePrimeiroCommit = "2017-04-09T20:59:27.000-03:00";
 
-    config.usuarioComentador.gitlab_userid = 12;
-    config.usuarioComentador.token = 'VPmypjV-4QXt_PzKFsxo';
+    config.botComentador.gitlab_userid = 12;
+    config.botComentador.token = 'VPmypjV-4QXt_PzKFsxo';
+    config.botComentador.username = 'sonarqube';
+
     config.tokenAdmin = 'mKRzDEyu_wsBVd-LCJAt';
 }
 if (rodandoBackEndViaNodeDiretamenteEmTCU) {
-    config.usuarioComentador.token = 'x';
+    config.botComentador.token = 'x';
 }
 
 module.exports = config;
