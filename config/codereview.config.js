@@ -9,7 +9,7 @@ const config = {
     },
 
     gitlabHost: "git",
-    tokenAdmin: 'mKRzDEyu_wsBVd-LCJAt', // Token Admin tem que ter acesso [api, read_user]
+    tokenAdmin: 'yj2--5cKKCSqaDRoND7N', // Token Admin tem que ter acesso [api, read_user]
 
     projeto: {
         projectId: 123,
@@ -116,14 +116,13 @@ if (rodandoBackEndViaNodeDiretamenteEmDellJR || rodandoEmDockerEmDellJR) {
         config.couchdb.host = '192.168.1.195';
         config.gitlabHost = '127.0.0.1:8090';
     }
+    config.tokenAdmin = 'zsyEWbKU6ec1sE1HW8ib';
+
     config.projeto.projectId = 1;
     config.projeto.dataCortePrimeiroCommit = "2017-04-09T20:59:27.000-03:00";
 
-    config.botComentador.gitlab_userid = 12;
-    config.botComentador.token = 'VPmypjV-4QXt_PzKFsxo';
     config.botComentador.username = 'sonarqube';
 
-    config.tokenAdmin = 'mKRzDEyu_wsBVd-LCJAt';
 }
 if (rodandoBackEndViaNodeDiretamenteEmTCU) {
     config.botComentador.token = 'x';
