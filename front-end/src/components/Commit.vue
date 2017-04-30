@@ -13,7 +13,7 @@
           Criado {{ timeAgo(commit.created_at) }}.
 
           <span v-if="!commitRevisado()" style="font-size: smaller">Com revisões pendentes.</span>
-          <span v-else style="font-weight: bold">{{ revisadoHaTempos() }}.</span>
+          <span v-else style="font-weight: bold; font-size: smaller">{{ revisadoHaTempos() }}.</span>
         </p>
       </div>
     </div>
