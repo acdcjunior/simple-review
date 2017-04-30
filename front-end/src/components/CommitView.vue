@@ -13,7 +13,7 @@
       <div class="panel panel-default">
         <div class="panel-body">
           <h2>{{ commit.title }}</h2>
-          <pre style="white-space: pre-wrap;">{{ commit.message }}</pre>
+          <pre style="white-space: pre-wrap; word-break: normal;">{{ commit.message }}</pre>
         </div>
       </div>
     </div>
@@ -40,6 +40,9 @@
         <p><button class="btn btn-info" v-on:click="marcarComoRevisadoSemFollowUp()"><span class="glyphicon glyphicon-ok"></span> Marcar como Revisado, sem <em>follow-up</em></button></p>
 
         <hr>
+        <a href="http://git/sti/sagas2/blob/desenvolvimento/CONTRIBUTING.md" target="_blank">
+          Clique aqui para abrir a <strong>Checklist</strong> <img src="../assets/external-link.png" alt="Abre em outra janela" style="margin: 0 0 3px 1px;">
+        </a>
       </div>
 
       <h2 class="col-md-12" v-if="usuarioLogadoEhAutorDesteCommit()">
@@ -63,8 +66,11 @@
           <committer v-if="revisao.revisor" :committer-email="revisao.revisor"></committer>
         </div>
       </div>
+
       <div class="col-md-12" v-if="exibirLoadingRevisaoAlterada">
+        <hr>
         <img src="../assets/loading.gif" alt="">
+        <hr>
       </div>
 
       <hr>
@@ -80,9 +86,6 @@
       </ul>
     </div>
 
-    <div class="col-md-12">
-      <a href="http://git/sti/sagas2/blob/desenvolvimento/CONTRIBUTING.md" target="_blank">Clique aqui para abrir a <strong>Checklist</strong> (em outra janela).</a>
-    </div>
 
     <div class="col-md-12" v-if="['antonio.junior@tcu.gov.br', 'alexandrevr@tcu.gov.br', 'marcosps@tcu.gov.br'].indexOf(committerLogado().email) !== -1">
       <a href="http://srv-codereview:5984/_utils/fauxton/#/database/sesol2/{{ commit.sha }}" target="_blank" class="btn btn-default pull-right">&nbsp;<span class="glyphicon glyphicon-cog"></span></a>
@@ -123,6 +126,7 @@ export default {
   },
 
   route: {
+      canReuse: false,
     data ({ to }) {
       let sha = to.params.id
       utils.atualizarDiff(sha)
