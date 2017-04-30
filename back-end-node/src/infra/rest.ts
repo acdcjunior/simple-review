@@ -1,15 +1,18 @@
 import * as requestPromise from 'request-promise';
 
-function rest(method, url, token, formData?): Promise<any> {
+function rest(method, url, token?, formData?): Promise<any> {
     let options = {
         url: url,
-        headers: {
-            'PRIVATE-TOKEN': token
-        },
         method: method,
         json: true,
+        headers: undefined,
         formData: undefined
     };
+    if (token) {
+        options.headers = {
+            'PRIVATE-TOKEN': token
+        };
+    }
     if (method.toUpperCase() === 'POST' && formData !== undefined) {
         options.formData = formData;
     }
@@ -18,7 +21,7 @@ function rest(method, url, token, formData?): Promise<any> {
 }
 
 export class Rest {
-    public static get<T>(url: string, token: string): Promise<T> {
+    public static get<T>(url: string, token?: string): Promise<T> {
         return rest("GET", url, token);
     }
     public static post<T>(url: string, token: string, formData?: any): Promise<T> {

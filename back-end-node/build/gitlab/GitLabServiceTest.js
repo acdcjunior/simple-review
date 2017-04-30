@@ -20,6 +20,7 @@ function printResults(prefixo, promise) {
         console.log(prefixo + 'ERRO!!!!!!!!!!!!!!!!! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
     });
 }
+exports.printResults = printResults;
 describe("GitLabService integracao readonly", function () {
     this.timeout(15000);
     it("getUserByEmail", function () {

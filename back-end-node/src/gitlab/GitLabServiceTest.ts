@@ -9,7 +9,7 @@ import {GitLabURLs, GitLabService} from "./GitLabService";
 import {Email} from "../geral/Email";
 import {codeReviewConfig} from "../geral/CodeReviewConfig";
 
-function printResults(prefixo, promise) {
+export function printResults(prefixo, promise) {
     return promise.then((x) => {
         console.log(prefixo + ' >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
         console.dir(x);

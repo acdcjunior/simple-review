@@ -12,6 +12,8 @@ export interface CodeReviewConfig {
 
     readonly mensagemTokenCriadoPorCodeReview: string;
 
+    readonly trello: CodeReviewTrello;
+
 }
 
 export interface CodeReviewConfigCouchDB {
@@ -33,6 +35,14 @@ export interface CodeReviewConfigCommitter {
     readonly sexo: string; // "m",
     readonly aliases: string[]; // ["alex", "alexandre"],
     readonly quota: number; // 25
+}
+
+export interface CodeReviewTrello {
+    readonly key: string;
+    readonly token: string;
+    readonly board_id: string;
+    readonly idListEmAndamento: string;
+    readonly idListEmTestes: string;
 }
 
 export const codeReviewConfig: CodeReviewConfig = require('./../../../config/codereview.config');

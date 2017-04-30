@@ -28,79 +28,30 @@ const config = {
 
     // usuarios abaixo somente serao carregados SOMENTE se nao jah existirem na base; caso jah existam, voce tem que altera-los direto no banco
     committers: [
-        {
-            username: "alexandrevr",
-            sexo: "m",
-            aliases: ["alex", "alexandre"],
-            quota: 25
-        },
-        {
-            username: "carvalhoj",
-            sexo: "m",
-            aliases: ["antonio", "antonio.junior"],
-            quota: 40
-        },
-        {
-            username: "marcosps",
-            sexo: "m",
-            aliases: ["marcos", "marcao"],
-            quota: 25
-        },
-        {
-            username: "Regiano",
-            sexo: "m",
-            aliases: ["regis"],
-            quota: 10
-        },
-        {
-            username: "fernandesm",
-            sexo: "m",
-            aliases: ["fernandes", "mauricio", "josemauricio"],
-            quota: 0
-        },
-        {
-            username: "LELIAKN",
-            sexo: "f",
-            aliases: ["lelia", "leliakarina", "leliakn"],
-            quota: 0
-        },
-        {
-            username: "CarlaNM",
-            sexo: "f",
-            aliases: ["carla", "carlanm"],
-            quota: 0
-        },
-
-
-        {
-            username: "x05499033332",
-            sexo: "m",
-            aliases: ["afonso"],
-            quota: 25
-        },
-        {
-            username: "x05929988846",
-            sexo: "m",
-            aliases: ["bruno"],
-            quota: 25
-        },
-        {
-            username: "x04992831131",
-            sexo: "m",
-            aliases: ["gabriel", "mesquita"],
-            quota: 25
-        },
-        {
-            username: "x05068388213",
-            sexo: "f",
-            aliases: ["rebeca", "rebecca"],
-            quota: 25
-        }
+        {username: "alexandrevr",  sexo: "m", quota: 25, aliases: ["alex", "alexandre"]},
+        {username: "carvalhoj",    sexo: "m", quota: 40, aliases: ["antonio", "antonio.junior"]},
+        {username: "marcosps",     sexo: "m", quota: 25, aliases: ["marcos", "marcao"]},
+        {username: "Regiano",      sexo: "m", quota: 10, aliases: ["regis"]},
+        {username: "fernandesm",   sexo: "m", quota: 0,  aliases: ["fernandes", "mauricio", "josemauricio"]},
+        {username: "LELIAKN",      sexo: "f", quota: 0,  aliases: ["lelia", "leliakarina", "leliakn"]},
+        {username: "CarlaNM",      sexo: "f", quota: 0,  aliases: ["carla", "carlanm"]},
+        {username: "x05499033332", sexo: "m", quota: 25, aliases: ["afonso"]},
+        {username: "x05929988846", sexo: "m", quota: 25, aliases: ["bruno"]},
+        {username: "x04992831131", sexo: "m", quota: 25, aliases: ["gabriel", "mesquita"]},
+        {username: "x05068388213", sexo: "f", quota: 25, aliases: ["rebeca", "rebecca"] }
     ],
 
     // quando a ferramenta cadastra um usuario, ela cria um token para poder acessar os dados desse usuario no
     // gitlab. a criacao desse token requer uma msg de justificativa. eh o valor abaixo.
     mensagemTokenCriadoPorCodeReview: "Criado via CodeReview",
+
+    trello: {
+        key: 'xxx',
+        token: 'xxx',
+        board_id: 'xx',
+        idListEmAndamento: "xx",
+        idListEmTestes: "xx"
+    }
 
 };
 

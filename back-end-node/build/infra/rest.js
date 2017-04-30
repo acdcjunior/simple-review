@@ -4,13 +4,16 @@ const requestPromise = require("request-promise");
 function rest(method, url, token, formData) {
     let options = {
         url: url,
-        headers: {
-            'PRIVATE-TOKEN': token
-        },
         method: method,
         json: true,
+        headers: undefined,
         formData: undefined
     };
+    if (token) {
+        options.headers = {
+            'PRIVATE-TOKEN': token
+        };
+    }
     if (method.toUpperCase() === 'POST' && formData !== undefined) {
         options.formData = formData;
     }
