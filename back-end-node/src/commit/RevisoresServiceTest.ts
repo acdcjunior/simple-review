@@ -1,3 +1,4 @@
+import * as sinon from 'sinon';
 import {expect} from "chai";
 import {RevisoresService} from "./RevisoresService";
 import {ArrayUtils} from "../geral/ArrayUtils";
@@ -8,25 +9,25 @@ import {sesol2Repository} from "../geral/Sesol2Repository";
 import * as Bluebird from 'bluebird';
 import {GitLabService} from "../gitlab/GitLabService";
 import {Email} from "../geral/Email";
-import {GitLabUser} from "../gitlab/GitLabUser";
 import {CommitterRepository} from "../committers/CommitterRepository";
 import {CommitRepository} from "./CommitRepository";
 Bluebird.longStackTraces();
 
 GitLabService.desabilitarComentariosNoGitLab = true;
 
-ArrayUtils.arrayShuffle = (arr) => arr.sort().reverse();
-
-sesol2Repository.insert = () => Promise.resolve("mock");
-
 const assert = require('assert');
 
 function gu(email, name, username) {
-    const gitLabUser = new GitLabUser();
-    gitLabUser.email = email;
-    gitLabUser.name = name;
-    gitLabUser.username = username;
-    return gitLabUser;
+    return {
+        username: username,
+        email: email,
+        name: name,
+        avatar_url: undefined,
+        id: undefined,
+        state: undefined,
+        web_url: undefined,
+        invalido: undefined
+    };
 }
 
 const committers = [
@@ -41,13 +42,8 @@ const committers = [
     /* 8 */  new Committer(gu('x05068388213@example.com',   "Rebeca Andrade Silva (X05068388213)",       'x05068388213'), null, [],          25, "f"),
     /* 9 */  new Committer(gu('x05499033332@example.com',   "Afonso Santos de Souza Silva (X05499033332)", 'x05499033332'), null, ["afonso"],  25, "m"),
     /* 10 */ new Committer(gu('x05929988846@example.com',   "Bruno Silva Santos Souza (X05929988846)",  'x05929988846'), null, [],          25, undefined),
+    /* 11 */ new Committer(gu('sonarqube-bot@example.com',  "SonarQube-GitLab",                             'sonarqube'),    null, [],          0,  "m") // bot comentador!!!
 ];
-CommitterRepository.findCommitterByUsernameOrAlias = (usernameOrAlias) => {
-    const committer = committers.find(committer => committer.aliases.indexOf(usernameOrAlias) !== -1);
-    if (!committer) return Promise.resolve(Committer.committerInvalido(usernameOrAlias));
-    return Promise.resolve(committer);
-};
-CommitterRepository.findAllCommitters = () => Promise.resolve(committers);
 
 const commit0 = new Commit('sha 0', 't 0', ' 0\n ',                  committers[1].email,  '');
 commit0.revisores.push(committers[0].email);
@@ -75,10 +71,28 @@ const commits = [
     /* 17 */ new Commit('sha17', 't17', '17\n @lelia @antonio . @marcos @afonso', committers[5].email,  ''),
     /* 18 */ new Commit('sha18', 't18', `Merge branch 'x' into x`,                committers[1].email,  ''),
 ];
-CommitRepository.findAllCommits = () => Promise.resolve(commits);
 
 describe("RevisoresService suite", function () {
     this.timeout(15000);
+
+    let sandbox;
+    beforeEach(function () {
+        sandbox = sinon.sandbox.create();
+
+        sandbox.stub(CommitterRepository, 'findCommitterByUsernameOrAlias').callsFake((usernameOrAlias) => {
+            const committer = committers.find(committer => committer.aliases.indexOf(usernameOrAlias) !== -1);
+            if (!committer) return Promise.resolve(Committer.committerInvalido(usernameOrAlias));
+            return Promise.resolve(committer);
+        });
+        sandbox.stub(CommitterRepository, 'findAllCommitters').returns(Promise.resolve(committers));
+        sandbox.stub(CommitRepository, 'findAllCommits').returns(Promise.resolve(commits));
+        sandbox.stub(sesol2Repository, 'insert').returns(Promise.resolve("mock"));
+        sandbox.stub(ArrayUtils, 'arrayShuffle').callsFake((arr) => arr.sort().reverse());
+    });
+
+    afterEach(function () {
+        sandbox.restore();
+    });
 
     it("atribuirRevisores()", function () {
         return RevisoresService.atribuirRevisores().then(() => {
@@ -172,14 +186,14 @@ function assertJson(commits) {
         {message:"13\n @carlanm",  author_email:"marcosps@example.com",       revisores:["carlanm@example.com"],                                  revisoes:[], historico:[":heavy_plus_sign: :point_right: Revisora @CarlaNM [`Carla Souza (CARLANM)`] atribuída via menção em mensagem de commit."]},
         {message:"14\n @leliakn",  author_email:"x04992831131@example.com",   revisores:["leliakn@example.com","x05068388213@example.com"],        revisoes:[], historico:[":heavy_plus_sign: :point_right: Revisora @LELIAKN [`Lelia Silva (LELIAKN)`] atribuída via menção em mensagem de commit.",":heavy_plus_sign: :gear: Revisora @x05068388213 [`Rebeca Andrade Silva (X05068388213)`] atribuída automaticamente."]},
         {message:"15\n @lelia",    author_email:"antonio.junior@example.com", revisores:["leliakn@example.com"],                                  revisoes:[], historico:[":heavy_plus_sign: :point_right: Revisora @LELIAKN [`Lelia Silva (LELIAKN)`] atribuída via menção em mensagem de commit."]},
-        {message:"16\n @invalido", author_email:"marcosps@example.com",       revisores:["antonio.junior@example.com"],                           revisoes:[], historico:[":interrobang: Revisor(a) @invalido mencionado(a), mas não reconhecido(a) na base de usuários. Menção ignorada.",":heavy_plus_sign: :gear: Revisor @carvalhoj [`Antonio C. de Carvalho Junior (CARVALHOJ)`] atribuído automaticamente."]},
+        {message:"16\n @invalido", author_email:"marcosps@example.com",       revisores:["antonio.junior@example.com"],                           revisoes:[], historico:["Revisor(a) @invalido mencionado(a), mas não reconhecido(a) na base de usuários. Menção ignorada.",":heavy_plus_sign: :gear: Revisor @carvalhoj [`Antonio C. de Carvalho Junior (CARVALHOJ)`] atribuído automaticamente."]},
         {
             message:"17\n @lelia @antonio . @marcos @afonso",
             author_email:"leliakn@example.com",
             revisores:["antonio.junior@example.com", "marcosps@example.com", "x05499033332@example.com"],
             revisoes:[],
             historico:[
-                ":interrobang: Revisora @LELIAKN [`Lelia Silva (LELIAKN)`] mencionada é autora do commit. Menção ignorada.",
+                "Revisora @LELIAKN [`Lelia Silva (LELIAKN)`] mencionada é autora do commit. Menção ignorada.",
                 ":heavy_plus_sign: :point_right: Revisor @carvalhoj [`Antonio C. de Carvalho Junior (CARVALHOJ)`] atribuído via menção em mensagem de commit.",
                 ":heavy_plus_sign: :point_right: Revisor @marcosps [`Marcos Paulo Santos da Silva (MARCOSPS)`] atribuído via menção em mensagem de commit.",
                 ":heavy_plus_sign: :point_right: Revisor @x05499033332 [`Afonso Santos de Souza Silva (X05499033332)`] atribuído via menção em mensagem de commit."
@@ -188,14 +202,14 @@ function assertJson(commits) {
         {
             message:"Merge branch 'x' into x",
             author_email:"antonio.junior@example.com",
-            revisores:["nao-terah-revisor@srv-codereview.example.com"],
+            revisores:["sonarqube-bot@example.com"],
             revisoes: [{
                 data: removerFinal(new Date().toISOString()),
-                revisor: "nao-terah-revisor@srv-codereview.example.com",
-                sexoRevisor: undefined,
+                revisor: "sonarqube-bot@example.com",
+                sexoRevisor: "m",
                 tipoRevisao: "sem revisão"
             }],
-            historico:[":ok: Commit não terá revisor: commit de merge sem conflito."]
+            historico:[":ok: Commit não terá revisão: commit de merge sem conflito."]
         }
     ];
     expect(commits).to.deep.equal(expected);
