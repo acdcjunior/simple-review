@@ -193,7 +193,7 @@ export default {
             window.$.getJSON(window.env.BACK_END_NODE + '/jenkins/pipeline', function (data) {
                 window.$('#jenkins').attr('src', 'http://jenkins/static/48484716/images/32x32/' + data.color + '.gif')
             });
-        }, 40 * 1000);
+        }, 60 * 1000);
     },
     exibirMinhasRevisoesPendentes() {
         this.exibirSomenteCommitsEmQueSouRevisor = true;
