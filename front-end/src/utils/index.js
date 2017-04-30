@@ -1,9 +1,10 @@
 
 const utils = {};
 
-let capitalizeFirstLetter = (string) => {
-  return string.charAt(0).toUpperCase() + string.slice(1)
-};
+function capitalizeFirstLetter(s) {
+    return s[0].toUpperCase() + s.slice(1)
+}
+
 utils.timeago = (dateAsString) => {
   let dataPassada = Date.parse(dateAsString);
   if (((+Date.now()) - (+dataPassada)) < 15 * 1000) {
@@ -37,7 +38,7 @@ utils.atualizarDiff = (sha) => {
 utils.atualizarGitLabFrame = (gitlabLink) => {
     try {
         const currentIframeUrl = document.getElementById('diff').contentWindow.location.href;
-        if (currentIframeUrl === gitlabLink) {
+        if (currentIframeUrl.endsWith(gitlabLink)) {
             return;
         }
     } catch (erro) {
@@ -52,7 +53,7 @@ utils.atualizarGitLabFrame = (gitlabLink) => {
 };
 
 utils.limparDiff = () => {
-    utils.atualizarGitLabFrame('');
+    utils.atualizarGitLabFrame('about:blank');
 };
 
 export default utils
