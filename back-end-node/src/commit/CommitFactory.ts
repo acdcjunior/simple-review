@@ -10,8 +10,8 @@ export class CommitFactory {
         return GitLabService.getCommits().then(commits => {
             const promisesDeCommitsInseridos: Promise<string>[] = [];
 
-            console.log(`\n\nCommitFactory: Processando COMMITS...`);
-            console.log(`\tCommitFactory: Processando ${commits.length} commits...`);
+            console.log(`\n\n\tCommitFactory: Processando COMMITS...`);
+            console.log(`\t\tCommitFactory: Processando ${commits.length} commits...`);
             commits.forEach(commit => {
                 promisesDeCommitsInseridos.push(sesol2Repository.insertIfNotExists(
                     new Commit(commit.id, commit.title, commit.message, commit.author_email, commit.created_at)
@@ -24,11 +24,11 @@ export class CommitFactory {
                     if (!resultadoDePromise) {
                         jahExistiam++;
                     } else {
-                        console.log('\t\tCommitFactory: ' + resultadoDePromise);
+                        console.log('\t\t\tCommitFactory: ' + resultadoDePromise);
                     }
                 });
-                console.log(`\tCommitFactory: Jah existiam: ${jahExistiam}`);
-                console.log(`CommitFactory: insercao de commits concluida!\n`);
+                console.log(`\t\tCommitFactory: Jah existiam: ${jahExistiam}`);
+                console.log(`\tCommitFactory: insercao de commits concluida!\n`);
 
                 return RevisoresService.atribuirRevisores();
             });

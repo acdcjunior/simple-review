@@ -10,8 +10,8 @@ import {codeReviewConfig, CodeReviewConfigCommitter} from "../geral/CodeReviewCo
 export class CommittersFactory {
 
     static carregarCommittersDoArquivo() {
-        console.log(`\n\nCommittersFactory: Iniciando carga dos committers do projeto.json...`);
-        console.log(`\tCommittersFactory: Inserindo (se nao existirem) ${codeReviewConfig.committers.length} committers...`);
+        console.log(`\n\n\tCommittersFactory: Iniciando carga dos committers do projeto.json...`);
+        console.log(`\t\tCommittersFactory: Inserindo (se nao existirem) ${codeReviewConfig.committers.length} committers...`);
 
         let promisesDeCommittersInseridos: Promise<string>[] = [];
         codeReviewConfig.committers.forEach((committer: CodeReviewConfigCommitter) => {
@@ -30,26 +30,26 @@ export class CommittersFactory {
         });
         return Promise.all(promisesDeCommittersInseridos).then((resultadosDasPromises: string[]) => {
             CommittersFactory.exibirQuantidadeQueJahExistia(resultadosDasPromises);
-            console.log(`CommittersFactory: projeto.json processado por completo!\n`);
+            console.log(`\tCommittersFactory: projeto.json processado por completo!\n`);
         });
     }
 
 
     static carregarCommittersDosUltimosCommits() {
-        console.log(`\n\nCommittersFactory: Iniciando carga dos committers dos ultimos commits...`);
+        console.log(`\n\n\tCommittersFactory: Iniciando carga dos committers dos ultimos commits...`);
 
         return CommittersFactory.getEmailsDosCommittersDosUltimosCommits().then((committersDosUltimosCommits: Email[]) => {
             let promisesDeCommittersInseridos: Promise<any>[] = [];
 
-            console.info(`\tCommittersFactory: Inserindo (se nao existirem) ultimos ${committersDosUltimosCommits.length} committers...`);
+            console.info(`\t\tCommittersFactory: Inserindo (se nao existirem) ultimos ${committersDosUltimosCommits.length} committers...`);
             committersDosUltimosCommits.forEach((committerEmail: Email) => {
-                console.info(`\t\tCommittersFactory: Inserindo commiter de email ${committerEmail.email}...`);
+                console.info(`\t\t\tCommittersFactory: Inserindo commiter de email ${committerEmail.email}...`);
                 promisesDeCommittersInseridos.push(
                     GitLabService.getUserByEmail(committerEmail).then((gitlabUser: GitLabUser) => {
                         if (!gitlabUser) {
                             throw new Error(`CommittersFactory: Commiter de email ${committerEmail.email} não foi encontrado no GitLab!`);
                         }
-                        console.info(`\t\t\tCommittersFactory: commiter de email ${committerEmail.email} encontrado com o username ${gitlabUser.username} e email ${gitlabUser.email}...`);
+                        console.info(`\t\t\t\tCommittersFactory: commiter de email ${committerEmail.email} encontrado com o username ${gitlabUser.username} e email ${gitlabUser.email}...`);
                         return GitLabService.criarImpersonationToken(gitlabUser.id).then((gitlabImpersonationToken: GitLabImpersonationToken) => {
                             return sesol2Repository.insertIfNotExists(
                                 new Committer(gitlabUser, gitlabImpersonationToken)
@@ -61,7 +61,7 @@ export class CommittersFactory {
 
             return Promise.all(promisesDeCommittersInseridos).then((resultadosDasPromises: string[]) => {
                 CommittersFactory.exibirQuantidadeQueJahExistia(resultadosDasPromises);
-                console.log("CommittersFactory: committers dos ultimos commits processados por completo!\n\n");
+                console.log("\tCommittersFactory: committers dos ultimos commits processados por completo!\n\n");
             });
         });
     }
@@ -72,15 +72,15 @@ export class CommittersFactory {
             if (!resultadoDePromise) {
                 jahExistiam++;
             } else {
-                console.info('\t\tCommittersFactory: ' + resultadoDePromise);
+                console.info('\t\t\tCommittersFactory: ' + resultadoDePromise);
             }
         });
-        console.info(`\tCommittersFactory: Jah existiam: ${jahExistiam}`);
+        console.info(`\t\tCommittersFactory: Jah existiam: ${jahExistiam}`);
     }
 
     static getEmailsDosCommittersDosUltimosCommits(): Promise<Email[]> {
         return GitLabService.getCommits(100).then((commits: GitLabCommit[]) => {
-            console.log(`\tCommittersFactory: Carregando committers de ${commits.length} commits...`);
+            console.log(`\t\tCommittersFactory: Carregando committers de ${commits.length} commits...`);
 
             let committersHash = {};
             commits.forEach(commit => {

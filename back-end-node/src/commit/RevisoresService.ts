@@ -17,19 +17,19 @@ export class RevisoresService {
 
     static atribuirRevisores() {
         return CommitterRepository.findAllCommitters().then((committers: Committer[]) => {
-            console.log(`\n\nRevisoresService: Atribuindo Revisores...`);
+            console.log(`\n\n\tRevisoresService: Atribuindo Revisores...`);
             const tabelaProporcoesDeCadaRevisor = new TabelaProporcoesDeCadaRevisor(committers);
 
-            console.log(`\tRevisoresService: TabelaProporcoesDeCadaRevisor construida`);
+            console.log(`\t\tRevisoresService: TabelaProporcoesDeCadaRevisor construida`);
             return CommitRepository.findAllCommits().then((commits: Commit[]) => {
-                console.log(`\tRevisoresService: Commits encontrados (${commits.length})`);
+                console.log(`\t\tRevisoresService: Commits encontrados: ${commits.length}`);
                 tabelaProporcoesDeCadaRevisor.atualizarContagemComRevisoresDosCommits(commits);
 
                 const commitsSemRevisores = commits.filter(commit => commit.revisores.length === 0);
-                console.log(`RevisoresService: Commits sem revisores encontrados: ${commitsSemRevisores.length}`);
+                console.log(`\t\tRevisoresService: Commits sem revisores encontrados: ${commitsSemRevisores.length}`);
 
                 return atribuirRevisoresAosCommits(commitsSemRevisores, tabelaProporcoesDeCadaRevisor).then(() => {
-                    console.log('RevisoresService: Revisores atribuídos!');
+                    console.log('\tRevisoresService: Revisores atribuídos!');
                 });
             });
         });

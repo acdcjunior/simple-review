@@ -3,7 +3,7 @@ import {CommittersFactory} from "../committers/CommittersFactory";
 
 
 export function carregarCommitsAndCommitters() {
-    console.log('*** Iniciando carga de committers e commits...\n\n');
+    console.log('\t*** Iniciando carga de committers e commits...');
 
     return CommittersFactory.carregarCommittersDoArquivo().then(() => {
         return CommittersFactory.carregarCommittersDosUltimosCommits()
