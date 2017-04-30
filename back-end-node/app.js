@@ -5,7 +5,6 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
-const index = require('./routes/index');
 const committers = require('./routes/committers');
 const jenkins = require('./routes/jenkins');
 const inject = require('./routes/inject');
@@ -25,7 +24,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 const BACK_END_CONTEXT = '/back-end-review';
-app.use(`${BACK_END_CONTEXT}/index`, index);
+app.use(`${BACK_END_CONTEXT}/index`, require('./routes/index'));
+app.use(`${BACK_END_CONTEXT}/splash`, require('./routes/splash'));
 app.use(`${BACK_END_CONTEXT}/committers`, committers);
 app.use(`${BACK_END_CONTEXT}/jenkins`, jenkins);
 app.use(`${BACK_END_CONTEXT}/inject.js`, inject);
@@ -39,7 +39,7 @@ app.use(function(req, res, next) {
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function(err, req, res) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

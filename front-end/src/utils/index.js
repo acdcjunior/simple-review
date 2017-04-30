@@ -31,6 +31,7 @@ utils.exibirTodosNoFrame = () => {
 };
 
 utils.atualizarDiff = (sha) => {
+    utils.limparDiffAboutBlank();
     let gitlabLink = utils.gitlabLink(sha);
     utils.atualizarGitLabFrame(gitlabLink);
 };
@@ -53,6 +54,11 @@ utils.atualizarGitLabFrame = (gitlabLink) => {
 };
 
 utils.limparDiff = () => {
+    utils.limparDiffAboutBlank();
+    utils.atualizarGitLabFrame(`${window.env.BACK_END_NODE}/splash`);
+};
+
+utils.limparDiffAboutBlank = () => {
     utils.atualizarGitLabFrame('about:blank');
 };
 

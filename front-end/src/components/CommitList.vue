@@ -171,6 +171,7 @@ export default {
     if (committers.testLogin(this)) {
       return
     }
+    utils.limparDiff();
     window.$('.dropdown-toggle').dropdown();
     this.carregarDadosPainelJenkins();
 
