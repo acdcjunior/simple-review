@@ -1,14 +1,12 @@
 const imgInterrogacao = require('../assets/question_mark.png');
-const imgMerge = require('../assets/merge.png');
 import {CommitterEntity} from "../servicos/CommitterService";
-
-const naoTerahRevisor = {email: 'nao-terah-revisor@srv-codereview.tcu.gov.br', username: 'nao-terah-revisor', name: 'Erro ao obter committers.', sexo: "m", avatar_url: imgMerge};
 
 const committers = {
   commiterLogado: undefined,
   committers: {
     'nada@erro.com': {email: 'nada@erro.com', username: 'erro', name: 'Erro ao obter committers.', sexo: "m", avatar_url: imgInterrogacao}
   },
+  botComentador: [],
   committerEntity: function (email) {
       return new CommitterEntity(committers.committers[email]);
   }
@@ -21,8 +19,10 @@ window.$.ajax({
   timeout: 3000, // sets timeout to 3 seconds
   success: receivedCommitters => {
     committers.committers = {};
-    committers.committers[naoTerahRevisor.email] = naoTerahRevisor;
     receivedCommitters.forEach(receivedCommitter => {
+      if (receivedCommitter.isBotComentador) {
+        committers.botComentador = receivedCommitter;
+      }
       committers.committers[receivedCommitter.email] = receivedCommitter
     })
   },

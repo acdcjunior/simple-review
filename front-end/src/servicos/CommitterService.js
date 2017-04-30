@@ -44,10 +44,6 @@ export class CommitterService {
 
 export class CommitService {
 
-    static usuarioLogadoEstaNaListaDeRevisoresDoCommit(commit) {
-        return commit.revisores.indexOf(committers.commiterLogado.email) !== -1;
-    }
-
     static usuarioLogadoNuncaRevisouCommit(commit) {
         return commit.revisoes.filter(revisao => revisao.revisor === committers.commiterLogado.email).length === 0;
     }
@@ -74,4 +70,47 @@ export class CommitService {
         });
     }
 
+    static marcarComoNaoSerahRevisado(commit, assimQueMarcarRevisado) {
+        // apaga revisores e coloca somente o bot
+        commit.revisores = [committers.botComentador.email];
+        // coloca bot jah como um dos revisores, para nao aparecer que commit estah pendente
+        commit.revisoes.push({
+            revisor: committers.botComentador.email,
+            sexoRevisor: committers.botComentador.sexo,
+            data: new Date().toISOString(),
+            tipoRevisao: CommitService.TIPO_REVISAO.SEM_REVISAO
+        });
+        // adiciona outra revisao com o usuario atual, pra ficar registrado quem marcou como naoSerahRevisado
+        return CommitService.marcarComoRevisado(commit, CommitService.TIPO_REVISAO.SEM_REVISAO, assimQueMarcarRevisado);
+    }
+
+    static commitJahMarcadoComoNaoSerahRevisado(commit) {
+        return commit.revisores.length === 1 && commit.revisores[0] === committers.botComentador.email;
+    }
+
 }
+
+CommitService.TIPO_REVISAO = {
+    SEM_FOLLOW_UP: "sem follow-up",
+    COM_FOLLOW_UP: "com follow-up",
+    SEM_REVISAO: "sem revisão",
+    PAR: "par"
+};
+
+CommitService.TIPO_REVISAO_DADOS = {};
+CommitService.TIPO_REVISAO_DADOS[CommitService.TIPO_REVISAO.SEM_FOLLOW_UP] = {
+    tipoRevisaoClass: 'text-primary',
+    tipoRevisaoTexto: `Revisado (sem <em>follow-up</em>)`
+};
+CommitService.TIPO_REVISAO_DADOS[CommitService.TIPO_REVISAO.COM_FOLLOW_UP] = {
+    tipoRevisaoClass: 'text-primary',
+    tipoRevisaoTexto: `Revisado (com <em>follow-up</em>)`
+};
+CommitService.TIPO_REVISAO_DADOS[CommitService.TIPO_REVISAO.SEM_REVISAO] = {
+    tipoRevisaoClass: 'text-muted',
+    tipoRevisaoTexto: `Marcado como sem revisão`
+};
+CommitService.TIPO_REVISAO_DADOS[CommitService.TIPO_REVISAO.PAR] = {
+    tipoRevisaoClass: 'text-success',
+    tipoRevisaoTexto: `Marcado feito em par`
+};

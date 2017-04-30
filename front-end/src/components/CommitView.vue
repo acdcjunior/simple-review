@@ -57,10 +57,9 @@
       <div v-show="!exibirLoadingRevisaoAlterada">
         <br>
         <hr>
-        <h4>Revisões indicadas realizadas: {{ commitRevisado() ? 'Sim' : 'Não' }}</h4>
         <div v-for="revisao in commit.revisoes">
           <br>
-          <strong style="margin-left: 1px" :class="tipoRevisaoClass(revisao)">Revisado ({{ tipoRevisaoTextoNaoItalico(revisao) }}<em>{{ tipoRevisaoTextoItalico(revisao) }}</em>) {{ timeAgoRevisado(revisao) }} por:</strong>
+          <strong style="margin-left: 1px" :class="tipoRevisaoClass(revisao)"><span v-html="tipoRevisaoTexto(revisao)"></span> {{ timeAgoRevisado(revisao) }} por:</strong>
           <committer v-if="revisao.revisor" :committer-email="revisao.revisor"></committer>
         </div>
       </div>
@@ -76,7 +75,7 @@
       <br>
       Histórico:
       <ul>
-        <li v-for="historico in commit.historico">{{ historico }}</li>
+        <li v-for="historico in commit.historico">{{ historico.replace(':gear:', '⚙').replace(':heavy_plus_sign:', '➕').replace(':point_right:', '👉').replace(':ok:', '🆗') }}</li>
         <li v-for="revisao in commit.revisoes">Revisado por {{ committerEntity(revisao.revisor).mencao() }} {{ timeAgo(revisao.data) }}, com revisão do tipo {{ revisao.tipoRevisao }}.</li>
       </ul>
     </div>
@@ -87,6 +86,7 @@
 
     <div class="col-md-12" v-if="['antonio.junior@tcu.gov.br', 'alexandrevr@tcu.gov.br', 'marcosps@tcu.gov.br'].indexOf(committerLogado().email) !== -1">
       <a href="http://srv-codereview:5984/_utils/fauxton/#/database/sesol2/{{ commit.sha }}" target="_blank" class="btn btn-default pull-right">&nbsp;<span class="glyphicon glyphicon-cog"></span></a>
+      <a v-on:click="marcarComoNaoSerahRevisado" class="btn btn-default pull-right" title="Marcar commit como sem necessidade de revisão." :disabled="commitJahMarcadoComoNaoSerahRevisado()">&nbsp;<span class="glyphicon glyphicon-eye-close"></span></a>
     </div>
 
     <div class="col-md-12"><br>&nbsp;<br>&nbsp;<br></div>
@@ -153,16 +153,10 @@ export default {
       return utils.timeago(revisao.data)
     },
     tipoRevisaoClass(revisao) {
-      return (revisao.tipoRevisao || '').indexOf('par') === -1 ? 'text-primary' : 'text-success'
+        return CommitService.TIPO_REVISAO_DADOS[revisao.tipoRevisao].tipoRevisaoClass;
     },
-    tipoRevisaoTextoNaoItalico(revisao) {
-      return revisao.tipoRevisao === 'par' ? 'feito em par' : revisao.tipoRevisao === 'com follow-up' ? 'com' : 'sem';
-    },
-    tipoRevisaoTextoItalico(revisao) {
-      return revisao.tipoRevisao === 'par' ? '' : ' follow-up';
-    },
-    sexoRevisorVaziouOuA(revisao) {
-      return revisao.sexoRevisor === 'f' ? 'a' : revisao.sexoRevisor ? '' : '(a)';
+    tipoRevisaoTexto(revisao) {
+        return CommitService.TIPO_REVISAO_DADOS[revisao.tipoRevisao].tipoRevisaoTexto;
     },
     loadCommit (commitId) {
       return store.findById(commitId).then(commit => {
@@ -181,19 +175,35 @@ export default {
     usuarioLogadoNuncaRevisouEsteCommit() {
         return CommitService.usuarioLogadoNuncaRevisouCommit(this.commit);
     },
-    usuarioLogadoEstaNaListaDeRevisoresDesteCommit() {
-        return CommitService.usuarioLogadoEstaNaListaDeRevisoresDoCommit(this.commit);
-    },
     marcarComoFeitoEmPar () {
-        this.marcarComoRevisado('par');
+        this.marcarComoRevisado(CommitService.TIPO_REVISAO.PAR);
     },
-    marcarComoRevisadoComFollowUp () {
-        this.marcarComoRevisado('com follow-up');
+    marcarComoRevisadoComFollowUp() {
+        this.marcarComoRevisado(CommitService.TIPO_REVISAO.COM_FOLLOW_UP);
     },
-      marcarComoRevisadoSemFollowUp () {
-        this.marcarComoRevisado('sem follow-up');
+    marcarComoRevisadoSemFollowUp() {
+        this.marcarComoRevisado(CommitService.TIPO_REVISAO.SEM_FOLLOW_UP);
     },
-    marcarComoRevisado (tipoRevisao) {
+    marcarComoNaoSerahRevisado() {
+        if (confirm(`Tem certeza que deseja marcar esse commit como sem necessidade de revisão?
+
+Mensagem do commit:
+-------------------------------------------------
+${this.commit.message}
+-------------------------------------------------`)) {
+            this.revisaoAlterada = true;
+            this.exibirLoadingRevisaoAlterada = true;
+            setTimeout(() => { this.exibirLoadingRevisaoAlterada = false }, 1000);
+
+            CommitService.marcarComoNaoSerahRevisado(this.commit, () => { window.diff.notes.refresh(); }).then(() => {
+                this.loadCommit(this.commit._id);
+            });
+        }
+    },
+    commitJahMarcadoComoNaoSerahRevisado() {
+        return CommitService.commitJahMarcadoComoNaoSerahRevisado(this.commit);
+    },
+    marcarComoRevisado(tipoRevisao) {
         this.revisaoAlterada = true;
         this.exibirLoadingRevisaoAlterada = true;
         setTimeout(() => { this.exibirLoadingRevisaoAlterada = false }, 1000);
