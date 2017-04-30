@@ -40,12 +40,19 @@ utils.atualizarGitLabFrame = (gitlabLink) => {
         if (currentIframeUrl === gitlabLink) {
             return;
         }
-    } catch (ignored) { /* cross-domain error, acontece quando estamos no amb de dev. */ }
-    document.getElementById('diff').src = gitlabLink;
+    } catch (erro) {
+        console.log('atualizarGitLabFrame - erro LENDO:', erro);
+    }
+    try {
+        document.getElementById('diff').contentWindow.location.replace(gitlabLink);
+    } catch (erro) {
+        console.log('atualizarGitLabFrame - erro ESCREVENDO:', erro);
+        document.getElementById('diff').src = gitlabLink;
+    }
 };
 
 utils.limparDiff = () => {
-  document.getElementById('diff').src = ''
+    utils.atualizarGitLabFrame('');
 };
 
 export default utils
