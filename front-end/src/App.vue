@@ -58,7 +58,7 @@
     top:0;
     left:0;
     right:0;
-    background-color: lightgray;
+    background-color: white;
 }
 .layout-col_left {
     background-color: #f4f4f4;
@@ -72,7 +72,7 @@
 }
 .layout-col_right {
     margin-left:22.5%;
-    height: 100%;
+    height: 99.9%;
 }
 
 .glyphicon {
