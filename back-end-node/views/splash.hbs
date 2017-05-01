@@ -1,40 +1,111 @@
-<style>* { font-family: 'Roboto', sans-serif; }</style>
+<style>
+* { font-family: 'Roboto', sans-serif; }
+hr {
+    border: 0;
+    height: 2px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0));
+}
+/*table, tr, td {border: 1px solid black;}*/
+#circle {
+    background: {{ trelloWipColor }};
+    width: 110px;
+    height: 110px;
+    line-height: 95px;
+    border-radius: 50%;
+    color:black;
+    border: solid 3px white;
+    box-shadow:0 0 5px black;
+
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    margin-left: 200px;
+}
+#circle .innerTEXT{
+    position:relative;
+    top:3px;
+    left:-2px;
+    color:white;
+    font-weight: bold;
+    font-size: 36pt;
+    text-shadow:2px 2px 2px black;
+}
+
+.avatar {
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,.1);
+    margin-right: 10px;
+    height: 36px;
+    width: 36px;
+    margin-bottom: 8px;
+}
+</style>
 
 <h3 style="text-align: center; font-style: italic;">Sesol-2 Code Review</h3>
 
 <hr>
 
+<div>
+    <a href="http://jenkins/view/Sesol-2/job/sagas2.pipeline/" target="_blank" style="text-decoration: none; display: table; margin: 0 auto;">
+        <!--suppress HtmlUnknownTarget -->
+        <img src="public/images/jenkins.png" style="height: 36px; margin: 0 0 8px 10px;">
+        <img src="{{ imagemJenkins }}" class="avatar" style="margin-bottom: 8px;">
+    </a>
+</div>
+
+<hr>
+
 <div style="color: navy;">
+    <a href="https://trello.com/b/ty9DwoOK/sprint" target="_blank" style="text-decoration: none; display: table; margin: 0 auto;">
     <table style="margin: 0 auto;">
         <tr>
-            <td colSpan="3" style="text-align: center; color: {{ trelloWipColor }}"><h2>Trello WIP: {{ trelloTotalWip }}/{{ trelloMaxWip }}</h2></td>
-        </tr>
-        <tr>
-            <td style="text-align: right;">Em Andamento:</td>
-            <td>{{ trello.wipEmAndamento }}/{{ trello.maxWipEmAndamento }}</td>
-            <td>{{ trello.wipEmAndamentoIncidentes }}</td>
-        </tr>
-        <tr>
-            <td style="text-align: right;">Em Testes:</td>
-            <td>{{ trello.wipEmTestes }}/{{ trello.maxWipEmTestes }}</td>
-            <td>{{ trello.wipEmTestesIncidentes }}</td>
+            <td colSpan="3" style="text-align: center;">
+                <div id="circle"><span class="innerTEXT">{{ trelloTotalWip }}/{{ trelloMaxWip }}</span></div>
+            </td>
+            <td style="width: 200px; font-size: x-small">
+                <table>
+                    <tr>
+                        <td style="text-align: left;">Trello WIP</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: right;">Em Andamento:</td>
+                        <td>{{ trello.wipEmAndamento }}/{{ trello.maxWipEmAndamento }}</td>
+                        <td>{{ trello.wipEmAndamentoIncidentes }}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: right;">Em Testes:</td>
+                        <td>{{ trello.wipEmTestes }}/{{ trello.maxWipEmTestes }}</td>
+                        <td>{{ trello.wipEmTestesIncidentes }}</td>
+                    </tr>
+                </table>
+            </td>
         </tr>
     </table>
+    </a>
 </div>
 
 <hr>
 
 <div style="text-align: center;">
-    <h2>Tipos de revisões por dia (últimos 10 dias):</h2>
-    <link rel="stylesheet" href="http://cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
-    <!--suppress JSUnresolvedLibraryURL -->
-    <script src="http://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
-
-    <link rel="stylesheet" type="text/css" href="https://rawgit.com/Globegitter/chartist-plugin-tooltip/master/dist/chartist-plugin-tooltip.css">
-    <!--suppress JSUnresolvedLibraryURL -->
-    <script type="text/javascript" src="https://rawgit.com/Globegitter/chartist-plugin-tooltip/master/dist/chartist-plugin-tooltip.min.js"></script>
+    <!--suppress HtmlUnknownTarget -->
+    <link rel="stylesheet" href="public/lib/chartist.min.css">
+    <!--suppress HtmlUnknownTarget -->
+    <script src="public/lib/chartist.min.js"></script>
+    <!--suppress HtmlUnknownTarget -->
+    <link rel="stylesheet" type="text/css" href="public/lib/chartist-plugin-tooltip.css">
+    <!--suppress HtmlUnknownTarget -->
+    <script type="text/javascript" src="public/lib/chartist-plugin-tooltip.min.js"></script>
 
     <div id="commits" class="ct-chart ct-perfect-fourth"></div>
+    <span style="font-size: x-small">
+        Tipos de revisões por dia --
+        {{#if teveQueIncluirDataUltimoCommitComRevisaoPendente}}
+            dia mais distante sem revisão, mais últimos 8 dias
+        {{else}}
+            últimos 10 dias
+        {{/if}}
+    </span>
+
     <!--suppress HtmlUnknownTag, CssUnusedSymbol -->
     <style>
         .ct-bar {
@@ -43,7 +114,7 @@
         .ct-series-a .ct-bar { stroke: #de615f; } /* commitsPorDataPendentes */
         .ct-series-b .ct-bar { stroke: #337ab7; } /* commitsPorDataSemFollowUp */
         .ct-series-c .ct-bar { stroke: #31708f; } /* commitsPorDataComFollowUp */
-        .ct-series-d .ct-bar { stroke: #3c763d; } /* commitsPorDataPar */
+        .ct-series-d .ct-bar { stroke: #009803; } /* commitsPorDataPar */
         .ct-series-e .ct-bar { stroke: #777; } /* commitsPorDataSemRevisao */
         #commits {
             height: 400px;

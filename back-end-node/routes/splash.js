@@ -8,6 +8,8 @@ const TipoRevisaoCommit = require('../build/commit/Commit').TipoRevisaoCommit;
 const CommitRepository = require('../build/commit/CommitRepository').CommitRepository;
 //noinspection JSUnresolvedVariable
 const TrelloService = require('../build/trello/TrelloService').TrelloService;
+//noinspection JSUnresolvedVariable
+const JenkinsCache = require('../build/integracaocontinua/JenkinsService').JenkinsCache;
 
 let commitsPorDataLabels = '[]';
 let commitsPorDataPendentes = '[]';
@@ -17,6 +19,7 @@ let commitsPorDataSemFollowUp = '[]';
 let commitsPorDataSemRevisao = '[]';
 
 let dataUltimoCommitComRevisaoPendente = undefined;
+let teveQueIncluirDataUltimoCommitComRevisaoPendente = false;
 
 let trello = {
     maxWipEmAndamento: undefined,
@@ -90,9 +93,11 @@ function load() {
         commitsPorDataSemFollowUp = [];
         commitsPorDataSemRevisao = [];
         const datasQueSeraoExibidas = Object.keys(commitsPedentesPorData).sort().slice(-10);
+        teveQueIncluirDataUltimoCommitComRevisaoPendente = false;
         if (datasQueSeraoExibidas.indexOf(dataUltimoCommitComRevisaoPendente) === -1) {
             datasQueSeraoExibidas[0] = dataUltimoCommitComRevisaoPendente;
             datasQueSeraoExibidas[1] = RETICENCIAS;
+            teveQueIncluirDataUltimoCommitComRevisaoPendente = true;
         }
         datasQueSeraoExibidas.forEach(data => {
             if (data === RETICENCIAS) {
@@ -117,7 +122,7 @@ function load() {
             commitsPorDataPar.push({meta: `Commits feitos em Par ${percent(commitsPedentesPorData[data].par)}`, value: commitsPedentesPorData[data].par});
             commitsPorDataComFollowUp.push({meta: `Revisões com Follow-Up ${percent(commitsPedentesPorData[data].comfollowup)}`, value: commitsPedentesPorData[data].comfollowup});
             commitsPorDataSemFollowUp.push({meta: `Revisões sem Follow-Up ${percent(commitsPedentesPorData[data].semfollowup)}`, value: commitsPedentesPorData[data].semfollowup});
-            commitsPorDataSemRevisao.push({meta: `Commits sem revisão ${percent(commitsPedentesPorData[data].semrevisao)}`, value: commitsPedentesPorData[data].semrevisao});
+            commitsPorDataSemRevisao.push({meta: `Commits sem necessidade de revisão ${percent(commitsPedentesPorData[data].semrevisao)}`, value: commitsPedentesPorData[data].semrevisao});
         });
         commitsPorDataLabels = JSON.stringify(commitsPorDataLabels);
         commitsPorDataPendentes = JSON.stringify(commitsPorDataPendentes);
@@ -141,8 +146,14 @@ function load() {
 router.get('/', function(req, res) {
     addCors(req, res);
 
+    let imagemJenkins = 'public/images/question-mark.png';
+    if (JenkinsCache.sagas2JobData.color) {
+        imagemJenkins = `http://jenkins/static/48484716/images/32x32/${JenkinsCache.sagas2JobData.color}.gif`;
+    }
+
     const trelloTotalWip = trello.wipEmAndamento + trello.wipEmTestes;
     const trelloMaxWip = trello.maxWipEmAndamento + trello.maxWipEmTestes;
+
     res.render('splash', {
         dataUltimoCommitComRevisaoPendente: dataUltimoCommitComRevisaoPendente,
         commitsPorDataLabels: commitsPorDataLabels,
@@ -151,10 +162,15 @@ router.get('/', function(req, res) {
         commitsPorDataComFollowUp: commitsPorDataComFollowUp,
         commitsPorDataSemFollowUp: commitsPorDataSemFollowUp,
         commitsPorDataSemRevisao: commitsPorDataSemRevisao,
+
+        imagemJenkins: imagemJenkins,
+
+        teveQueIncluirDataUltimoCommitComRevisaoPendente: teveQueIncluirDataUltimoCommitComRevisaoPendente,
+
         trello: trello,
         trelloTotalWip: trelloTotalWip,
         trelloMaxWip: trelloMaxWip,
-        trelloWipColor: trelloTotalWip > trelloMaxWip ? 'red' : 'navy',
+        trelloWipColor: trelloTotalWip > trelloMaxWip ? '#D83737' : (trelloTotalWip === trelloMaxWip ? '#d7d200' : '#009803'),
     });
 });
 

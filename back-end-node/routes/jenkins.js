@@ -3,24 +3,11 @@ const router = express.Router();
 
 const addCors = require('./addCors');
 //noinspection JSUnresolvedVariable
-const Rest = require('../build/infra/rest').Rest;
-
-let jenkinsData = {};
-
-function consultarJenkins() {
-    Rest.get('http://srv-ic-master:8089/view/Sesol-2/job/sagas2.pipeline/api/json?pretty=true').then(data => {
-        jenkinsData = data;
-    }).catch(() => {
-        console.log('Erro na consulta jenkins.')
-    });
-}
+const JenkinsCache = require('../build/integracaocontinua/JenkinsService').JenkinsCache;
 
 router.get('/pipeline', function(req, res) {
     addCors(req, res);
-    res.send(jenkinsData);
+    res.send(JenkinsCache.sagas2JobData);
 });
-
-setInterval(consultarJenkins, 60 * 1000);
-consultarJenkins();
 
 module.exports = router;

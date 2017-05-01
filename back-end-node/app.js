@@ -31,6 +31,8 @@ app.use(`${BACK_END_CONTEXT}/jenkins`, jenkins);
 app.use(`${BACK_END_CONTEXT}/inject.js`, inject);
 app.use(`${BACK_END_CONTEXT}/rpc`, rpc);
 
+app.use(`${BACK_END_CONTEXT}/public`, express.static(path.join(__dirname, 'public')));
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   let err = new Error('Not Found');
