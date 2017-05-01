@@ -3,10 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const rest_1 = require("../infra/rest");
 const CodeReviewConfig_1 = require("../geral/CodeReviewConfig");
 class TrelloService {
-    static getCardsEmAndamento() {
+    static getListEmAndamento() {
         return rest_1.Rest.get(TrelloURLs.listEmAndamentoUrl());
     }
-    static getCardsEmTestes() {
+    static getListEmTestes() {
         return rest_1.Rest.get(TrelloURLs.listEmTestesUrl());
     }
 }

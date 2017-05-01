@@ -3,11 +3,11 @@ import {codeReviewConfig} from "../geral/CodeReviewConfig";
 
 export class TrelloService {
 
-    static getCardsEmAndamento(): Promise<TrelloList> {
+    static getListEmAndamento(): Promise<TrelloList> {
         return Rest.get<TrelloList>(TrelloURLs.listEmAndamentoUrl());
     }
 
-    static getCardsEmTestes(): Promise<TrelloList> {
+    static getListEmTestes(): Promise<TrelloList> {
         return Rest.get<TrelloList>(TrelloURLs.listEmTestesUrl());
     }
 

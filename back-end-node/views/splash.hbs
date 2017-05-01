@@ -1,3 +1,79 @@
-<h1 style="text-align: center; font-family: 'Roboto', sans-serif; font-style: italic;">Sesol-2 Code Review</h1>
+<style>* { font-family: 'Roboto', sans-serif; }</style>
 
-<div style="text-align: center; font-family: 'Roboto', sans-serif; font-style: italic;">Commits na base: {{ qtdCommits }}</div>
+<h3 style="text-align: center; font-style: italic;">Sesol-2 Code Review</h3>
+
+<hr>
+
+<div style="color: navy;">
+    <table style="margin: 0 auto;">
+        <tr>
+            <td colSpan="3" style="text-align: center; color: {{ trelloWipColor }}"><h2>Trello WIP: {{ trelloTotalWip }}/{{ trelloMaxWip }}</h2></td>
+        </tr>
+        <tr>
+            <td style="text-align: right;">Em Andamento:</td>
+            <td>{{ trello.wipEmAndamento }}/{{ trello.maxWipEmAndamento }}</td>
+            <td>{{ trello.wipEmAndamentoIncidentes }}</td>
+        </tr>
+        <tr>
+            <td style="text-align: right;">Em Testes:</td>
+            <td>{{ trello.wipEmTestes }}/{{ trello.maxWipEmTestes }}</td>
+            <td>{{ trello.wipEmTestesIncidentes }}</td>
+        </tr>
+    </table>
+</div>
+
+<hr>
+
+<div style="text-align: center;">
+    <h2>Tipos de revisões por dia (últimos 10 dias):</h2>
+    <link rel="stylesheet" href="http://cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+    <!--suppress JSUnresolvedLibraryURL -->
+    <script src="http://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="https://rawgit.com/Globegitter/chartist-plugin-tooltip/master/dist/chartist-plugin-tooltip.css">
+    <!--suppress JSUnresolvedLibraryURL -->
+    <script type="text/javascript" src="https://rawgit.com/Globegitter/chartist-plugin-tooltip/master/dist/chartist-plugin-tooltip.min.js"></script>
+
+    <div id="commits" class="ct-chart ct-perfect-fourth"></div>
+    <!--suppress HtmlUnknownTag, CssUnusedSymbol -->
+    <style>
+        .ct-bar {
+            stroke-width: 40px;
+        }
+        .ct-series-a .ct-bar { stroke: #de615f; } /* commitsPorDataPendentes */
+        .ct-series-b .ct-bar { stroke: #337ab7; } /* commitsPorDataSemFollowUp */
+        .ct-series-c .ct-bar { stroke: #31708f; } /* commitsPorDataComFollowUp */
+        .ct-series-d .ct-bar { stroke: #3c763d; } /* commitsPorDataPar */
+        .ct-series-e .ct-bar { stroke: #777; } /* commitsPorDataSemRevisao */
+        #commits {
+            height: 400px;
+            width: 80%;
+            margin: 0 auto;
+        }
+    </style>
+    <!--suppress JSUnresolvedVariable, JSUnresolvedFunction, ES6ModulesDependencies -->
+    <script>
+        let data = {
+            labels: [].concat({{{ commitsPorDataLabels }}}),
+            series: [
+                {{{ commitsPorDataPendentes }}},
+                {{{ commitsPorDataSemFollowUp }}},
+                {{{ commitsPorDataComFollowUp }}},
+                {{{ commitsPorDataPar }}},
+                {{{ commitsPorDataSemRevisao }}}
+            ]
+        };
+
+        let options = {
+            seriesBarDistance: 0,
+            showLabel: true,
+            stackBars: true,
+            plugins: [
+                Chartist.plugins.tooltip()
+            ]
+        };
+
+        new Chartist.Bar('.ct-chart', data, options);
+    </script>
+</div>
+

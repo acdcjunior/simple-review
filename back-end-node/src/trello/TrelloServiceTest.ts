@@ -4,12 +4,12 @@ import {printResults} from "../gitlab/GitLabServiceTest";
 describe("TrelloService", function () {
     this.timeout(15000);
 
-    it("getCardsEmAndamento", function () {
-        return printResults('getCardsEmAndamento', TrelloService.getCardsEmAndamento());
+    it("getListEmAndamento", function () {
+        return printResults('getListEmAndamento', TrelloService.getListEmAndamento());
     });
 
-    it("getCardsEmTestes", function () {
-        return printResults('getCardsEmTestes', TrelloService.getCardsEmTestes());
+    it("getListEmTestes", function () {
+        return printResults('getListEmTestes', TrelloService.getListEmTestes());
     });
 
 });
