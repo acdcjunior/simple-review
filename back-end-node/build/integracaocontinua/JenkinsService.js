@@ -18,12 +18,10 @@ class JenkinsCache {
     static consultarJenkins() {
         JenkinsService.getSagas2Job().then(data => {
             JenkinsCache.sagas2JobData = data;
-        }).catch(() => {
-            console.log('Erro na consulta jenkins.');
-        });
+        }).catch(() => { });
     }
 }
 JenkinsCache.sagas2JobData = { color: undefined };
 exports.JenkinsCache = JenkinsCache;
-setInterval(JenkinsCache.consultarJenkins, 60 * 1000);
+setInterval(JenkinsCache.consultarJenkins, 180 * 1000);
 JenkinsCache.consultarJenkins(); // chamada inicial
