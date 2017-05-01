@@ -2,7 +2,7 @@
 <div class="col-md-12">
   <div class="row">
     <div class="col-md-12" style="margin-top: 5px">
-      <div class="dropdown" style="float: right; margin-top: 5px">
+      <div class="dropdown" style="float: right;">
         <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
           <span class="glyphicon glyphicon-option-vertical"></span>
           <span class="caret"></span>
@@ -14,13 +14,7 @@
           <li><a :href="'#/login/'"><span class="glyphicon glyphicon-transfer"></span>Trocar usuário</a></li>
         </ul>
       </div>
-      <h2 class="page-header">
-        Sesol-2
-        <a href="http://jenkins/view/Sesol-2/job/sagas2.pipeline/" target="_blank" style="text-decoration: none">
-            <img src="http://jenkins/static/9c3ef1de/images/headshot.png" style="height: 25px; margin: 0 0 8px 10px;">
-            <img id="jenkins" src="../assets/question_mark.png" class="avatar" style="height: 25px;width: 25px;margin-bottom: 8px;">
-        </a>
-      </h2>
+      <h3 class="page-header" style="margin-top: 5px;">Sesol-2 Code Review</h3>
     </div>
 
     <div class="col-md-12">
@@ -116,8 +110,6 @@ export default {
       qtdTodosPendentesDoUsuarioLogado: undefined,
       qtdTodosPendentesDoUsuarioLogadoTimer: undefined,
 
-      painelJenkinsTimer: undefined,
-
       ocultarEspacosEmBranco: opcoesCommitList.ocultarEspacosEmBranco,
       diffLadoALado: opcoesCommitList.diffLadoALado,
       exibirSomenteCommitsEmQueSouRevisor: opcoesCommitList.exibirSomenteCommitsEmQueSouRevisor,
@@ -149,7 +141,6 @@ export default {
               });
           }, 5000);
 
-          this.carregarDadosPainelJenkins();
           this.carregarCommits().then(() => {
               if (to.query && to.query.scroll) {
                 const commitParaScroll = document.getElementById(to.query.scroll);
@@ -173,7 +164,6 @@ export default {
     }
     utils.limparDiff();
     window.$('.dropdown-toggle').dropdown();
-    this.carregarDadosPainelJenkins();
 
     this.carregarCommits();
     store.registerListener('list', () => {
@@ -187,18 +177,6 @@ export default {
             console.log('Não há committer logado! -> ', committers.commiterLogado);
         }
         return committers.commiterLogado;
-    },
-    carregarDadosPainelJenkins() {
-        clearInterval(this.painelJenkinsTimer);
-        this.painelJenkinsTimer = setInterval(() => {
-            window.$.getJSON(window.env.BACK_END_NODE + '/jenkins/pipeline', function (data) {
-                let imagemJenkins = require('../assets/question_mark.png');
-                if (data.color) {
-                    imagemJenkins = `http://jenkins/static/48484716/images/32x32/${data.color}.gif`;
-                }
-                window.$('#jenkins').attr('src', imagemJenkins);
-            });
-        }, 60 * 1000);
     },
     exibirMinhasRevisoesPendentes() {
         this.exibirSomenteCommitsEmQueSouRevisor = true;
