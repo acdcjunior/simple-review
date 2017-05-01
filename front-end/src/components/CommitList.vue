@@ -192,7 +192,11 @@ export default {
         clearInterval(this.painelJenkinsTimer);
         this.painelJenkinsTimer = setInterval(() => {
             window.$.getJSON(window.env.BACK_END_NODE + '/jenkins/pipeline', function (data) {
-                window.$('#jenkins').attr('src', 'http://jenkins/static/48484716/images/32x32/' + data.color + '.gif')
+                let imagemJenkins = require('../assets/question_mark.png');
+                if (data.color) {
+                    imagemJenkins = `http://jenkins/static/48484716/images/32x32/${data.color}.gif`;
+                }
+                window.$('#jenkins').attr('src', imagemJenkins);
             });
         }, 60 * 1000);
     },
