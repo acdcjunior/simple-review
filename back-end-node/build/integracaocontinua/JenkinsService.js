@@ -8,7 +8,7 @@ class JenkinsService {
 }
 class JenkinsURLs {
     static sagas2PipelineUrl() {
-        return JenkinsURLs.jobUrl('Sesol - 2', 'sagas2.pipeline');
+        return JenkinsURLs.jobUrl('Sesol-2', 'sagas2.pipeline');
     }
     static jobUrl(grupo, job) {
         return `http://srv-ic-master:8089/view/${grupo}/job/${job}/api/json?pretty=true`;

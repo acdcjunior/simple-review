@@ -11,7 +11,7 @@ class JenkinsService {
 class JenkinsURLs {
 
     static sagas2PipelineUrl(): string {
-        return JenkinsURLs.jobUrl('Sesol - 2', 'sagas2.pipeline');
+        return JenkinsURLs.jobUrl('Sesol-2', 'sagas2.pipeline');
     }
 
     static jobUrl(grupo: string, job: string): string {
