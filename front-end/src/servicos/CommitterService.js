@@ -103,7 +103,7 @@ CommitService.TIPO_REVISAO_DADOS[CommitService.TIPO_REVISAO.SEM_FOLLOW_UP] = {
     tipoRevisaoTexto: `Revisado (sem <em>follow-up</em>)`
 };
 CommitService.TIPO_REVISAO_DADOS[CommitService.TIPO_REVISAO.COM_FOLLOW_UP] = {
-    tipoRevisaoClass: 'text-primary',
+    tipoRevisaoClass: 'text-info', /* notar que o css de texto eh diferente do css de button (trocado!!!) */
     tipoRevisaoTexto: `Revisado (com <em>follow-up</em>)`
 };
 CommitService.TIPO_REVISAO_DADOS[CommitService.TIPO_REVISAO.SEM_REVISAO] = {

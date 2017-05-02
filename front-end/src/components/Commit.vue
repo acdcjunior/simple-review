@@ -11,14 +11,39 @@
 
         <p style="margin: 10px 5px 0 0">
           Criado {{ timeAgo(commit.created_at) }}.
-
-          <span v-if="!commitRevisado()" style="font-size: smaller">Com revisões pendentes.</span>
-          <span v-else style="font-weight: bold; font-size: smaller">{{ revisadoHaTempos() }}.</span>
+          &nbsp;
+          <span v-for="bolinha in bolinhas">
+            <span class="bolinha" v-bind:class="bolinha.className" v-bind:title="bolinha.hint">{{ bolinha.iniciais }}</span>
+          </span>
         </p>
       </div>
     </div>
   </div>
 </template>
+
+<style>
+  .bolinha {
+    display: inline-block;
+    border-radius: 50%;
+
+    width: 24px;
+    height: 24px;
+    padding: 3px 3px 0 2px;
+
+    border: 1px solid #666;
+
+    text-align: center;
+
+    color: #dedede;
+    font-size: 11px;
+    font-family: 'Roboto', sans-serif;
+  }
+  .bolinha.bolinha-text-danger { background: #de615f;  }
+  .bolinha.bolinha-text-success { background: #009803; }
+  .bolinha.bolinha-text-muted { background: #777777; }
+  .bolinha.bolinha-text-info { background: #31708f; }
+  .bolinha.bolinha-text-primary { background: #337ab7; }
+</style>
 
 <script>
 import committers from '../committers'
@@ -35,6 +60,10 @@ export default {
 
   props: {
     commit: Object
+  },
+
+  created() {
+      this.bolinhas = this.calcularBolinhas();
   },
 
   methods: {
@@ -56,12 +85,35 @@ export default {
     usuarioLogadoNuncaRevisouCommit() {
         return CommitService.usuarioLogadoNuncaRevisouCommit(this.commit);
     },
-    commitRevisado () {
-        return CommitService.commitFoiRevisado(this.commit);
+    criarBolinha(emailRevisor, classeTipoRevisao, tipoRevisaoTexto) {
+        const committer = committers.get(emailRevisor);
+        if (committer.isBotComentador) {
+            return;
+        }
+        return {className: 'bolinha-' + classeTipoRevisao, email: emailRevisor, iniciais: committer.name.substr(0, 2).toUpperCase(), hint: `${tipoRevisaoTexto.replace(/<\/?em>/g, '')} por ${committer.name}`}
+    },
+    calcularBolinhas() {
+        let bolinhas = [];
+        this.commit.revisores.forEach(emailRevisor => {
+            const bolinha = this.criarBolinha(emailRevisor, 'text-danger', 'Pendente de revisão');
+            if (bolinha) {
+                bolinhas.push(bolinha);
+            }
+        });
+        this.commit.revisoes.forEach(revisao => {
+            if (this.commit.revisores.indexOf(revisao.revisor) !== -1) {
+                bolinhas = bolinhas.filter(badge => badge.email !== revisao.revisor);
+            }
+            const bolinha = this.criarBolinha(revisao.revisor, CommitService.TIPO_REVISAO_DADOS[revisao.tipoRevisao].tipoRevisaoClass, CommitService.TIPO_REVISAO_DADOS[revisao.tipoRevisao].tipoRevisaoTexto);
+            if (bolinha) {
+                bolinhas.push(bolinha);
+            }
+        });
+        return bolinhas;
     },
     abrirRevisao () {
-      utils.atualizarDiff(this.commit.sha)
-      this.$router.go('/commit/' + this.commit.sha)
+        utils.atualizarDiff(this.commit.sha);
+        this.$router.go('/commit/' + this.commit.sha)
     }
   }
 }
