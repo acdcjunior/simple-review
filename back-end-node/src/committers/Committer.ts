@@ -54,7 +54,7 @@ export class Committer extends Sesol2 {
         return !this.sexo ? "o(a)" : this.sexo === "m" ? "o" : "a";
     }
     mencao() {
-        return `@${this.username} [\`${this.name}\`]`;
+        return `\`${this.name}\``;
     }
 
     public static committerInvalido(username): Committer {
