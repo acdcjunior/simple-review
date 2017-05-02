@@ -1,0 +1,1 @@
+docker restart desenvolvimento_back-end_1 && back-attach.bat
