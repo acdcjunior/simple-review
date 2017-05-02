@@ -139,7 +139,7 @@ export default {
 
   methods: {
     committerLogado() {
-        return committers.commiterLogado
+        return committers.committerLogado
     },
     timeAgo (data) {
         return utils.timeago(data);
@@ -174,7 +174,7 @@ export default {
         return !this.usuarioLogadoEhAutorDesteCommit() && this.usuarioLogadoNuncaRevisouEsteCommit();
     },
     usuarioLogadoEhAutorDesteCommit() {
-        return this.commit.author_email === committers.commiterLogado.email;
+        return this.commit.author_email === committers.committerLogado.email;
     },
     usuarioLogadoNuncaRevisouEsteCommit() {
         return CommitService.usuarioLogadoNuncaRevisouCommit(this.commit);

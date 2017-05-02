@@ -173,10 +173,10 @@ export default {
 
   methods: {
     logado() {
-        if (!committers.commiterLogado) {
-            console.log('Não há committer logado! -> ', committers.commiterLogado);
+        if (!committers.committerLogado) {
+            console.log('Não há committer logado! -> ', committers.committerLogado);
         }
-        return committers.commiterLogado;
+        return committers.committerLogado;
     },
     exibirMinhasRevisoesPendentes() {
         this.exibirSomenteCommitsEmQueSouRevisor = true;

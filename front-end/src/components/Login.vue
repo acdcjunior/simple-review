@@ -50,8 +50,8 @@ export default {
 
   methods: {
     submit () {
-      this.$cookie.set('commiterLogado', JSON.stringify(this.committerSelecionado), { expires: '1Y' })
-      committers.commiterLogado = this.committerSelecionado
+      this.$cookie.set('committerLogado', JSON.stringify(this.committerSelecionado), { expires: '1Y' })
+      committers.committerLogado = this.committerSelecionado
       this.$router.go('/commits')
     }
   }

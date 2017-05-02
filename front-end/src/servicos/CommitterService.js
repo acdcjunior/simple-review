@@ -28,7 +28,7 @@ export class CommitterService {
                 dataType: 'json',
                 url: `${window.env.GITLAB_PROTOCOL_HOST}/api/v4/todos`,
                 headers: {
-                    'PRIVATE-TOKEN': committers.commiterLogado.impersonationToken
+                    'PRIVATE-TOKEN': committers.committerLogado.impersonationToken
                 },
                 success: todos => {
                     resolve(todos.length);
@@ -45,7 +45,7 @@ export class CommitterService {
 export class CommitService {
 
     static usuarioLogadoNuncaRevisouCommit(commit) {
-        return commit.revisoes.filter(revisao => revisao.revisor === committers.commiterLogado.email).length === 0;
+        return commit.revisoes.filter(revisao => revisao.revisor === committers.committerLogado.email).length === 0;
     }
 
     static commitFoiRevisado(commit) {
@@ -60,13 +60,13 @@ export class CommitService {
 
     static marcarComoRevisado(commit, tipoRevisao, assimQueMarcarRevisado) {
         commit.revisoes.push({
-            revisor: committers.commiterLogado.email,
-            sexoRevisor: committers.commiterLogado.sexo,
+            revisor: committers.committerLogado.email,
+            sexoRevisor: committers.committerLogado.sexo,
             data: new Date().toISOString(),
             tipoRevisao: tipoRevisao
         });
         return store.atualizar(commit).then(() => {
-            backEnd.marcarRevisado(commit.sha, committers.commiterLogado, tipoRevisao).then(assimQueMarcarRevisado || (()=>{}));
+            backEnd.marcarRevisado(commit.sha, committers.committerLogado, tipoRevisao).then(assimQueMarcarRevisado || (()=>{}));
         });
     }
 
