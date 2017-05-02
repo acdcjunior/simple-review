@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
     <img class="avatar" v-bind:src="committer.avatar_url">
     {{ committer.name }}
   </div>
