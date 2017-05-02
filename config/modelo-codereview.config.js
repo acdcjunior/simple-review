@@ -20,7 +20,7 @@ const config = {
     },
 
     botComentador: {
-        username: 'sonarqube',
+        username: 'SonarQube',
         sexo: "m",
         aliases: [], // aliases nao fazem sentido para o bot, jah q ninguem deve mencionah-lo
         quota: 0 // tem que ser 0, zenao o bot vai ganhar revisoes!
@@ -60,7 +60,7 @@ const rodandoBackEndViaNodeDiretamenteEmDellJR = require("os").hostname() === "d
 // desenvolvimento no tcu
 const rodandoBackEndViaNodeDiretamenteEmTCU = require("os").hostname() === "E-098571";
 // backend rodando em docker, mas em casa
-let rodandoEmDockerEmDellJR = true;
+let rodandoEmDockerEmDellJR = false;
 
 if (rodandoBackEndViaNodeDiretamenteEmDellJR || rodandoEmDockerEmDellJR) {
     if (rodandoBackEndViaNodeDiretamenteEmDellJR) {
@@ -73,7 +73,6 @@ if (rodandoBackEndViaNodeDiretamenteEmDellJR || rodandoEmDockerEmDellJR) {
     config.projeto.dataCortePrimeiroCommit = "2017-04-09T20:59:27.000-03:00";
 
     config.botComentador.username = 'sonarqube';
-
 }
 if (rodandoBackEndViaNodeDiretamenteEmTCU) {
     config.botComentador.token = 'x';
