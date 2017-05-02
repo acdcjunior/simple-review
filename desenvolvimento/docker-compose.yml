@@ -68,9 +68,9 @@ services:
     #
     # Dispare manualmente usando $ curl -X POST http://srv-codereview/back-end-review/rpc/webhook
     #
-    git:
-        image: gitlab/gitlab-ce
-        networks:
-            - code-review-network
-        ports:
-            - "8090:80"
+    #git:
+    #    image: gitlab/gitlab-ce
+    #    networks:
+    #        - code-review-network
+    #    ports:
+    #        - "8090:80"
