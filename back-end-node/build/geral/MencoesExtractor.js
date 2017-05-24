@@ -9,6 +9,7 @@ class MencoesExtractor {
         const mencoes = texto.match(/@[a-zA-Z.0-9]+/g) || [];
         return Promise.all(mencoes
             .map(mencaoComArroba => mencaoComArroba.substring(1))
+            .map(mencaoSemArroba => mencaoSemArroba.toLowerCase())
             .map(CommitterRepository_1.CommitterRepository.findCommitterByUsernameOrAlias));
     }
 }

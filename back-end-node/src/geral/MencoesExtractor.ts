@@ -14,6 +14,7 @@ export class MencoesExtractor {
         return Promise.all(
             mencoes
                 .map(mencaoComArroba => mencaoComArroba.substring(1))
+                .map(mencaoSemArroba => mencaoSemArroba.toLowerCase())
                 .map(CommitterRepository.findCommitterByUsernameOrAlias)
         );
     }
