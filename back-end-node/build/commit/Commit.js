@@ -103,9 +103,13 @@ class Commit extends Sesol2_1.Sesol2 {
         return this.revisores.filter(Commit.isEmailDeEstagiario).length === this.revisores.length;
     }
     isCommitDeMergeSemConflito() {
-        return Commit.regexMensagemMerge.test(this.message) && this.message.indexOf('Conflicts:') === -1;
+        return Commit.REGEX_MENSAGEM_MERGE.test(this.message) && this.message.indexOf('Conflicts:') === -1;
+    }
+    isCommitNaoDeveSerRevisado() {
+        return Commit.REGEX_MENSAGEM_SEM_REVISOR.test(this.message);
     }
 }
 Commit.COMMIT_TYPE = 'commit';
-Commit.regexMensagemMerge = /^Merge( remote-tracking)? branch '[\w\/-]+'( of http.*?\.git)? into [\w\/]+[\s\S]*$/;
+Commit.REGEX_MENSAGEM_MERGE = /^Merge( remote-tracking)? branch '[\w\/-]+'( of http.*?\.git)? into [\w\/]+[\s\S]*$/;
+Commit.REGEX_MENSAGEM_SEM_REVISOR = /\[sem[- ]revis(or|ao)]/;
 exports.Commit = Commit;

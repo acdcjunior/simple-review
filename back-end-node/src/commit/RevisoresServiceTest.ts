@@ -66,10 +66,11 @@ const commits = [
     /* 12 */ new Commit('sha12', 't12', '12\n ',                                  committers[1].email,  ''),
     /* 13 */ new Commit('sha13', 't13', '13\n @carlanm',                          committers[2].email,  ''),
     /* 14 */ new Commit('sha14', 't14', '14\n @leliakn',                          committers[7].email,  ''),
-    /* 15 */ new Commit('sha15', 't15', '15\n@leLIA',                            committers[1].email,  ''),
+    /* 15 */ new Commit('sha15', 't15', '15\n@leLIA',                             committers[1].email,  ''),
     /* 16 */ new Commit('sha16', 't16', '16\n @invalido',                         committers[2].email,  ''),
     /* 17 */ new Commit('sha17', 't17', '17\n @lelia @antonio . @marcos @afonso', committers[5].email,  ''),
     /* 18 */ new Commit('sha18', 't18', `Merge branch 'x' into x`,                committers[1].email,  ''),
+    /* 19 */ new Commit('sha19', 't19', `qualquer coisa [sem-revisor]`,           committers[1].email,  ''),
 ];
 
 describe("RevisoresService suite", function () {
@@ -160,15 +161,22 @@ function assertCommitRevisor(commit, revisor) {
 }
 
 function assertJson(commits) {
+
+    const removerFinal = (data) => data.replace(/:\d\d\.\d\d\dZ$/, ':SS.MMMZ');
+    const AGORA = removerFinal(new Date().toISOString());
+
     commits.forEach(c => {
        delete c._id;
        delete c.type;
        delete c.sha;
        delete c.title;
        delete c.created_at;
+
+       if (c.revisoes[0] && c.revisoes[0].data) {
+            c.revisoes[0].data = removerFinal(c.revisoes[0].data)
+       }
     });
-    const removerFinal = (data) => data.replace(/:\d\d\.\d\d\dZ$/, ':SS.MMMZ');
-    commits[18].revisoes[0].data = removerFinal(commits[18].revisoes[0].data);
+
     let expected = [
         {message:" 0\n ",          author_email:"antonio.junior@example.com", revisores:["alexandrevr@example.com"],                              revisoes:[], historico:[]},
         {message:" 1\n ",          author_email:"antonio.junior@example.com", revisores:["carlanm@example.com"],                                  revisoes:[], historico:[]},
@@ -200,16 +208,28 @@ function assertJson(commits) {
             ]
         },
         {
-            message:"Merge branch 'x' into x",
-            author_email:"antonio.junior@example.com",
+            message: commits[18].message,
+            author_email: commits[18].author_email,
             revisores:["SonarQube"],
             revisoes: [{
-                data: removerFinal(new Date().toISOString()),
+                data: AGORA,
                 revisor: "SonarQube",
                 sexoRevisor: undefined,
                 tipoRevisao: "sem revisão"
             }],
             historico:[":ok: Commit não terá revisão: commit de merge sem conflito."]
+        },
+        {
+            message: commits[19].message,
+            author_email: commits[19].author_email,
+            revisores:["SonarQube"],
+            revisoes: [{
+                data: AGORA,
+                revisor: "SonarQube",
+                sexoRevisor: undefined,
+                tipoRevisao: "sem revisão"
+            }],
+            historico:[":ok: Commit não terá revisão: commit indicado para não ter revisão."]
         }
     ];
     expect(commits).to.deep.equal(expected);
