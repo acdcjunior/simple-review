@@ -21,7 +21,7 @@ let commitsPorDataSemRevisao = '[]';
 let dataUltimoCommitComRevisaoPendente = undefined;
 let teveQueIncluirDataUltimoCommitComRevisaoPendente = false;
 
-let trello = {
+const trello = {
     maxWipEmAndamento: undefined,
     wipEmAndamento: -1,
     wipEmAndamentoIncidentes: -1,
@@ -68,7 +68,7 @@ const VALOR_ZERO = {meta: ``, value: 0};
 
 function load() {
     CommitRepository.findAllCommits().then(commits => {
-        let commitsPedentesPorData = {};
+        const commitsPedentesPorData = {};
         dataUltimoCommitComRevisaoPendente = undefined;
         commits.forEach(commit => {
             const dataCommit = commit.created_at.slice(0, 10);
@@ -109,7 +109,7 @@ function load() {
                 commitsPorDataSemRevisao.push(VALOR_ZERO);
                 return;
             }
-            let total = commitsPedentesPorData[data].pendente +
+            const total = commitsPedentesPorData[data].pendente +
                 commitsPedentesPorData[data].par +
                 commitsPedentesPorData[data].comfollowup +
                 commitsPedentesPorData[data].semfollowup +
@@ -155,17 +155,19 @@ router.get('/', function(req, res) {
     const trelloMaxWip = trello.maxWipEmAndamento + trello.maxWipEmTestes;
 
     res.render('splash', {
-        dataUltimoCommitComRevisaoPendente: dataUltimoCommitComRevisaoPendente,
-        commitsPorDataLabels: commitsPorDataLabels,
-        commitsPorDataPendentes: commitsPorDataPendentes,
-        commitsPorDataPar: commitsPorDataPar,
-        commitsPorDataComFollowUp: commitsPorDataComFollowUp,
-        commitsPorDataSemFollowUp: commitsPorDataSemFollowUp,
-        commitsPorDataSemRevisao: commitsPorDataSemRevisao,
+        grafico: {
+            labels: commitsPorDataLabels,
+            series: {
+                a: {cor: '#de615f', dados: commitsPorDataPendentes},
+                b: {cor: '#337ab7', dados: commitsPorDataSemFollowUp},
+                c: {cor: '#31708f', dados: commitsPorDataComFollowUp},
+                d: {cor: '#009803', dados: commitsPorDataPar},
+                e: {cor: '#777',    dados: commitsPorDataSemRevisao},
+            },
+            legenda: 'Tipos de revisões por dia -- ' + (teveQueIncluirDataUltimoCommitComRevisaoPendente ? 'dia mais distante sem revisão, mais últimos 8 dias' : 'últimos 10 dias')
+        },
 
         imagemJenkins: imagemJenkins,
-
-        teveQueIncluirDataUltimoCommitComRevisaoPendente: teveQueIncluirDataUltimoCommitComRevisaoPendente,
 
         trello: trello,
         trelloTotalWip: trelloTotalWip,

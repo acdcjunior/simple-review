@@ -98,12 +98,7 @@ hr {
 
     <div id="commits" class="ct-chart ct-perfect-fourth"></div>
     <span style="font-size: x-small">
-        Tipos de revisões por dia --
-        {{#if teveQueIncluirDataUltimoCommitComRevisaoPendente}}
-            dia mais distante sem revisão, mais últimos 8 dias
-        {{else}}
-            últimos 10 dias
-        {{/if}}
+        {{ grafico.legenda }}
     </span>
 
     <!--suppress HtmlUnknownTag, CssUnusedSymbol -->
@@ -111,11 +106,11 @@ hr {
         .ct-bar {
             stroke-width: 40px;
         }
-        .ct-series-a .ct-bar { stroke: #de615f; } /* commitsPorDataPendentes */
-        .ct-series-b .ct-bar { stroke: #337ab7; } /* commitsPorDataSemFollowUp */
-        .ct-series-c .ct-bar { stroke: #31708f; } /* commitsPorDataComFollowUp */
-        .ct-series-d .ct-bar { stroke: #009803; } /* commitsPorDataPar */
-        .ct-series-e .ct-bar { stroke: #777; } /* commitsPorDataSemRevisao */
+        .ct-series-a .ct-bar { stroke: {{ grafico.series.a.cor }}; }
+        .ct-series-b .ct-bar { stroke: {{ grafico.series.b.cor }}; }
+        .ct-series-c .ct-bar { stroke: {{ grafico.series.c.cor }}; }
+        .ct-series-d .ct-bar { stroke: {{ grafico.series.d.cor }}; }
+        .ct-series-e .ct-bar { stroke: {{ grafico.series.e.cor }}; }
         #commits {
             height: 400px;
             width: 80%;
@@ -125,13 +120,13 @@ hr {
     <!--suppress JSUnresolvedVariable, JSUnresolvedFunction, ES6ModulesDependencies -->
     <script>
         let data = {
-            labels: [].concat({{{ commitsPorDataLabels }}}),
+            labels: [].concat({{{ grafico.labels }}}),
             series: [
-                {{{ commitsPorDataPendentes }}},
-                {{{ commitsPorDataSemFollowUp }}},
-                {{{ commitsPorDataComFollowUp }}},
-                {{{ commitsPorDataPar }}},
-                {{{ commitsPorDataSemRevisao }}}
+                {{{ grafico.series.a.dados }}},
+                {{{ grafico.series.b.dados }}},
+                {{{ grafico.series.c.dados }}},
+                {{{ grafico.series.d.dados }}},
+                {{{ grafico.series.e.dados }}}
             ]
         };
 
