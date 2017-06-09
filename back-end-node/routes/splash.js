@@ -11,16 +11,6 @@ const TrelloService = require('../build/trello/TrelloService').TrelloService;
 //noinspection JSUnresolvedVariable
 const JenkinsCache = require('../build/integracaocontinua/JenkinsService').JenkinsCache;
 
-let commitsPorDataLabels = '[]';
-let commitsPorDataPendentes = '[]';
-let commitsPorDataPar = '[]';
-let commitsPorDataComFollowUp = '[]';
-let commitsPorDataSemFollowUp = '[]';
-let commitsPorDataSemRevisao = '[]';
-
-let dataUltimoCommitComRevisaoPendente = undefined;
-let teveQueIncluirDataUltimoCommitComRevisaoPendente = false;
-
 const trello = {
     maxWipEmAndamento: undefined,
     wipEmAndamento: -1,
@@ -66,39 +56,56 @@ function contarTipoRevisao(commit, tipoRevisao) {
 const RETICENCIAS = '●●●';
 const VALOR_ZERO = {meta: ``, value: 0};
 
-function load() {
+let commitsPorData = {
+    labels: '[]',
+    pendentes: '[]',
+    par: '[]',
+    comFollowUp: '[]',
+    semFollowUp: '[]',
+    semRevisao: '[]',
+    legenda: 'Sem commits para exibir'
+};
+function calcularCommitsPorData() {
     CommitRepository.findAllCommits().then(commits => {
         const commitsPedentesPorData = {};
-        dataUltimoCommitComRevisaoPendente = undefined;
+        let dataUltimoCommitComRevisaoPendente = undefined;
         commits.forEach(commit => {
             const dataCommit = commit.created_at.slice(0, 10);
-            commitsPedentesPorData[dataCommit] = commitsPedentesPorData[dataCommit] || {pendente:0, par:0, comfollowup:0, semfollowup:0, semrevisao:0};
+            commitsPedentesPorData[dataCommit] = commitsPedentesPorData[dataCommit] || {
+                    pendente: 0,
+                    par: 0,
+                    comfollowup: 0,
+                    semfollowup: 0,
+                    semrevisao: 0
+                };
             commitsPedentesPorData[dataCommit].pendente += contarRevisoresPendentes(commit);
             commitsPedentesPorData[dataCommit].par += contarTipoRevisao(commit, TipoRevisaoCommit.PAR);
             commitsPedentesPorData[dataCommit].comfollowup += contarTipoRevisao(commit, TipoRevisaoCommit.COM_FOLLOW_UP);
             commitsPedentesPorData[dataCommit].semfollowup += contarTipoRevisao(commit, TipoRevisaoCommit.SEM_FOLLOW_UP);
-            commitsPedentesPorData[dataCommit].semrevisao += contarTipoRevisao(commit, TipoRevisaoCommit.SEM_REVISAO)/2; // commits sem revisao inserem duas entradas
+            commitsPedentesPorData[dataCommit].semrevisao += contarTipoRevisao(commit, TipoRevisaoCommit.SEM_REVISAO) / 2; // commits sem revisao inserem duas entradas
 
-            if (commitsPedentesPorData[dataCommit].pendente) {
-                if (!dataUltimoCommitComRevisaoPendente || dataCommit < dataUltimoCommitComRevisaoPendente) {
-                    dataUltimoCommitComRevisaoPendente = dataCommit;
-                }
+            if (commitsPedentesPorData[dataCommit].pendente &&
+                (!dataUltimoCommitComRevisaoPendente || dataCommit < dataUltimoCommitComRevisaoPendente)) {
+                dataUltimoCommitComRevisaoPendente = dataCommit;
             }
         });
 
-        commitsPorDataLabels = [];
-        commitsPorDataPendentes = [];
-        commitsPorDataPar = [];
-        commitsPorDataComFollowUp = [];
-        commitsPorDataSemFollowUp = [];
-        commitsPorDataSemRevisao = [];
+        const commitsPorDataLabels = [];
+        const commitsPorDataPendentes = [];
+        const commitsPorDataPar = [];
+        const commitsPorDataComFollowUp = [];
+        const commitsPorDataSemFollowUp = [];
+        const commitsPorDataSemRevisao = [];
+
         const datasQueSeraoExibidas = Object.keys(commitsPedentesPorData).sort().slice(-10);
-        teveQueIncluirDataUltimoCommitComRevisaoPendente = false;
         if (datasQueSeraoExibidas.indexOf(dataUltimoCommitComRevisaoPendente) === -1) {
             datasQueSeraoExibidas[0] = dataUltimoCommitComRevisaoPendente;
             datasQueSeraoExibidas[1] = RETICENCIAS;
-            teveQueIncluirDataUltimoCommitComRevisaoPendente = true;
+            commitsPorData.legenda = 'Tipos de revisões por dia -- dia mais distante sem revisão, mais últimos 8 dias';
+        } else {
+            commitsPorData.legenda = 'Tipos de revisões por dia -- últimos 10 dias';
         }
+
         datasQueSeraoExibidas.forEach(data => {
             if (data === RETICENCIAS) {
                 commitsPorDataLabels.push(data);
@@ -115,22 +122,43 @@ function load() {
                 commitsPedentesPorData[data].semfollowup +
                 commitsPedentesPorData[data].semrevisao;
 
-            const percent = (valor) => `(${((valor/total) * 100).toFixed(0)}%)`;
+            const percent = (valor) => `(${((valor / total) * 100).toFixed(0)}%)`;
 
             commitsPorDataLabels.push(data);
-            commitsPorDataPendentes.push({meta: `Revisões Pendentes ${percent(commitsPedentesPorData[data].pendente)}`, value: commitsPedentesPorData[data].pendente});
-            commitsPorDataPar.push({meta: `Commits feitos em Par ${percent(commitsPedentesPorData[data].par)}`, value: commitsPedentesPorData[data].par});
-            commitsPorDataComFollowUp.push({meta: `Revisões com Follow-Up ${percent(commitsPedentesPorData[data].comfollowup)}`, value: commitsPedentesPorData[data].comfollowup});
-            commitsPorDataSemFollowUp.push({meta: `Revisões sem Follow-Up ${percent(commitsPedentesPorData[data].semfollowup)}`, value: commitsPedentesPorData[data].semfollowup});
-            commitsPorDataSemRevisao.push({meta: `Commits sem necessidade de revisão ${percent(commitsPedentesPorData[data].semrevisao)}`, value: commitsPedentesPorData[data].semrevisao});
+            commitsPorDataPendentes.push({
+                meta: `Revisões Pendentes ${percent(commitsPedentesPorData[data].pendente)}`,
+                value: commitsPedentesPorData[data].pendente
+            });
+            commitsPorDataPar.push({
+                meta: `Commits feitos em Par ${percent(commitsPedentesPorData[data].par)}`,
+                value: commitsPedentesPorData[data].par
+            });
+            commitsPorDataComFollowUp.push({
+                meta: `Revisões com Follow-Up ${percent(commitsPedentesPorData[data].comfollowup)}`,
+                value: commitsPedentesPorData[data].comfollowup
+            });
+            commitsPorDataSemFollowUp.push({
+                meta: `Revisões sem Follow-Up ${percent(commitsPedentesPorData[data].semfollowup)}`,
+                value: commitsPedentesPorData[data].semfollowup
+            });
+            commitsPorDataSemRevisao.push({
+                meta: `Commits sem necessidade de revisão ${percent(commitsPedentesPorData[data].semrevisao)}`,
+                value: commitsPedentesPorData[data].semrevisao
+            });
         });
-        commitsPorDataLabels = JSON.stringify(commitsPorDataLabels);
-        commitsPorDataPendentes = JSON.stringify(commitsPorDataPendentes);
-        commitsPorDataPar = JSON.stringify(commitsPorDataPar);
-        commitsPorDataComFollowUp = JSON.stringify(commitsPorDataComFollowUp);
-        commitsPorDataSemFollowUp = JSON.stringify(commitsPorDataSemFollowUp);
-        commitsPorDataSemRevisao = JSON.stringify(commitsPorDataSemRevisao);
+        commitsPorData = {
+            labels: JSON.stringify(commitsPorDataLabels),
+            pendentes: JSON.stringify(commitsPorDataPendentes),
+            par: JSON.stringify(commitsPorDataPar),
+            comFollowUp: JSON.stringify(commitsPorDataComFollowUp),
+            semFollowUp: JSON.stringify(commitsPorDataSemFollowUp),
+            semRevisao: JSON.stringify(commitsPorDataSemRevisao)
+        };
     });
+}
+
+function load() {
+    calcularCommitsPorData();
     TrelloService.getListEmAndamento().then(listEmAndamento => {
         trello.maxWipEmAndamento = maxWip(listEmAndamento);
         trello.wipEmAndamento = listEmAndamento.cards.length;
@@ -156,15 +184,15 @@ router.get('/', function(req, res) {
 
     res.render('splash', {
         grafico: {
-            labels: commitsPorDataLabels,
+            labels: commitsPorData.labels,
             series: {
-                a: {cor: '#de615f', dados: commitsPorDataPendentes},
-                b: {cor: '#337ab7', dados: commitsPorDataSemFollowUp},
-                c: {cor: '#31708f', dados: commitsPorDataComFollowUp},
-                d: {cor: '#009803', dados: commitsPorDataPar},
-                e: {cor: '#777',    dados: commitsPorDataSemRevisao},
+                a: {cor: '#de615f', dados: commitsPorData.pendentes},
+                b: {cor: '#337ab7', dados: commitsPorData.semFollowUp},
+                c: {cor: '#31708f', dados: commitsPorData.comFollowUp},
+                d: {cor: '#009803', dados: commitsPorData.par},
+                e: {cor: '#777',    dados: commitsPorData.semRevisao},
             },
-            legenda: 'Tipos de revisões por dia -- ' + (teveQueIncluirDataUltimoCommitComRevisaoPendente ? 'dia mais distante sem revisão, mais últimos 8 dias' : 'últimos 10 dias')
+            legenda: commitsPorData.legenda
         },
 
         imagemJenkins: imagemJenkins,
