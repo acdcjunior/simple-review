@@ -5,7 +5,7 @@ const expect = require("chai").expect;
 describe("Commit", function () {
     this.timeout(15000);
     const msgsMerges = [
-        { message: `Merge branch 'desenvolvimento' of http://srv-scm.example.com/sti/sagas2.git into desenvolvimento`, ehMergeSemConflito: true },
+        { message: `Merge branch 'desenvolvimento' of http://srv-scm.example.com.br/sti/sagas2.git into desenvolvimento`, ehMergeSemConflito: true },
         { message: `Merge remote-tracking branch 'origin/desenvolvimento' into desenvolvimento`, ehMergeSemConflito: true },
         { message: `Merge remote-tracking branch 'origin/master' into desenvolvimento`, ehMergeSemConflito: true },
         { message: `Merge branch 'terceiro-branch' into desenvolvimento\n`, ehMergeSemConflito: true },
@@ -13,11 +13,11 @@ describe("Commit", function () {
         { message: `Merge remote-tracking branch 'origin/master' into desenvolvimento
             
              blablabla:
-	            sagas2Negocio/src/main/java/br/gov/tcu/sagas/negocio/instrucaogabinete/oficializarinstrucao/ServicoOficializarInstrucao.java`, ehMergeSemConflito: true },
+	            sagas2Negocio/src/main/java/br/com/example/sagas/negocio/instrucaogabinete/oficializarinstrucao/ServicoOficializarInstrucao.java`, ehMergeSemConflito: true },
         { message: `Merge remote-tracking branch 'origin/master' into desenvolvimento
             
              Conflicts:
-	            sagas2Negocio/src/main/java/br/gov/tcu/sagas/negocio/instrucaogabinete/oficializarinstrucao/ServicoOficializarInstrucao.java`, ehMergeSemConflito: false }
+	            sagas2Negocio/src/main/java/br/com/example/sagas/negocio/instrucaogabinete/oficializarinstrucao/ServicoOficializarInstrucao.java`, ehMergeSemConflito: false }
     ];
     msgsMerges.forEach((msgMerge, index) => {
         it(`isCommitDeMergeSemConflito ${index}: ${msgMerge.message}`, function () {

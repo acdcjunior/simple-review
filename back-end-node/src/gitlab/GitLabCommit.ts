@@ -6,11 +6,11 @@ export class GitLabCommit {
     public created_at: string; // "2017-04-19T12:19:15.000-03:00",
     public parent_ids: string[]; // ["dda68cd55657cf31726066271bddaf55b22b1ec5"],
     public message: string; // "test(instrucao): Testando construção do email na operação retomar instrução.\n",
-    public author_name: string; // "Gabriel Mesquita de Araujo",
-    public author_email: string; // "x04912831131@tcu.gov.br",
+    public author_name: string; // "Bob Nelson da Silva",
+    public author_email: string; // "x09992123131@example.com.br",
     public authored_date: string; // "2017-04-19T12:19:15.000-03:00",
-    public committer_name: string; // "Gabriel Mesquita de Araujo",
-    public committer_email: string; // "x04912831131@tcu.gov.br",
+    public committer_name: string; // "Bob Nelson da Silva",
+    public committer_email: string; // "x09992123131@example.com.br",
     public committed_date: string; // "2017-04-19T12:19:15.000-03:00"
 
 }

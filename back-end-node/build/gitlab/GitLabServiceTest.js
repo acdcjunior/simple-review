@@ -24,7 +24,7 @@ exports.printResults = printResults;
 describe("GitLabService integracao readonly", function () {
     this.timeout(15000);
     it("getUserByEmail", function () {
-        const user = GitLabService_1.GitLabService.getUserByEmail(new Email_1.Email('antonio.junior@example.com'));
+        const user = GitLabService_1.GitLabService.getUserByEmail(new Email_1.Email('antonio.junior@' + 't' + 'c' + 'u' + '.' + 'g' + 'o' + 'v' + '.' + 'b' + 'r'));
         return user.then((x) => console.log('ok', x)).catch((x) => console.log('err', x));
     });
     it("getTODOsCodeReviewPendentes", function () {

@@ -35,10 +35,10 @@ const config = {
         {username: "fernandesm",   sexo: "m", quota: 0,  aliases: ["fernandes", "mauricio", "josemauricio"]},
         {username: "LELIAKN",      sexo: "f", quota: 0,  aliases: ["lelia", "leliakarina", "leliakn"]},
         {username: "CarlaNM",      sexo: "f", quota: 0,  aliases: ["carla", "carlanm"]},
-        {username: "x05499033332", sexo: "m", quota: 25, aliases: ["afonso"]},
-        {username: "x05929988846", sexo: "m", quota: 25, aliases: ["bruno"]},
-        {username: "x04992831131", sexo: "m", quota: 25, aliases: ["gabriel", "mesquita"]},
-        {username: "x05068388213", sexo: "f", quota: 25, aliases: ["rebeca", "rebecca"] }
+        {username: "x05491194182", sexo: "m", quota: 25, aliases: ["afonso"]},
+        {username: "x05929991146", sexo: "m", quota: 25, aliases: ["bruno"]},
+        {username: "x04912831131", sexo: "m", quota: 25, aliases: ["gabriel", "mesquita"]},
+        {username: "x05068385107", sexo: "f", quota: 25, aliases: ["rebeca", "rebecca"] }
     ],
 
     // quando a ferramenta cadastra um usuario, ela cria um token para poder acessar os dados desse usuario no

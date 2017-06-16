@@ -30,7 +30,7 @@ export class TipoRevisaoCommit {
 }
 
 interface RevisaoCommit {
-    readonly revisor: string; // "antonio.junior@tcu.gov.br"
+    readonly revisor: string; // "antonio.junior@example.com.br"
     readonly sexoRevisor: string; // "m"
     readonly data: string; // "2017-04-25T23:06:31.702Z"
     readonly tipoRevisao: string; // "par"
