@@ -12,8 +12,13 @@ const GitLabService_1 = require("../gitlab/GitLabService");
 const Email_1 = require("../geral/Email");
 const CommitterRepository_1 = require("../committers/CommitterRepository");
 const CommitRepository_1 = require("./CommitRepository");
+const CodeReviewConfig_1 = require("../geral/CodeReviewConfig");
 Bluebird.longStackTraces();
 GitLabService_1.GitLabService.desabilitarComentariosNoGitLab = true;
+Email_1.Email.corrigirEmail = (email) => email.replace(/@.*\.example\.com$/g, '@example.com').toLowerCase();
+Email_1.Email.prototype.isEmailDeEstagiario = function () { return /[xX]\d{11}@example.com$/.test(this.email); };
+const FAKE_BOT_USERNAME = 'fake-bot-username';
+CodeReviewConfig_1.codeReviewConfig.botComentador.username = FAKE_BOT_USERNAME;
 const assert = require('assert');
 function gu(email, name, username) {
     return {
@@ -28,17 +33,17 @@ function gu(email, name, username) {
     };
 }
 const committers = [
-    /* 0 */ new Committer_1.Committer(gu('alexandrevr@example.com', "Alexandre Silva Santos (ALEXANDREVR)", 'alexandrevr'), null, [], 25, "m"),
+    /* 0 */ new Committer_1.Committer(gu('alexandrevr@example.com', "Alexandre Souza Silva (ALEXANDREVR)", 'alexandrevr'), null, [], 25, "m"),
     /* 1 */ new Committer_1.Committer(gu('antonio.junior@example.com', "Antonio C. de Carvalho Junior (CARVALHOJ)", 'carvalhoj'), null, ["antonio"], 40, "m"),
-    /* 2 */ new Committer_1.Committer(gu('marcosps@example.com', "Marcos Paulo Santos da Silva (MARCOSPS)", 'marcosps'), null, ["marcos"], 25, "m"),
-    /* 3 */ new Committer_1.Committer(gu('regiano@example.com', "Regiano da Silva Santos (REGIANO)", 'regiano'), null, [], 10, "m"),
-    /* 4 */ new Committer_1.Committer(gu('fernandesm@example.com', "Jose Mauricio Santos (FERNANDESM)", 'fernandesm'), null, [], 0, "m"),
-    /* 5 */ new Committer_1.Committer(gu('leliakn@example.com', "Lelia Silva (LELIAKN)", 'LELIAKN'), null, ["lelia"], 0, "f"),
-    /* 6 */ new Committer_1.Committer(gu('carlanm@example.com', "Carla Souza (CARLANM)", 'CarlaNM'), null, [], 0, "f"),
-    /* 7 */ new Committer_1.Committer(gu('x04992831131@example.com', "Gabriel Mesquita de Araujo (X04992831131)", 'x04992831131'), null, [], 25, "m"),
-    /* 8 */ new Committer_1.Committer(gu('x05068388213@example.com', "Rebeca Andrade Silva (X05068388213)", 'x05068388213'), null, [], 25, "f"),
-    /* 9 */ new Committer_1.Committer(gu('x05499033332@example.com', "Afonso Santos de Souza Silva (X05499033332)", 'x05499033332'), null, ["afonso"], 25, "m"),
-    /* 10 */ new Committer_1.Committer(gu('x05929988846@example.com', "Bruno Silva Santos Souza (X05929988846)", 'x05929988846'), null, [], 25, undefined),
+    /* 2 */ new Committer_1.Committer(gu('marcosps@example.com', "Marcos Paulo Barbosa Silva (MARCOSPS)", 'marcosps'), null, ["marcos"], 25, "m"),
+    /* 3 */ new Committer_1.Committer(gu('regiano@example.com', "Regiano Smith (REGIANO)", 'regiano'), null, [], 10, "m"),
+    /* 4 */ new Committer_1.Committer(gu('fernandesm@example.com', "Jose Mauricio Silva (FERNANDESM)", 'fernandesm'), null, [], 0, "m"),
+    /* 5 */ new Committer_1.Committer(gu('leliakn@example.com', "Lelia Souza Silva (LELIAKN)", 'LELIAKN'), null, ["lelia"], 0, "f"),
+    /* 6 */ new Committer_1.Committer(gu('carlanm@example.com', "Carla Silva Santos (CARLANM)", 'CarlaNM'), null, [], 0, "f"),
+    /* 7 */ new Committer_1.Committer(gu('x04992831131@example.com', "Gabriel Mosquete Silva (X04992831131)", 'x04992831131'), null, [], 25, "m"),
+    /* 8 */ new Committer_1.Committer(gu('x05068388213@example.com', "Rebeca Skywalker (X05068388213)", 'x05068388213'), null, [], 25, "f"),
+    /* 9 */ new Committer_1.Committer(gu('x05499033332@example.com', "Afonso Santos (X05499033332)", 'x05499033332'), null, ["afonso"], 25, "m"),
+    /* 10 */ new Committer_1.Committer(gu('x05929988846@example.com', "Bruno Silva Santos (X05929988846)", 'x05929988846'), null, [], 25, undefined),
     /* 11 */ new Committer_1.Committer(gu('sonarqube-bot@example.com', "SonarQube-GitLab", 'sonarqube'), null, [], 0, "m") // bot comentador!!!
 ];
 const commit0 = new Commit_1.Commit('sha 0', 't 0', ' 0\n ', committers[1].email, '');
@@ -153,20 +158,20 @@ function assertJson(commits) {
     let expected = [
         { message: " 0\n ", author_email: "antonio.junior@example.com", revisores: ["alexandrevr@example.com"], revisoes: [], historico: [] },
         { message: " 1\n ", author_email: "antonio.junior@example.com", revisores: ["carlanm@example.com"], revisoes: [], historico: [] },
-        { message: " 2\n ", author_email: "antonio.junior@example.com", revisores: ["marcosps@example.com"], revisoes: [], historico: [":heavy_plus_sign: :gear: Revisor `Marcos Paulo Santos da Silva (MARCOSPS)` atribuído automaticamente."] },
-        { message: " 3\n ", author_email: "x04992831131@example.com", revisores: ["x05068388213@example.com", "antonio.junior@example.com"], revisoes: [], historico: [":heavy_plus_sign: :gear: Revisora `Rebeca Andrade Silva (X05068388213)` atribuída automaticamente.", ":heavy_plus_sign: :gear: Revisor `Antonio C. de Carvalho Junior (CARVALHOJ)` atribuído automaticamente."] },
-        { message: " 4\n ", author_email: "antonio.junior@example.com", revisores: ["regiano@example.com"], revisoes: [], historico: [":heavy_plus_sign: :gear: Revisor `Regiano da Silva Santos (REGIANO)` atribuído automaticamente."] },
-        { message: " 5\n ", author_email: "x05068388213@example.com", revisores: ["x04992831131@example.com", "antonio.junior@example.com"], revisoes: [], historico: [":heavy_plus_sign: :gear: Revisor `Gabriel Mesquita de Araujo (X04992831131)` atribuído automaticamente.", ":heavy_plus_sign: :gear: Revisor `Antonio C. de Carvalho Junior (CARVALHOJ)` atribuído automaticamente."] },
-        { message: " 6\n ", author_email: "antonio.junior@example.com", revisores: ["alexandrevr@example.com"], revisoes: [], historico: [":heavy_plus_sign: :gear: Revisor `Alexandre Silva Santos (ALEXANDREVR)` atribuído automaticamente."] },
-        { message: " 7\n ", author_email: "x05499033332@example.com", revisores: ["x05929988846@example.com", "marcosps@example.com"], revisoes: [], historico: [":heavy_plus_sign: :gear: Revisor(a) `Bruno Silva Santos Souza (X05929988846)` atribuído(a) automaticamente.", ":heavy_plus_sign: :gear: Revisor `Marcos Paulo Santos da Silva (MARCOSPS)` atribuído automaticamente."] },
-        { message: " 8\n ", author_email: "antonio.junior@example.com", revisores: ["alexandrevr@example.com"], revisoes: [], historico: [":heavy_plus_sign: :gear: Revisor `Alexandre Silva Santos (ALEXANDREVR)` atribuído automaticamente."] },
-        { message: " 9\n ", author_email: "x05929988846@example.com", revisores: ["x05499033332@example.com", "antonio.junior@example.com"], revisoes: [], historico: [":heavy_plus_sign: :gear: Revisor `Afonso Santos de Souza Silva (X05499033332)` atribuído automaticamente.", ":heavy_plus_sign: :gear: Revisor `Antonio C. de Carvalho Junior (CARVALHOJ)` atribuído automaticamente."] },
-        { message: "10\n ", author_email: "antonio.junior@example.com", revisores: ["marcosps@example.com"], revisoes: [], historico: [":heavy_plus_sign: :gear: Revisor `Marcos Paulo Santos da Silva (MARCOSPS)` atribuído automaticamente."] },
-        { message: "11\n ", author_email: "antonio.junior@example.com", revisores: ["regiano@example.com"], revisoes: [], historico: [":heavy_plus_sign: :gear: Revisor `Regiano da Silva Santos (REGIANO)` atribuído automaticamente."] },
-        { message: "12\n ", author_email: "antonio.junior@example.com", revisores: ["alexandrevr@example.com"], revisoes: [], historico: [":heavy_plus_sign: :gear: Revisor `Alexandre Silva Santos (ALEXANDREVR)` atribuído automaticamente."] },
-        { message: "13\n @carlanm", author_email: "marcosps@example.com", revisores: ["carlanm@example.com"], revisoes: [], historico: [":heavy_plus_sign: :point_right: Revisora `Carla Souza (CARLANM)` atribuída via menção em mensagem de commit."] },
-        { message: "14\n @leliakn", author_email: "x04992831131@example.com", revisores: ["leliakn@example.com", "x05068388213@example.com"], revisoes: [], historico: [":heavy_plus_sign: :point_right: Revisora `Lelia Silva (LELIAKN)` atribuída via menção em mensagem de commit.", ":heavy_plus_sign: :gear: Revisora `Rebeca Andrade Silva (X05068388213)` atribuída automaticamente."] },
-        { message: "15\n@leLIA", author_email: "antonio.junior@example.com", revisores: ["leliakn@example.com"], revisoes: [], historico: [":heavy_plus_sign: :point_right: Revisora `Lelia Silva (LELIAKN)` atribuída via menção em mensagem de commit."] },
+        { message: " 2\n ", author_email: "antonio.junior@example.com", revisores: ["marcosps@example.com"], revisoes: [], historico: [":heavy_plus_sign: :gear: Revisor `Marcos Paulo Barbosa Silva (MARCOSPS)` atribuído automaticamente."] },
+        { message: " 3\n ", author_email: "x04992831131@example.com", revisores: ["x05068388213@example.com", "antonio.junior@example.com"], revisoes: [], historico: [":heavy_plus_sign: :gear: Revisora `Rebeca Skywalker (X05068388213)` atribuída automaticamente.", ":heavy_plus_sign: :gear: Revisor `Antonio C. de Carvalho Junior (CARVALHOJ)` atribuído automaticamente."] },
+        { message: " 4\n ", author_email: "antonio.junior@example.com", revisores: ["regiano@example.com"], revisoes: [], historico: [":heavy_plus_sign: :gear: Revisor `Regiano Smith (REGIANO)` atribuído automaticamente."] },
+        { message: " 5\n ", author_email: "x05068388213@example.com", revisores: ["x04992831131@example.com", "antonio.junior@example.com"], revisoes: [], historico: [":heavy_plus_sign: :gear: Revisor `Gabriel Mosquete Silva (X04992831131)` atribuído automaticamente.", ":heavy_plus_sign: :gear: Revisor `Antonio C. de Carvalho Junior (CARVALHOJ)` atribuído automaticamente."] },
+        { message: " 6\n ", author_email: "antonio.junior@example.com", revisores: ["alexandrevr@example.com"], revisoes: [], historico: [":heavy_plus_sign: :gear: Revisor `Alexandre Souza Silva (ALEXANDREVR)` atribuído automaticamente."] },
+        { message: " 7\n ", author_email: "x05499033332@example.com", revisores: ["x05929988846@example.com", "marcosps@example.com"], revisoes: [], historico: [":heavy_plus_sign: :gear: Revisor(a) `Bruno Silva Santos (X05929988846)` atribuído(a) automaticamente.", ":heavy_plus_sign: :gear: Revisor `Marcos Paulo Barbosa Silva (MARCOSPS)` atribuído automaticamente."] },
+        { message: " 8\n ", author_email: "antonio.junior@example.com", revisores: ["alexandrevr@example.com"], revisoes: [], historico: [":heavy_plus_sign: :gear: Revisor `Alexandre Souza Silva (ALEXANDREVR)` atribuído automaticamente."] },
+        { message: " 9\n ", author_email: "x05929988846@example.com", revisores: ["x05499033332@example.com", "antonio.junior@example.com"], revisoes: [], historico: [":heavy_plus_sign: :gear: Revisor `Afonso Santos (X05499033332)` atribuído automaticamente.", ":heavy_plus_sign: :gear: Revisor `Antonio C. de Carvalho Junior (CARVALHOJ)` atribuído automaticamente."] },
+        { message: "10\n ", author_email: "antonio.junior@example.com", revisores: ["marcosps@example.com"], revisoes: [], historico: [":heavy_plus_sign: :gear: Revisor `Marcos Paulo Barbosa Silva (MARCOSPS)` atribuído automaticamente."] },
+        { message: "11\n ", author_email: "antonio.junior@example.com", revisores: ["regiano@example.com"], revisoes: [], historico: [":heavy_plus_sign: :gear: Revisor `Regiano Smith (REGIANO)` atribuído automaticamente."] },
+        { message: "12\n ", author_email: "antonio.junior@example.com", revisores: ["alexandrevr@example.com"], revisoes: [], historico: [":heavy_plus_sign: :gear: Revisor `Alexandre Souza Silva (ALEXANDREVR)` atribuído automaticamente."] },
+        { message: "13\n @carlanm", author_email: "marcosps@example.com", revisores: ["carlanm@example.com"], revisoes: [], historico: [":heavy_plus_sign: :point_right: Revisora `Carla Silva Santos (CARLANM)` atribuída via menção em mensagem de commit."] },
+        { message: "14\n @leliakn", author_email: "x04992831131@example.com", revisores: ["leliakn@example.com", "x05068388213@example.com"], revisoes: [], historico: [":heavy_plus_sign: :point_right: Revisora `Lelia Souza Silva (LELIAKN)` atribuída via menção em mensagem de commit.", ":heavy_plus_sign: :gear: Revisora `Rebeca Skywalker (X05068388213)` atribuída automaticamente."] },
+        { message: "15\n@leLIA", author_email: "antonio.junior@example.com", revisores: ["leliakn@example.com"], revisoes: [], historico: [":heavy_plus_sign: :point_right: Revisora `Lelia Souza Silva (LELIAKN)` atribuída via menção em mensagem de commit."] },
         { message: "16\n @invalido", author_email: "marcosps@example.com", revisores: ["antonio.junior@example.com"], revisoes: [], historico: ["Revisor(a) @invalido mencionado(a), mas não reconhecido(a) na base de usuários. Menção ignorada.", ":heavy_plus_sign: :gear: Revisor `Antonio C. de Carvalho Junior (CARVALHOJ)` atribuído automaticamente."] },
         {
             message: "17\n @lelia @antonio . @marcos @afonso",
@@ -174,19 +179,19 @@ function assertJson(commits) {
             revisores: ["antonio.junior@example.com", "marcosps@example.com", "x05499033332@example.com"],
             revisoes: [],
             historico: [
-                "Revisora `Lelia Silva (LELIAKN)` mencionada é autora do commit. Menção ignorada.",
+                "Revisora `Lelia Souza Silva (LELIAKN)` mencionada é autora do commit. Menção ignorada.",
                 ":heavy_plus_sign: :point_right: Revisor `Antonio C. de Carvalho Junior (CARVALHOJ)` atribuído via menção em mensagem de commit.",
-                ":heavy_plus_sign: :point_right: Revisor `Marcos Paulo Santos da Silva (MARCOSPS)` atribuído via menção em mensagem de commit.",
-                ":heavy_plus_sign: :point_right: Revisor `Afonso Santos de Souza Silva (X05499033332)` atribuído via menção em mensagem de commit."
+                ":heavy_plus_sign: :point_right: Revisor `Marcos Paulo Barbosa Silva (MARCOSPS)` atribuído via menção em mensagem de commit.",
+                ":heavy_plus_sign: :point_right: Revisor `Afonso Santos (X05499033332)` atribuído via menção em mensagem de commit."
             ]
         },
         {
             message: commits[18].message,
             author_email: commits[18].author_email,
-            revisores: ["SonarQube"],
+            revisores: [FAKE_BOT_USERNAME],
             revisoes: [{
                     data: AGORA,
-                    revisor: "SonarQube",
+                    revisor: FAKE_BOT_USERNAME,
                     sexoRevisor: undefined,
                     tipoRevisao: "sem revisão"
                 }],
@@ -195,10 +200,10 @@ function assertJson(commits) {
         {
             message: commits[19].message,
             author_email: commits[19].author_email,
-            revisores: ["SonarQube"],
+            revisores: [FAKE_BOT_USERNAME],
             revisoes: [{
                     data: AGORA,
-                    revisor: "SonarQube",
+                    revisor: FAKE_BOT_USERNAME,
                     sexoRevisor: undefined,
                     tipoRevisao: "sem revisão"
                 }],
