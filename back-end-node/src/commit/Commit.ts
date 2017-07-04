@@ -45,7 +45,7 @@ export class Commit extends Sesol2 {
     public readonly message: string;
     public readonly author_email: string;
     public readonly created_at: string;
-    public readonly revisores: any[];
+    public readonly revisores: string[];
     public readonly revisoes: RevisaoCommit[];
     public readonly historico: any[];
 
