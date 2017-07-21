@@ -86,16 +86,12 @@ hr {
 
 <hr>
 
-<div style="text-align: center;">
-    <!--suppress HtmlUnknownTarget -->
-    <link rel="stylesheet" href="public/lib/chartist.min.css">
-    <!--suppress HtmlUnknownTarget -->
-    <script src="public/lib/chartist.min.js"></script>
-    <!--suppress HtmlUnknownTarget -->
-    <link rel="stylesheet" type="text/css" href="public/lib/chartist-plugin-tooltip.css">
-    <!--suppress HtmlUnknownTarget -->
-    <script type="text/javascript" src="public/lib/chartist-plugin-tooltip.min.js"></script>
+<link rel="stylesheet" href="public/lib/chartist.min.css">
+<script src="public/lib/chartist.min.js"></script>
+<link rel="stylesheet" type="text/css" href="public/lib/chartist-plugin-tooltip.css">
+<script type="text/javascript" src="public/lib/chartist-plugin-tooltip.min.js"></script>
 
+<div style="text-align: center;">
     <div id="commits" class="ct-chart ct-perfect-fourth"></div>
     <span style="font-size: x-small">
         {{ grafico.legenda }}
@@ -103,14 +99,12 @@ hr {
 
     <!--suppress HtmlUnknownTag, CssUnusedSymbol -->
     <style>
-        .ct-bar {
-            stroke-width: 40px;
-        }
-        .ct-series-a .ct-bar { stroke: {{ grafico.series.a.cor }}; }
-        .ct-series-b .ct-bar { stroke: {{ grafico.series.b.cor }}; }
-        .ct-series-c .ct-bar { stroke: {{ grafico.series.c.cor }}; }
-        .ct-series-d .ct-bar { stroke: {{ grafico.series.d.cor }}; }
-        .ct-series-e .ct-bar { stroke: {{ grafico.series.e.cor }}; }
+        #commits .ct-bar { stroke-width: 40px; }
+        #commits .ct-series-a .ct-bar { stroke: {{ grafico.series.a.cor }}; }
+        #commits .ct-series-b .ct-bar { stroke: {{ grafico.series.b.cor }}; }
+        #commits .ct-series-c .ct-bar { stroke: {{ grafico.series.c.cor }}; }
+        #commits .ct-series-d .ct-bar { stroke: {{ grafico.series.d.cor }}; }
+        #commits .ct-series-e .ct-bar { stroke: {{ grafico.series.e.cor }}; }
         #commits {
             height: 400px;
             width: 80%;
@@ -139,7 +133,53 @@ hr {
             ]
         };
 
-        new Chartist.Bar('.ct-chart', data, options);
+        new Chartist.Bar('#commits', data, options);
+    </script>
+</div>
+
+<div style="text-align: center;">
+    <div id="commitsPorUsuarioSempre" class="ct-chart ct-perfect-fourth"></div>
+    <span style="font-size: x-small">
+        {{ graficoPorUsuarioSempre.legenda }}
+    </span>
+
+    <!--suppress HtmlUnknownTag, CssUnusedSymbol -->
+    <style>
+        #commitsPorUsuarioSempre .ct-bar { stroke-width: 40px; }
+        #commitsPorUsuarioSempre .ct-series-a .ct-bar { stroke: {{ graficoPorUsuarioSempre.series.a.cor }}; }
+        #commitsPorUsuarioSempre .ct-series-b .ct-bar { stroke: {{ graficoPorUsuarioSempre.series.b.cor }}; }
+        #commitsPorUsuarioSempre .ct-series-c .ct-bar { stroke: {{ graficoPorUsuarioSempre.series.c.cor }}; }
+        #commitsPorUsuarioSempre .ct-series-d .ct-bar { stroke: {{ graficoPorUsuarioSempre.series.d.cor }}; }
+        #commitsPorUsuarioSempre .ct-series-e .ct-bar { stroke: {{ graficoPorUsuarioSempre.series.e.cor }}; }
+        #commitsPorUsuarioSempre {
+            height: 400px;
+            width: 80%;
+            margin: 0 auto;
+        }
+    </style>
+    <!--suppress JSUnresolvedVariable, JSUnresolvedFunction, ES6ModulesDependencies -->
+    <script>
+        let dataPorUsuario = {
+            labels: [].concat({{{ graficoPorUsuarioSempre.labels }}}),
+            series: [
+                {{{ graficoPorUsuarioSempre.series.a.dados }}},
+                {{{ graficoPorUsuarioSempre.series.b.dados }}},
+                {{{ graficoPorUsuarioSempre.series.c.dados }}},
+                {{{ graficoPorUsuarioSempre.series.d.dados }}},
+                {{{ graficoPorUsuarioSempre.series.e.dados }}}
+            ]
+        };
+
+        let optionsPorUsuario = {
+            seriesBarDistance: 0,
+            showLabel: true,
+            stackBars: true,
+            plugins: [
+                Chartist.plugins.tooltip()
+            ]
+        };
+
+        new Chartist.Bar('#commitsPorUsuarioSempre', dataPorUsuario, optionsPorUsuario);
     </script>
 </div>
 

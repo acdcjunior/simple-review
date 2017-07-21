@@ -1,23 +1,20 @@
-const express = require('express');
-const router = express.Router();
-
-const addCors = require('./addCors');
-//noinspection JSUnresolvedVariable
-const TipoRevisaoCommit = require('../build/commit/Commit').TipoRevisaoCommit;
-//noinspection JSUnresolvedVariable
-const CommitRepository = require('../build/commit/CommitRepository').CommitRepository;
-//noinspection JSUnresolvedVariable
-const TrelloService = require('../build/trello/TrelloService').TrelloService;
-//noinspection JSUnresolvedVariable
-const JenkinsCache = require('../build/integracaocontinua/JenkinsService').JenkinsCache;
+import * as express from 'express';
+import {CommitRepository} from "../../commit/CommitRepository";
+import {calcularTipoCommitAtribuir} from './calcularTipoCommitAtribuir';
+import {TipoRevisaoCommit} from "../../commit/Commit";
+import {TrelloService} from "../../trello/TrelloService";
+import {JenkinsCache} from "../../integracaocontinua/JenkinsService";
+import {contarRevisoresPendentes, contarTipoRevisao} from "./CommitContagens";
+import {CommitsPorUsuario} from "./CommitsPorUsuario";
+import {addCors} from "../addCors";
 
 const trello = {
     maxWipEmAndamento: undefined,
     wipEmAndamento: -1,
-    wipEmAndamentoIncidentes: -1,
+    wipEmAndamentoIncidentes: '-1',
     maxWipEmTestes: undefined,
     wipEmTestes: -1,
-    wipEmTestesIncidentes: -1
+    wipEmTestesIncidentes: '-1'
 };
 
 function cardIncidente(card) {
@@ -39,22 +36,13 @@ function contarIncidentes(listEmAndamento) {
     return '';
 }
 
-// funcao duplicada em front/srv/servicos/CommitterService.js
-function contarRevisoresPendentes(commit) {
-    let revisoresPendentes = commit.revisores.length;
-    commit.revisoes.forEach(revisao => {
-        if (commit.revisores.indexOf(revisao.revisor) !== -1) {
-            revisoresPendentes--;
-        }
-    });
-    return revisoresPendentes;
-}
-function contarTipoRevisao(commit, tipoRevisao) {
-    return commit.revisoes.filter(revisao => revisao.tipoRevisao === tipoRevisao).length;
-}
-
 const RETICENCIAS = '●●●';
 const VALOR_ZERO = {meta: ``, value: 0};
+
+const main = {
+    calcularCommitsPorUsuarioSempre: undefined,
+    commitsPorUsuarioSempre: undefined
+};
 
 let commitsPorData = {
     labels: '[]',
@@ -69,6 +57,7 @@ function calcularCommitsPorData() {
     CommitRepository.findAllCommits().then(commits => {
         const commitsPedentesPorData = {};
         let dataUltimoCommitComRevisaoPendente = undefined;
+        let legenda = '';
         commits.forEach(commit => {
             const dataCommit = commit.created_at.slice(0, 10);
             commitsPedentesPorData[dataCommit] = commitsPedentesPorData[dataCommit] || {
@@ -101,9 +90,9 @@ function calcularCommitsPorData() {
         if (datasQueSeraoExibidas.indexOf(dataUltimoCommitComRevisaoPendente) === -1) {
             datasQueSeraoExibidas[0] = dataUltimoCommitComRevisaoPendente;
             datasQueSeraoExibidas[1] = RETICENCIAS;
-            commitsPorData.legenda = 'Tipos de revisões por dia -- dia mais distante sem revisão, mais últimos 8 dias';
+            legenda = 'Tipos de revisões por dia -- dia mais distante sem revisão, mais últimos 8 dias';
         } else {
-            commitsPorData.legenda = 'Tipos de revisões por dia -- últimos 10 dias';
+            legenda = 'Tipos de revisões por dia -- últimos 10 dias';
         }
 
         datasQueSeraoExibidas.forEach(data => {
@@ -152,13 +141,47 @@ function calcularCommitsPorData() {
             par: JSON.stringify(commitsPorDataPar),
             comFollowUp: JSON.stringify(commitsPorDataComFollowUp),
             semFollowUp: JSON.stringify(commitsPorDataSemFollowUp),
-            semRevisao: JSON.stringify(commitsPorDataSemRevisao)
+            semRevisao: JSON.stringify(commitsPorDataSemRevisao),
+            legenda: legenda
         };
     });
 }
 
+main.commitsPorUsuarioSempre = new CommitsPorUsuario();
+
+function seteDias() {
+    CommitRepository.findAllCommits().then(commits => {
+        const commitsPedentesPorData = {
+            pendentes: 0,
+            par: 0,
+            comfollowup: 0,
+            semfollowup: 0,
+            semRevisao: 0
+        };
+        const dataCorte = '2017-06-26';
+        let count = 0;
+        commits.forEach(commit => {
+            const dataCommit = commit.created_at.slice(0, 10);
+
+            console.log('data', dataCommit);
+            if (dataCommit > dataCorte) {
+                count++;
+                calcularTipoCommitAtribuir(commitsPedentesPorData, commit);
+            }
+
+        });
+        console.log('total: ', count);
+        console.log(JSON.stringify(commitsPedentesPorData, null, '\t'));
+    });
+}
+seteDias();
+
 function load() {
     calcularCommitsPorData();
+
+    main.commitsPorUsuarioSempre.calcularCommitsPorUsuarioSempre();
+
+    if ("SEMPRE SERÁ" != new Date().toString()) { return; }
     TrelloService.getListEmAndamento().then(listEmAndamento => {
         trello.maxWipEmAndamento = maxWip(listEmAndamento);
         trello.wipEmAndamento = listEmAndamento.cards.length;
@@ -171,7 +194,8 @@ function load() {
     });
 }
 
-router.get('/', function(req, res) {
+export const splashRouter = express.Router();
+splashRouter.get('/', function(req, res) {
     addCors(req, res);
 
     let imagemJenkins = 'public/images/question-mark.png';
@@ -190,9 +214,20 @@ router.get('/', function(req, res) {
                 b: {cor: '#337ab7', dados: commitsPorData.semFollowUp},
                 c: {cor: '#31708f', dados: commitsPorData.comFollowUp},
                 d: {cor: '#009803', dados: commitsPorData.par},
-                e: {cor: '#777',    dados: commitsPorData.semRevisao},
+                e: {cor: '#777',    dados: commitsPorData.semRevisao },
             },
             legenda: commitsPorData.legenda
+        },
+        graficoPorUsuarioSempre: {
+            labels: main.commitsPorUsuarioSempre.labels,
+            series: {
+                a: {cor: '#de615f', dados: main.commitsPorUsuarioSempre.pendentes},
+                b: {cor: '#337ab7', dados: main.commitsPorUsuarioSempre.semFollowUp},
+                c: {cor: '#31708f', dados: main.commitsPorUsuarioSempre.comFollowUp},
+                d: {cor: '#009803', dados: main.commitsPorUsuarioSempre.par},
+                e: {cor: '#777',    dados: main.commitsPorUsuarioSempre.semRevisao },
+            },
+            legenda: main.commitsPorUsuarioSempre.legenda
         },
 
         imagemJenkins: imagemJenkins,
@@ -206,5 +241,3 @@ router.get('/', function(req, res) {
 
 load(); // carrega primeira vez
 setInterval(load, 3 * 60 * 1000); // agenda uma carga a cada 3 minutos
-
-module.exports = router;
