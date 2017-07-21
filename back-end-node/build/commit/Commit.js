@@ -110,6 +110,6 @@ class Commit extends Sesol2_1.Sesol2 {
     }
 }
 Commit.COMMIT_TYPE = 'commit';
-Commit.REGEX_MENSAGEM_MERGE = /^Merge( remote-tracking)? branch '[\w\/-]+'( of http.*?\.git)? into [\w\/]+[\s\S]*$/;
+Commit.REGEX_MENSAGEM_MERGE = /^Merge( remote-tracking)? branch '[\w\/-]+'( of http.*?(\.git)?)?( into [\w\/]+[\s\S]*)?$/;
 Commit.REGEX_MENSAGEM_SEM_REVISOR = /\[sem[- ]revis(or|ao)]/;
 exports.Commit = Commit;

@@ -5,19 +5,24 @@ describe("Commit", function () {
     this.timeout(15000);
 
     const msgsMerges = [
-        {message: `Merge branch 'desenvolvimento' of http://srv-scm.example.com.br/sti/sagas2.git into desenvolvimento`, ehMergeSemConflito: true},
+        {message: `Merge branch 'desenvolvimento' of http://srv-scm.example.com.br/sti/sistema2.git into desenvolvimento`, ehMergeSemConflito: true},
         {message: `Merge remote-tracking branch 'origin/desenvolvimento' into desenvolvimento`, ehMergeSemConflito: true},
         {message: `Merge remote-tracking branch 'origin/master' into desenvolvimento`, ehMergeSemConflito: true},
         {message: `Merge branch 'terceiro-branch' into desenvolvimento\n`, ehMergeSemConflito: true},
         {message: `Merge branch 'terceiro_branch' into desenvolvimento\n`, ehMergeSemConflito: true},
+
+        {message: `Merge branch 'desenvolvimento'`, ehMergeSemConflito: true},
+        {message: `Merge remote-tracking branch 'remotes/origin/desenvolvimento'`, ehMergeSemConflito: true},
+        {message: `Merge branch 'desenvolvimento' of http://srv-scm.bob.net.br/sti/sistema2 into desenvolvimento`, ehMergeSemConflito: true},
+
         {message: `Merge remote-tracking branch 'origin/master' into desenvolvimento
             
              blablabla:
-	            sagas2Negocio/src/main/java/br/com/example/sagas/negocio/instrucaogabinete/oficializarinstrucao/ServicoOficializarInstrucao.java`, ehMergeSemConflito: true},
+	            sistema2Negocio/src/main/java/br/com/example/sistema/negocio/instrucaogabinete/oficializarinstrucao/ServicoOficializarInstrucao.java`, ehMergeSemConflito: true},
         {message: `Merge remote-tracking branch 'origin/master' into desenvolvimento
             
              Conflicts:
-	            sagas2Negocio/src/main/java/br/com/example/sagas/negocio/instrucaogabinete/oficializarinstrucao/ServicoOficializarInstrucao.java`, ehMergeSemConflito: false}
+	            sistema2Negocio/src/main/java/br/com/example/sistema/negocio/instrucaogabinete/oficializarinstrucao/ServicoOficializarInstrucao.java`, ehMergeSemConflito: false}
     ];
 
     msgsMerges.forEach((msgMerge, index) => {

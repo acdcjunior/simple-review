@@ -137,7 +137,7 @@ export class Commit extends Sesol2 {
         return this.revisores.filter(Commit.isEmailDeEstagiario).length === this.revisores.length;
     }
 
-    private static readonly REGEX_MENSAGEM_MERGE: RegExp = /^Merge( remote-tracking)? branch '[\w\/-]+'( of http.*?\.git)? into [\w\/]+[\s\S]*$/;
+    private static readonly REGEX_MENSAGEM_MERGE: RegExp = /^Merge( remote-tracking)? branch '[\w\/-]+'( of http.*?(\.git)?)?( into [\w\/]+[\s\S]*)?$/;
     isCommitDeMergeSemConflito() {
         return Commit.REGEX_MENSAGEM_MERGE.test(this.message) && this.message.indexOf('Conflicts:') === -1;
     }
