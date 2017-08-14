@@ -14,7 +14,9 @@ export class CommitFactory {
             return Promise.all(commits.map(commit =>
                 sesol2Repository.insertIfNotExists(
                     new Commit(commit.id, commit.title, commit.message, commit.author_email, commit.created_at)
-                )
+                ).catch((e) => {
+                    console.error('Error while inserting into repository!', e);
+                })
             )).then((resultadosDasPromises: string[]) => {
                 let jahExistiam = 0;
                 resultadosDasPromises.forEach(resultadoDePromise => {

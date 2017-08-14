@@ -9,7 +9,9 @@ class CommitFactory {
         return GitLabService_1.GitLabService.getCommits().then(commits => {
             console.log(`\n\n\tCommitFactory: Processando Commits...`);
             console.log(`\t\tCommitFactory: Inserindo (se nao existirem) ${commits.length} commits...`);
-            return Promise.all(commits.map(commit => Sesol2Repository_1.sesol2Repository.insertIfNotExists(new Commit_1.Commit(commit.id, commit.title, commit.message, commit.author_email, commit.created_at)))).then((resultadosDasPromises) => {
+            return Promise.all(commits.map(commit => Sesol2Repository_1.sesol2Repository.insertIfNotExists(new Commit_1.Commit(commit.id, commit.title, commit.message, commit.author_email, commit.created_at)).catch((e) => {
+                console.error('Error while inserting into repository!', e);
+            }))).then((resultadosDasPromises) => {
                 let jahExistiam = 0;
                 resultadosDasPromises.forEach(resultadoDePromise => {
                     if (!resultadoDePromise) {
