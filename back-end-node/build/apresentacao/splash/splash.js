@@ -151,13 +151,13 @@ function seteDias() {
         let count = 0;
         commits.forEach(commit => {
             const dataCommit = commit.created_at.slice(0, 10);
-            console.log('data', dataCommit);
+            // console.log('data', dataCommit);
             if (dataCommit > dataCorte) {
                 count++;
                 calcularTipoCommitAtribuir_1.calcularTipoCommitAtribuir(commitsPedentesPorData, commit);
             }
         });
-        console.log('total: ', count);
+        // console.log('total: ', count);
         console.log(JSON.stringify(commitsPedentesPorData, null, '\t'));
     });
 }
