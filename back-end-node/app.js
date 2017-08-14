@@ -44,7 +44,7 @@ app.use(`${BACK_END_CONTEXT}/public`, express.static(path.join(__dirname, 'publi
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  let err = new Error('Not Found! Request: ' + JSON.stringify(req, null, '\t'));
+  let err = new Error('Not Found! Request: ' + req.originalUrl);
   err.status = 404;
   next(err);
 });
