@@ -40,9 +40,9 @@ class CommittersFactory {
                         return Sesol2Repository_1.sesol2Repository.insertIfNotExists(new Committer_1.Committer(gitlabUser, gitlabImpersonationToken));
                     });
                 }).catch((e) => {
-                    console.error('######################################################');
-                    console.error(e);
-                    console.error('######################################################');
+                    console.error('####################################################################################################');
+                    console.error(e.message);
+                    console.error('####################################################################################################');
                     return Promise.resolve();
                 }));
             });
