@@ -203,8 +203,10 @@ splashRouter.get('/', function(req, res) {
         imagemJenkins = `http://jenkins/static/48484716/images/32x32/${JenkinsCache.sagas2JobData.color}.gif`;
     }
 
-    const trelloTotalWip = trello.wipEmAndamento + trello.wipEmTestes;
-    const trelloMaxWip = trello.maxWipEmAndamento + trello.maxWipEmTestes;
+    let trelloTotalWip: number | string = trello.wipEmAndamento + trello.wipEmTestes;
+    let trelloMaxWip = trello.maxWipEmAndamento + trello.maxWipEmTestes;
+    trelloTotalWip = "?";
+    trelloMaxWip = "?";
 
     res.render('splash', {
         grafico: {
