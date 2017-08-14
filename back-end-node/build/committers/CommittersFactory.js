@@ -39,6 +39,11 @@ class CommittersFactory {
                     return GitLabService_1.GitLabService.criarImpersonationToken(gitlabUser.id).then((gitlabImpersonationToken) => {
                         return Sesol2Repository_1.sesol2Repository.insertIfNotExists(new Committer_1.Committer(gitlabUser, gitlabImpersonationToken));
                     });
+                }).catch((e) => {
+                    console.error('######################################################');
+                    console.error(e);
+                    console.error('######################################################');
+                    return Promise.resolve();
                 }));
             });
             return Promise.all(promisesDeCommittersInseridos).then((resultadosDasPromises) => {
