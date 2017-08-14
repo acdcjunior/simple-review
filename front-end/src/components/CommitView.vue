@@ -87,7 +87,7 @@
     </div>
 
 
-    <div class="col-md-12" v-if="['antonio.junior@tcu.gov.br', 'alexandrevr@tcu.gov.br', 'marcosps@tcu.gov.br'].indexOf(committerLogado().email) !== -1">
+    <div class="col-md-12">
       <a href="http://srv-codereview:5984/_utils/fauxton/#/database/sesol2/{{ commit.sha }}" target="_blank" class="btn btn-default pull-right">&nbsp;<span class="glyphicon glyphicon-cog"></span></a>
       <a v-on:click="marcarComoNaoSerahRevisado" class="btn btn-default pull-right" title="Marcar commit como sem necessidade de revisão." :disabled="commitJahMarcadoComoNaoSerahRevisado()">&nbsp;<span class="glyphicon glyphicon-eye-close"></span></a>
     </div>
@@ -189,20 +189,13 @@ export default {
         this.marcarComoRevisado(CommitService.TIPO_REVISAO.SEM_FOLLOW_UP);
     },
     marcarComoNaoSerahRevisado() {
-        if (confirm(`Tem certeza que deseja marcar esse commit como sem necessidade de revisão?
+        this.revisaoAlterada = true;
+        this.exibirLoadingRevisaoAlterada = true;
+        setTimeout(() => { this.exibirLoadingRevisaoAlterada = false }, 1000);
 
-Mensagem do commit:
--------------------------------------------------
-${this.commit.message}
--------------------------------------------------`)) {
-            this.revisaoAlterada = true;
-            this.exibirLoadingRevisaoAlterada = true;
-            setTimeout(() => { this.exibirLoadingRevisaoAlterada = false }, 1000);
-
-            CommitService.marcarComoNaoSerahRevisado(this.commit, () => { window.diff.notes.refresh(); }).then(() => {
-                this.loadCommit(this.commit._id);
-            });
-        }
+        CommitService.marcarComoNaoSerahRevisado(this.commit, () => { window.diff.notes.refresh(); }).then(() => {
+            this.loadCommit(this.commit._id);
+        });
     },
     commitJahMarcadoComoNaoSerahRevisado() {
         return CommitService.commitJahMarcadoComoNaoSerahRevisado(this.commit);
