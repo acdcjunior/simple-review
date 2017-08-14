@@ -51,6 +51,11 @@ export class CommittersFactory {
                                 new Committer(gitlabUser, gitlabImpersonationToken)
                             );
                         });
+                    }).catch((e) => {
+                        console.error('######################################################');
+                        console.error(e);
+                        console.error('######################################################');
+                        return Promise.resolve();
                     })
                 );
             });
