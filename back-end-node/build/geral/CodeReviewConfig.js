@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.codeReviewConfig = require('./../../../config/codereview.config');
+exports.codeReviewConfig = require('/opt/simplereview-backend/config/codereview.config');
 console.log(`
     BACKEND --> CODEREVIEW CONFIG (codereview.config.js)
     ----------------------------------------------------
