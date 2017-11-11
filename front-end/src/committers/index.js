@@ -36,7 +36,7 @@ committers.get = (email) => {
   if (committers.committers[email]) {
     return committers.committers[email]
   }
-  return {email: email, username: email.replace(/@.*/g, ''), name: email, avatar_url: imgInterrogacao}
+  return {email: email, username: (email || 'sem-email').replace(/@.*/g, ''), name: email, avatar_url: imgInterrogacao}
 };
 
 committers.testLogin = (component) => {
