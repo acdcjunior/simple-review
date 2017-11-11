@@ -57,7 +57,7 @@ class CommitsPorUsuario {
             this.comFollowUp = JSON.stringify(commitsPorUsuarioSempreComFollowUp);
             this.semFollowUp = JSON.stringify(commitsPorUsuarioSempreSemFollowUp);
             this.semRevisao = JSON.stringify(commitsPorUsuarioSempreSemRevisao);
-        });
+        }).catch(e => console.error('Erro ao calcular commits por usuario', e));
     }
 }
 exports.CommitsPorUsuario = CommitsPorUsuario;
