@@ -111,7 +111,7 @@ export class GitLabService {
                 return tokenJahCriadoPorNos;
             } else {
                 // criamos um token novo
-                let r = Rest.post(GitLabURLs.impersonationTokenUrl(user_id), codeReviewConfig.tokenAdmin);
+                let r = Rest.post<GitLabImpersonationToken>(GitLabURLs.impersonationTokenUrl(user_id), codeReviewConfig.tokenAdmin);
                 let form = (r as any).form();
                 form.append('user_id', 'user_id');
                 form.append('name', codeReviewConfig.mensagemTokenCriadoPorCodeReview);
