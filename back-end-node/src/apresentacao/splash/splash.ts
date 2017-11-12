@@ -53,20 +53,30 @@ let commitsPorData = {
     semRevisao: '[]',
     legenda: 'Sem commits para exibir'
 };
-function calcularCommitsPorData() {
-    CommitRepository.findAllCommits().then(commits => {
+
+async function calcularCommitsPorData() {
+
+    try {
+        let commits = await CommitRepository.findAllCommits();
+
         const commitsPedentesPorData = {};
         let dataUltimoCommitComRevisaoPendente = undefined;
+
+        let olderPendingRevisionCommit = {
+            exists: false,
+            date: undefined
+        };
+
         let legenda = '';
         commits.forEach(commit => {
             const dataCommit = commit.created_at.slice(0, 10);
             commitsPedentesPorData[dataCommit] = commitsPedentesPorData[dataCommit] || {
-                    pendente: 0,
-                    par: 0,
-                    comfollowup: 0,
-                    semfollowup: 0,
-                    semrevisao: 0
-                };
+                pendente: 0,
+                par: 0,
+                comfollowup: 0,
+                semfollowup: 0,
+                semrevisao: 0
+            };
             commitsPedentesPorData[dataCommit].pendente += contarRevisoresPendentes(commit);
             commitsPedentesPorData[dataCommit].par += contarTipoRevisao(commit, TipoRevisaoCommit.PAR);
             commitsPedentesPorData[dataCommit].comfollowup += contarTipoRevisao(commit, TipoRevisaoCommit.COM_FOLLOW_UP);
@@ -74,8 +84,8 @@ function calcularCommitsPorData() {
             commitsPedentesPorData[dataCommit].semrevisao += contarTipoRevisao(commit, TipoRevisaoCommit.SEM_REVISAO) / 2; // commits sem revisao inserem duas entradas
 
             if (commitsPedentesPorData[dataCommit].pendente &&
-                (!dataUltimoCommitComRevisaoPendente || dataCommit < dataUltimoCommitComRevisaoPendente)) {
-                dataUltimoCommitComRevisaoPendente = dataCommit;
+                (!olderPendingRevisionCommit.exists || dataCommit < olderPendingRevisionCommit.date)) {
+                olderPendingRevisionCommit = {exists: true, date: dataCommit};
             }
         });
 
@@ -87,8 +97,8 @@ function calcularCommitsPorData() {
         const commitsPorDataSemRevisao = [];
 
         const datasQueSeraoExibidas = Object.keys(commitsPedentesPorData).sort().slice(-10);
-        if (datasQueSeraoExibidas.indexOf(dataUltimoCommitComRevisaoPendente) === -1) {
-            datasQueSeraoExibidas[0] = dataUltimoCommitComRevisaoPendente;
+        if (olderPendingRevisionCommit.exists && datasQueSeraoExibidas.indexOf(olderPendingRevisionCommit.date) === -1) {
+            datasQueSeraoExibidas[0] = olderPendingRevisionCommit.date;
             datasQueSeraoExibidas[1] = RETICENCIAS;
             legenda = 'Tipos de revisões por dia -- dia mais distante sem revisão, mais últimos 8 dias';
         } else {
@@ -135,6 +145,7 @@ function calcularCommitsPorData() {
                 value: commitsPedentesPorData[data].semrevisao
             });
         });
+
         commitsPorData = {
             labels: JSON.stringify(commitsPorDataLabels),
             pendentes: JSON.stringify(commitsPorDataPendentes),
@@ -144,7 +155,9 @@ function calcularCommitsPorData() {
             semRevisao: JSON.stringify(commitsPorDataSemRevisao),
             legenda: legenda
         };
-    });
+    } catch (e) {
+        console.error('Erro ao calcular calcularCommitsPorData', e)
+    }
 }
 
 main.commitsPorUsuarioSempre = new CommitsPorUsuario();

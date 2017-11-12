@@ -28,6 +28,8 @@ export class CommittersFactory {
         })).then((resultadosDasPromises: string[]) => {
             CommittersFactory.exibirQuantidadeQueJahExistia(resultadosDasPromises);
             console.log(`\tCommittersFactory: projeto.json processado por completo!\n`);
+        }).catch((reason: any) => {
+            console.log(`\tCommittersFactory: error while inserting users!\n`, reason);
         });
     }
 

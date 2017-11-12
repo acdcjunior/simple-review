@@ -22,6 +22,8 @@ class CommittersFactory {
         })).then((resultadosDasPromises) => {
             CommittersFactory.exibirQuantidadeQueJahExistia(resultadosDasPromises);
             console.log(`\tCommittersFactory: projeto.json processado por completo!\n`);
+        }).catch((reason) => {
+            console.log(`\tCommittersFactory: error while inserting users!\n`, reason);
         });
     }
     static carregarCommittersDosUltimosCommits() {
