@@ -13,6 +13,7 @@ RUN npm install
 COPY tsconfig.json /opt/simplereview-backend/app
 COPY app.js /opt/simplereview-backend/app
 
+VOLUME /opt/simplereview-backend/config
 VOLUME /opt/simplereview-backend/app/bin
 VOLUME /opt/simplereview-backend/app/public
 VOLUME /opt/simplereview-backend/app/routes

@@ -11,6 +11,9 @@ COPY package-lock.json /opt/simplereview-backend/app
 RUN npm install
 
 COPY . /opt/simplereview-backend/app
+RUN ./node_modules/.bin/tsc
+
+VOLUME /opt/simplereview-backend/config
 
 EXPOSE 3000
 
