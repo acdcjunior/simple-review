@@ -88,7 +88,7 @@
 
 
     <div class="col-md-12">
-      <a href="http://srv-codereview:5984/_utils/fauxton/#/database/sesol2/{{ commit.sha }}" target="_blank" class="btn btn-default pull-right">&nbsp;<span class="glyphicon glyphicon-cog"></span></a>
+      <a href="http://{{ couchdbHost() }}:5984/_utils/fauxton/#/database/sesol2/{{ commit.sha }}" target="_blank" class="btn btn-default pull-right">&nbsp;<span class="glyphicon glyphicon-cog"></span></a>
       <a v-on:click="marcarComoNaoSerahRevisado" class="btn btn-default pull-right" title="Marcar commit como sem necessidade de revisão." :disabled="commitJahMarcadoComoNaoSerahRevisado()">&nbsp;<span class="glyphicon glyphicon-eye-close"></span></a>
     </div>
 
@@ -138,6 +138,9 @@ export default {
   },
 
   methods: {
+    couchdbHost() {
+        return window.env.COUCHDB_HOST
+    },
     committerLogado() {
         return committers.committerLogado
     },

@@ -36,25 +36,55 @@
     </div>
 
     <div class="col-md-12">
-      <hr>
-      <label style="width: 100%">
-        Exibir somente commits realizados por:
-        <select v-model="exibirSomenteCommitsEfetuadosPor" v-on:change="carregarCommits" class="form-control" style="display: inline-block; width: 80%">
-        <option v-for="committer in committers" v-bind:value="committer.email">
-          {{ committer.name }}
-        </option>
-      </select>
-      <button title="Voltar a exibir commits de 'Todos'" class="btn btn-default" :disabled="exibirSomenteCommitsEfetuadosPor === emailTodos()" v-on:click="restaurarCommitsEfetuadosPor"><span class="glyphicon glyphicon-erase"></span></button>
-      </label>
+        <div class="col-md-10" style="padding-top: 10px">
+            Revisões encontradas: {{ (commits || []).length }}
+        </div>
+        <div class="col-md-2">
+            <button title="Alterar busca" class="btn btn-sm text-right" v-bind:class="{'btn-default': buscaEstahComValoresPadrao(), 'btn-danger': !buscaEstahComValoresPadrao()}" v-on:click="togglePainelBusca">
+                <span class="center-block glyphicon" v-bind:class="{'glyphicon-menu-up': painelBusca, 'glyphicon-menu-down': !painelBusca}" style="margin-right: auto; margin-bottom: 3px;"></span>
+            </button>
+        </div>
     </div>
-    <div class="col-md-12">
-      <label><input type="checkbox" v-model="exibirSomenteCommitsEmQueSouRevisor" v-on:change="carregarCommits"> Somente commits dos quais sou revisor(a)</label>
+
+    <div class="col-md-12" v-if="painelBusca">
+        <hr>
+        <div class="col-md-12">
+            <label style="width: 100%">
+                Exibir somente commits do autor:
+                <select v-model="exibirSomenteCommitsDoAutor" v-on:change="carregarCommits" class="form-control" style="display: inline-block; width: 80%">
+                    <option v-for="committer in committers" v-bind:value="committer.email">
+                        {{ committer.name }}
+                    </option>
+                </select>
+                <button title="Voltar a exibir commits de 'Todos'" class="btn btn-default" :disabled="exibirSomenteCommitsDoAutor === emailTodos()" v-on:click="restaurarCommitsEfetuadosPor"><span class="glyphicon glyphicon-erase"></span></button>
+            </label>
+        </div>
+
+        <div class="col-md-12">
+            <label style="width: 100%">
+                Exibir commits cujo revisor é:
+                <select v-model="exibirSomenteCommitsDoRevisor" v-on:change="carregarCommits" class="form-control" style="display: inline-block; width: 80%">
+                    <option v-for="committer in committers" v-bind:value="committer.email">
+                        {{ committer.name }}
+                    </option>
+                </select>
+                <button title="Voltar a exibir commits em que sou revisor" class="btn btn-default" :disabled="exibirSomenteCommitsDoRevisor === logado().email" v-on:click="restaurarCommitsDoRevisor"><span class="glyphicon glyphicon-erase"></span></button>
+            </label>
+        </div>
+
+        <div class="col-md-12">
+            <label><input type="checkbox" v-model="exibirSomenteCommitsNaoRevisados" v-on:change="carregarCommits"> Somente commits não revisados</label>
+        </div>
+
+        <div class="col-md-12">
+            <button class="btn btn-default" :disabled="buscaEstahComValoresPadrao()" v-on:click="exibirMinhasRevisoesPendentes">
+                Restaurar Busca Padrão
+            </button>
+        </div>
     </div>
+
     <div class="col-md-12">
-      <label><input type="checkbox" v-model="exibirSomenteCommitsNaoRevisados" v-on:change="carregarCommits"> Somente commits não revisados por mim</label>
-      <br>
-      Encontrados: {{ (commits || []).length }}
-      <hr>
+        <hr>
     </div>
 
     <div class="col-md-12" v-if="!commits">
@@ -90,9 +120,10 @@ export default {
       opcoesCommitList = {
         ocultarEspacosEmBranco: true,
         diffLadoALado: true,
-        exibirSomenteCommitsEmQueSouRevisor: true,
-        exibirSomenteCommitsNaoRevisados: true,
-        exibirSomenteCommitsEfetuadosPor: store.todos.email
+
+        exibirSomenteCommitsDoAutor: store.todos.email,
+        exibirSomenteCommitsDoRevisor: store.todos.email,
+        exibirSomenteCommitsNaoRevisados: true
       }
     }
     utils.ocultarEspacosEmBranco = opcoesCommitList.ocultarEspacosEmBranco;
@@ -112,9 +143,13 @@ export default {
 
       ocultarEspacosEmBranco: opcoesCommitList.ocultarEspacosEmBranco,
       diffLadoALado: opcoesCommitList.diffLadoALado,
-      exibirSomenteCommitsEmQueSouRevisor: opcoesCommitList.exibirSomenteCommitsEmQueSouRevisor,
+
+      painelBusca: false,
+
+      exibirSomenteCommitsDoAutor: opcoesCommitList.exibirSomenteCommitsDoAutor,
+      exibirSomenteCommitsDoRevisor: opcoesCommitList.exibirSomenteCommitsDoRevisor,
       exibirSomenteCommitsNaoRevisados: opcoesCommitList.exibirSomenteCommitsNaoRevisados,
-      exibirSomenteCommitsEfetuadosPor: opcoesCommitList.exibirSomenteCommitsEfetuadosPor,
+
       committers: [
         store.todos
       ]
@@ -181,18 +216,8 @@ export default {
         }
         return committers.committerLogado;
     },
-    exibirMinhasRevisoesPendentes() {
-        this.exibirSomenteCommitsEmQueSouRevisor = true;
-        this.exibirSomenteCommitsNaoRevisados = true;
-        this.exibirSomenteCommitsEfetuadosPor = store.todos.email;
-        this.carregarCommits();
-    },
     exibirMeusTodos () {
         utils.exibirTodosNoFrame();
-    },
-    restaurarCommitsEfetuadosPor () {
-      this.exibirSomenteCommitsEfetuadosPor = store.todos.email;
-      this.carregarCommits()
     },
     emailTodos () {
       return store.todos.email
@@ -207,20 +232,42 @@ export default {
       this.$cookie.set('opcoesCommitList', JSON.stringify({
         ocultarEspacosEmBranco: this.ocultarEspacosEmBranco,
         diffLadoALado: this.diffLadoALado,
-        exibirSomenteCommitsEmQueSouRevisor: this.exibirSomenteCommitsEmQueSouRevisor,
-        exibirSomenteCommitsNaoRevisados: this.exibirSomenteCommitsNaoRevisados,
-        exibirSomenteCommitsEfetuadosPor: this.exibirSomenteCommitsEfetuadosPor
+
+        exibirSomenteCommitsDoAutor: this.exibirSomenteCommitsDoAutor,
+        exibirSomenteCommitsDoRevisor: this.exibirSomenteCommitsDoRevisor,
+        exibirSomenteCommitsNaoRevisados: this.exibirSomenteCommitsNaoRevisados
       }), { expires: '1Y' })
     },
     carregarCommits () {
       this.salvarCookieOpcoes();
       this.commits = undefined;
-      return store.findAllCommitsThat(this.logado().email, this.exibirSomenteCommitsEfetuadosPor, this.exibirSomenteCommitsEmQueSouRevisor, this.exibirSomenteCommitsNaoRevisados).then(commits => {
+      return store.findAllCommitsThat(this.logado().email, this.exibirSomenteCommitsDoAutor, this.exibirSomenteCommitsDoRevisor, this.exibirSomenteCommitsNaoRevisados).then(commits => {
           this.commits = commits;
           return store.findAllCommitsPendentesDoRevisor(this.logado().email).then(commitsPendentesDoUsuarioLogado => {
               this.qtdCommitsPendentesDoUsuarioLogado = commitsPendentesDoUsuarioLogado.length;
           })
       });
+    },
+
+    togglePainelBusca () {
+        this.painelBusca = !this.painelBusca;
+    },
+    exibirMinhasRevisoesPendentes() {
+        this.exibirSomenteCommitsDoAutor = store.todos.email;
+        this.exibirSomenteCommitsDoRevisor = this.logado().email;
+        this.exibirSomenteCommitsNaoRevisados = true;
+        this.carregarCommits();
+    },
+    restaurarCommitsEfetuadosPor () {
+        this.exibirSomenteCommitsDoAutor = store.todos.email;
+        this.carregarCommits()
+    },
+    restaurarCommitsDoRevisor () {
+        this.exibirSomenteCommitsDoRevisor = this.logado().email;
+        this.carregarCommits()
+    },
+    buscaEstahComValoresPadrao() {
+        return this.exibirSomenteCommitsDoAutor === store.todos.email && this.exibirSomenteCommitsDoRevisor === this.logado().email && this.exibirSomenteCommitsNaoRevisados;
     }
   }
 }
