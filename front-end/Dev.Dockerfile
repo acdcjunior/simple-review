@@ -18,9 +18,7 @@ VOLUME /opt/simplereview-frontend/app/test
 VOLUME /opt/simplereview-frontend/app/vendor
 
 
-RUN npm run build
-
 EXPOSE 5000
 
 # CMD npm run dev
-CMD npm run servir
+CMD npm run build && npm run servir
