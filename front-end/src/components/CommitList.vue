@@ -241,7 +241,7 @@ export default {
     carregarCommits () {
       this.salvarCookieOpcoes();
       this.commits = undefined;
-      return store.findAllCommitsThat(this.logado().email, this.exibirSomenteCommitsDoAutor, this.exibirSomenteCommitsDoRevisor, this.exibirSomenteCommitsNaoRevisados).then(commits => {
+      return store.findAllCommitsThat(this.exibirSomenteCommitsDoAutor, this.exibirSomenteCommitsDoRevisor, this.exibirSomenteCommitsNaoRevisados).then(commits => {
           this.commits = commits;
           return store.findAllCommitsPendentesDoRevisor(this.logado().email).then(commitsPendentesDoUsuarioLogado => {
               this.qtdCommitsPendentesDoUsuarioLogado = commitsPendentesDoUsuarioLogado.length;

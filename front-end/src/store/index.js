@@ -76,7 +76,7 @@ function promiseRetornarSomenteCommitsDoAutor(autor) {
     return commits => Promise.resolve(commits.filter(commitDoAutor(autor)));
 }
 
-store.findAllCommitsThat = (meuEmail, emailDoAutor, emailDoRevisor, exibirSomenteCommitsNaoRevisados) => {
+store.findAllCommitsThat = (emailDoAutor, emailDoRevisor, exibirSomenteCommitsNaoRevisados) => {
 
     let commitsPromise;
     if (emailDoRevisor === store.todos.email) {
