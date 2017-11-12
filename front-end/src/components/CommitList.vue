@@ -21,25 +21,25 @@
       <committer v-if="exibirUsuarioLogado" :committer-email="logado().email"></committer>
 
       <div style="margin-top: 5px;">
-        <div class="col-md-12">
-          <button v-on:click="exibirMinhasRevisoesPendentes" class="btn btn-info" type="button" title="Você tem {{ qtdCommitsPendentesDoUsuarioLogado }} indicações de revisão pendentes.">
-            Revisões <span class="badge">{{ qtdCommitsPendentesDoUsuarioLogado }}</span>
-          </button>
-          <button v-on:click="exibirMeusTodos" class="btn btn-info" type="button" title="Clique para exibir seus TODOs (comentários que te mencionam) no GitLab.">
-            Menções <span class="badge">{{ qtdTodosPendentesDoUsuarioLogado }}</span>
-          </button>
-          <a href="https://trello.com/b/ty9DwoOK/sprint" class="btn btn-info" target="_blank" title="Clique para abrir o Trello Sesol-2 (outra aba)">
-            Trello
+        <div class="col-md-7">
+          Revisões Pendentes:
+          <a v-on:click="exibirMinhasRevisoesPendentes" href="#" title="Você tem {{ qtdCommitsPendentesDoUsuarioLogado }} indicações de revisão pendentes.">
+            <span class="numero" v-bind:class="{'numero-vermelho': qtdCommitsPendentesDoUsuarioLogado > 5, 'numero-amarelo': qtdCommitsPendentesDoUsuarioLogado > 2}">{{ qtdCommitsPendentesDoUsuarioLogado }}</span>
+          </a>
+
+        </div>
+        <div class="col-md-5" style="font-size: 90%">
+          Menções:
+          <a v-on:click="exibirMeusTodos" href="#" title="Exibir quem te MARCOU.">
+            <span class="numero">{{ qtdTodosPendentesDoUsuarioLogado+10 }}</span>
           </a>
         </div>
       </div>
     </div>
 
     <div class="col-md-12">
-        <div class="col-md-10" style="padding-top: 10px">
-            Revisões encontradas: {{ (commits || []).length }}
-        </div>
-        <div class="col-md-2">
+        <div class="col-md-12">
+            <hr v-if="painelBusca">
             <button title="Alterar busca" class="btn btn-sm text-right" v-bind:class="{'btn-default': buscaEstahComValoresPadrao(), 'btn-danger': !buscaEstahComValoresPadrao()}" v-on:click="togglePainelBusca">
                 <span class="center-block glyphicon" v-bind:class="{'glyphicon-menu-up': painelBusca, 'glyphicon-menu-down': !painelBusca}" style="margin-right: auto; margin-bottom: 3px;"></span>
             </button>
@@ -47,28 +47,25 @@
     </div>
 
     <div class="col-md-12" v-if="painelBusca">
-        <hr>
         <div class="col-md-12">
             <label style="width: 100%">
                 Exibir somente commits do autor:
-                <select v-model="exibirSomenteCommitsDoAutor" v-on:change="carregarCommits" class="form-control" style="display: inline-block; width: 80%">
+                <select v-model="exibirSomenteCommitsDoAutor" v-on:change="carregarCommits" class="form-control">
                     <option v-for="committer in committers" v-bind:value="committer.email">
                         {{ committer.name }}
                     </option>
                 </select>
-                <button title="Voltar a exibir commits de 'Todos'" class="btn btn-default" :disabled="exibirSomenteCommitsDoAutor === emailTodos()" v-on:click="restaurarCommitsEfetuadosPor"><span class="glyphicon glyphicon-erase"></span></button>
             </label>
         </div>
 
         <div class="col-md-12">
             <label style="width: 100%">
                 Exibir commits cujo revisor é:
-                <select v-model="exibirSomenteCommitsDoRevisor" v-on:change="carregarCommits" class="form-control" style="display: inline-block; width: 80%">
+                <select v-model="exibirSomenteCommitsDoRevisor" v-on:change="carregarCommits" class="form-control">
                     <option v-for="committer in committers" v-bind:value="committer.email">
                         {{ committer.name }}
                     </option>
                 </select>
-                <button title="Voltar a exibir commits em que sou revisor" class="btn btn-default" :disabled="exibirSomenteCommitsDoRevisor === logado().email" v-on:click="restaurarCommitsDoRevisor"><span class="glyphicon glyphicon-erase"></span></button>
             </label>
         </div>
 
@@ -80,6 +77,10 @@
             <button class="btn btn-default" :disabled="buscaEstahComValoresPadrao()" v-on:click="exibirMinhasRevisoesPendentes">
                 Restaurar Busca Padrão
             </button>
+        </div>
+
+        <div class="col-md-10" style="padding-top: 10px">
+            Revisões encontradas: {{ (commits || []).length }}
         </div>
     </div>
 
@@ -257,14 +258,6 @@ export default {
         this.exibirSomenteCommitsDoRevisor = this.logado().email;
         this.exibirSomenteCommitsNaoRevisados = true;
         this.carregarCommits();
-    },
-    restaurarCommitsEfetuadosPor () {
-        this.exibirSomenteCommitsDoAutor = store.todos.email;
-        this.carregarCommits()
-    },
-    restaurarCommitsDoRevisor () {
-        this.exibirSomenteCommitsDoRevisor = this.logado().email;
-        this.carregarCommits()
     },
     buscaEstahComValoresPadrao() {
         return this.exibirSomenteCommitsDoAutor === store.todos.email && this.exibirSomenteCommitsDoRevisor === this.logado().email && this.exibirSomenteCommitsNaoRevisados;

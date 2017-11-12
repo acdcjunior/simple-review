@@ -64,3 +64,73 @@ input[type="text"], textarea {
   height: 36px;
   margin-right: 10px;
 }
+
+/* ------------------------------------------- */
+
+.numerox {
+  display: inline-block;
+  border-radius: 50%;
+
+  width: 36px;
+  height: 36px;
+  padding: 8px;
+
+  background: #fff;
+  border: 2px solid #666;
+  color: #666;
+  text-align: center;
+
+  font: 22px Arial, sans-serif;
+}
+.numero {
+  padding-top: 7px;
+  padding-right: 1px;
+  font-size: 12.025px;
+  font-weight: bold;
+  white-space: nowrap;
+  color: #ffffff;
+  background-color: #999999;
+
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  vertical-align: middle;
+
+  border-radius: 50%;
+}
+.numero:hover {
+  color: #ffffff;
+  text-decoration: none;
+  cursor: pointer;
+}
+.numero-vermelho {
+  background-color: #ff2629;
+}
+.numero-vermelho:hover {
+  background-color: #953b39;
+}
+.numero-amarelo {
+  background-color: #f89406;
+}
+.numero-amarelo:hover {
+  background-color: #c67605;
+}
+.numero-success {
+  background-color: #468847;
+}
+.numero-success:hover {
+  background-color: #356635;
+}
+.numero-info {
+  background-color: #3a87ad;
+}
+.numero-info:hover {
+  background-color: #2d6987;
+}
+.numero-inverse {
+  background-color: #333333;
+}
+.numero-inverse:hover {
+  background-color: #1a1a1a;
+}
