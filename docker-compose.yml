@@ -12,45 +12,42 @@ services:
         networks:
             - code-review-network
         ports:
-            - "5984:5984"              # altere no codereview.config.js também
+            - "5984:5984"              # change at the codereview.config.js as well
         environment:
-            - COUCHDB_USER=root        # altere no codereview.config.js também
-            - COUCHDB_PASSWORD=pass    # altere no codereview.config.js também
+            - COUCHDB_USER=root        # change at the codereview.config.js as well
+            - COUCHDB_PASSWORD=pass    # change at the codereview.config.js as well
         volumes:
             - ./couchdb/data:/usr/local/var/lib/couchdb
 
-
-
     back-end:
-        build:  ./back-end-node
+        image: acdcjunior/simple-review-backend
         restart: always
         networks:
             - code-review-network
         ports:
             - "8093:3000"
-        links:
-            - couchdb
         volumes:
-            - ./config:/opt/simplereview-backend/config
+            - .:/opt/simplereview-backend/config
 
     front-end:
-        build: ./front-end
+        image: acdcjunior/simple-review-frontend
         restart: always
         networks:
             - code-review-network
         ports:
             - "5000:5000"
 
-
-
     srv-codereview:
-        build: ./nginx
+        image: acdcjunior/simple-review-nginx
         restart: always
         networks:
             - code-review-network
         ports:
             - "80:80"
-                
+        environment:
+            - GITLAB_HOST=mygitserver.com # override if needed; default is "git"
+            - GITLAB_PORT=80              # override if needed; default is "80"
+
     # Adicionar como webhook:
     # http://git/sti/sagas2/settings/integrations
     # http://srv-codereview/back-end-review/rpc/webhook
