@@ -1,0 +1,73 @@
+version: '2'
+
+networks:
+    simplereview-network:
+        driver: bridge
+
+services:
+
+    # Add as webhook:
+    # http://git/sti/sagas2/settings/integrations
+    # http://srv-codereview/back-end-review/rpc/webhook
+    #
+    # Dispare manualmente usando $ curl -X POST http://srv-codereview/back-end-review/rpc/webhook
+    #
+    git:
+        image: gitlab/gitlab-ce
+        networks:
+            - simplereview-network
+        ports:
+            - "8090:80"
+        logging:
+            driver: none # mutes output
+
+    couchdb:
+        image: couchdb:1.6.1
+        networks:
+            - simplereview-network
+        ports:
+            - "5984:5984"              # altere no codereview.config.js também
+        environment:
+            - COUCHDB_USER=root        # altere no codereview.config.js também
+            - COUCHDB_PASSWORD=pass    # altere no codereview.config.js também
+        volumes:
+            - ./couchdb-dev-data:/usr/local/var/lib/couchdb
+        logging:
+            driver: none # mutes output
+
+    back-end:
+        build:
+            context: ../back-end-node
+            dockerfile: Dev.Dockerfile
+        networks:
+            - simplereview-network
+        ports:
+            - "8093:3000"
+        volumes:
+            - ../config:/opt/simplereview-backend/config
+            - ../back-end-node/bin:/opt/simplereview-backend/app/bin
+            - ../back-end-node/public:/opt/simplereview-backend/app/public
+            - ../back-end-node/routes:/opt/simplereview-backend/app/routes
+            - ../back-end-node/src:/opt/simplereview-backend/app/src
+            - ../back-end-node/views:/opt/simplereview-backend/app/views
+
+    front-end:
+        build:
+            context: ../front-end
+            dockerfile: Dev.Dockerfile
+        networks:
+            - simplereview-network
+        ports:
+            - "5000:5000"
+        volumes:
+            - ../front-end/build:/opt/simplereview-frontend/app/build
+            - ../front-end/src:/opt/simplereview-frontend/app/src
+            - ../front-end/test:/opt/simplereview-frontend/app/test
+            - ../front-end/vendor:/opt/simplereview-frontend/app/vendor
+
+    srv-codereview:
+        build: ../nginx
+        networks:
+            - simplereview-network
+        ports:
+            - "80:80"
