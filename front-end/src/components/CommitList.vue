@@ -138,6 +138,9 @@ export default {
           this.qtdTodosPendentesDoUsuarioLogadoTimer = setInterval(() => {
               CommitterService.gitlabTodosDoUsuarioLogado().then(qtdTodosUsuarioLogado => {
                   this.qtdTodosPendentesDoUsuarioLogado = qtdTodosUsuarioLogado;
+              }).catch(e => {
+                  console.log("Error while getting TODOs from logged-in user.", e);
+                  clearInterval(this.qtdTodosPendentesDoUsuarioLogadoTimer);
               });
           }, 5000);
 
