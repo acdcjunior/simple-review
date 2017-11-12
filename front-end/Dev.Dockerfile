@@ -10,7 +10,9 @@ COPY package.json /opt/simplereview-frontend/app/
 COPY package-lock.json /opt/simplereview-frontend/app/
 RUN npm install
 
-COPY . /opt/simplereview-frontend/app
+COPY .babelrc          /opt/simplereview-frontend/app/
+COPY .eslintrc.js      /opt/simplereview-frontend/app/
+COPY servidor.js       /opt/simplereview-frontend/app/
 
 VOLUME /opt/simplereview-frontend/app/build
 VOLUME /opt/simplereview-frontend/app/src
