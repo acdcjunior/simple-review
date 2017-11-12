@@ -35,6 +35,7 @@ Run at `/.dev/`:
           createUser("Bob Bob", "simplereview__bob");
           createUser("Eve Eve", "simplereview__eve");
           createUser("UpPerCaSe MaRy", "simplereview__MaRy");
+          createUser("Othe Team Bart", "simplereview__bart");
           createUser("Antonio C Jr", "acdcjunior");
           createUser("Bot GitLab", "simplereview__bot");
 

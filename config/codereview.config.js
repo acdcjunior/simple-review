@@ -9,7 +9,7 @@ const config = {
     },
 
     gitlabHost: "git",
-    tokenAdmin: '-x-AyJ-9ULh1JytxMRs9', // Token Admin tem que ter acesso [api, read_user]
+    tokenAdmin: '6eG3kEs1rRxynkiCDfD1', // @root user token that must have [api, read_user] access
 
     projeto: {
         projectId: 1,
@@ -33,7 +33,7 @@ const config = {
         {username: "simplereview__alice", sexo: "f", quota: 20, aliases: ["alice", "ali"]},
         {username: "simplereview__bob",   sexo: "m", quota: 10, aliases: ["bob", "bobby"]},
         {username: "simplereview__eve",   sexo: "f", quota: 20, aliases: ["eve"]},
-        {username: "simplereview__MaRy",  sexo: "f", quota: 10, aliases: ["mary"]},
+        {username: "simplereview__MaRy",  sexo: "f", quota: 10, aliases: ["ma"]},
         {username: "acdcjunior",          sexo: "m", quota: 20, aliases: ["antonio"]}
     ],
 
