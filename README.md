@@ -46,3 +46,6 @@ Run at `/.dev/`:
             dataType: 'json',
             success: function (d) { console.info(`Successfully created project with ID: ${d.id} -- `, d); }
           });
+
+- You should be able to edit and have most of back-end auto-updated. If not, run `.dev/restart-back.bat`
+- For the front-end you'll have to run it locally (`npm i && npm run dev`) and go to http://127.0.0.1:5555
