@@ -9,6 +9,7 @@
         window.env.FRONT_END_HOST = window.env.isDev ? 'http://127.0.0.1:5000/code-review/' : '';
         window.env.BACK_END_NODE = window.env.isDev ? 'http://127.0.0.1/back-end-review' : '/back-end-review';
         window.env.GITLAB_PROTOCOL_HOST = window.env.isDev ? 'http://127.0.0.1' : '';
+        window.env.PROJECT = window.location.host === '127.0.0.1' ? 'simplereview__alice/simple-review-sample-project' : 'sti/sagas2';
         window.env.COUCHDB_HOST = window.location.hostname;
 
         // https://code.jquery.com/jquery-3.2.1.min.js

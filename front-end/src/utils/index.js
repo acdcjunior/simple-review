@@ -20,7 +20,7 @@ utils.ocultarEspacosEmBranco = true;
 utils.diffLadoALado = true;
 
 utils.gitlabLink = (sha) => {
-    return `${window.env.GITLAB_PROTOCOL_HOST}/sti/sagas2/commit/${sha}?${utils.diffLadoALado ? 'view=parallel&' : '&'}${utils.ocultarEspacosEmBranco ? 'w=1' : ''}`;
+    return `${window.env.GITLAB_PROTOCOL_HOST}/${window.env.PROJECT}/commit/${sha}?${utils.diffLadoALado ? 'view=parallel&' : '&'}${utils.ocultarEspacosEmBranco ? 'w=1' : ''}`;
 };
 utils.gitlabTodosLink = () => {
     return `${window.env.GITLAB_PROTOCOL_HOST}/dashboard/todos`;
