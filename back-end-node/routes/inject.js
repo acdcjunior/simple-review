@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 
 function inject() {
+    console.log('simple-review executed at gitlab frame!');
+
     const DIFF_URL_AFTER_SIGN_IN = 'diffUrlAfterSignIn';
 
     // se acessou o servidor sem contexto
@@ -28,13 +30,22 @@ function inject() {
     }
     $(() => {
         // se eh URL de diff
-        if (/^\/\w+\/\w+\/commit\/.+$/.test(window.location.pathname)) {
-            // remove os headers
+        if (/^\/[-\w]+\/[-\w]+\/commit\/.+$/.test(window.location.pathname)) {
+            // remove the headers
             $('body > div.page-with-sidebar > div.content-wrapper.page-with-layout-nav > div.scrolling-tabs-container.sub-nav-scroll').remove();
             $('body > div.page-with-sidebar > div.layout-nav').remove();
             $('body > header').remove();
+            $('body > .nav-sidebar-inner-scroll').remove();
 
-            // remove a limitacao da width no diff
+            // remove new sidebar
+            $('body .nav-sidebar').remove();
+            $('body .page-with-new-sidebar').removeClass('page-with-new-sidebar');
+
+            // remove new nav
+            $('body .page-with-new-nav .alert-wrapper').remove();
+            $('body .page-with-new-nav').removeClass('page-with-new-nav');
+
+            // remove width limitation of diff
             $(".container-limited").css("max-width", "none")
         }
     });
@@ -42,8 +53,8 @@ function inject() {
 
 router.get('/', function (req, res) {
     res.send(`
-        console.log('inject.js de code review carregado!');
-        \n(${inject.toString()})();
+        console.log('simple-review injected into gitlab frame!');
+        \nwindow.addEventListener('load', \n${inject.toString()}, false);
     `);
 });
 
