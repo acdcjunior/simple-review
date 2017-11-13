@@ -37,6 +37,7 @@ utils.atualizarDiff = (sha) => {
 };
 
 utils.atualizarGitLabFrame = (gitlabLink) => {
+    window.$(".iframe-loading-over").show();
     try {
         const currentIframeUrl = document.getElementById('diff').contentWindow.location.href;
         if (currentIframeUrl.endsWith(gitlabLink)) {

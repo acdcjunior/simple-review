@@ -35,3 +35,16 @@ router.redirect({
 });
 
 router.start(App, '#app');
+
+window.addEventListener('message', function (event) {
+  if (event.data === 'hide-loading') {
+    setTimeout(() => {
+      window.$("#iframe-loading-image").hide();
+      window.$(".iframe-loading-over").fadeOut(1000, () => {
+        console.log('showing back');
+        window.$("#iframe-loading-image").show();
+      });
+    }, 200);
+  }
+});
+

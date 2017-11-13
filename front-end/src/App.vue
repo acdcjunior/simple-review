@@ -10,6 +10,11 @@
         </div>
         <div class="layout-col_right">
             <iframe id="diff" name="diff" width="100%" height="99.635%" frameborder="0" marginheight="0" marginwidth="0" scrolling="yes" src=""></iframe>
+            <div class="iframe-loading-over">
+                <div style="margin-top: 10%; text-align: center">
+                    <img id="iframe-loading-image" src="https://www.prizerebel.com/assets/images/progress_bar.gif" alt="Loading...">
+                </div>
+            </div>
         </div>
         <button id="botao-encolher" class="btn btn-default"
                 title="Encolher (ocultar) temporariamente barra lateral"
@@ -73,6 +78,16 @@
 .layout-col_right {
     margin-left:22.5%;
     height: 99.9%;
+    position: relative;
+}
+.iframe-loading-over {
+    position: absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background-color: white;
+    opacity: .99;
 }
 
 .glyphicon {

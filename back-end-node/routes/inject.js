@@ -29,8 +29,9 @@ function inject() {
         return;
     }
     $(() => {
-        // se eh URL de diff
-        if (/^\/[-\w]+\/[-\w]+\/commit\/.+$/.test(window.location.pathname)) {
+        const isCommitDiffPage = /^\/[-\w]+\/[-\w]+\/commit\/.+$/.test(window.location.pathname);
+        const isTODOsPage = /\/dashboard\/todos/.test(window.location.pathname);
+        if (isCommitDiffPage || isTODOsPage) {
             // remove the headers
             $('body > div.page-with-sidebar > div.content-wrapper.page-with-layout-nav > div.scrolling-tabs-container.sub-nav-scroll').remove();
             $('body > div.page-with-sidebar > div.layout-nav').remove();
@@ -48,6 +49,7 @@ function inject() {
             // remove width limitation of diff
             $(".container-limited").css("max-width", "none")
         }
+        parent.window.postMessage('hide-loading', '*');
     });
 }
 
