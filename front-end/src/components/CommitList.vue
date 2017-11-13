@@ -31,7 +31,7 @@
         <div class="col-md-5" style="font-size: 90%">
           Menções:
           <a v-on:click="exibirMeusTodos" href="#" title="Exibir quem te MARCOU.">
-            <span class="numero">{{ qtdTodosPendentesDoUsuarioLogado+10 }}</span>
+            <span class="numero">{{ qtdTodosPendentesDoUsuarioLogado }}</span>
           </a>
         </div>
       </div>
@@ -219,6 +219,7 @@ export default {
     },
     exibirMeusTodos () {
         utils.exibirTodosNoFrame();
+        return false;
     },
     emailTodos () {
       return store.todos.email

@@ -2,7 +2,7 @@
   <div class="col-md-12" id="{{ commit.sha }}">
     <div class="panel panel-default">
       <div class="panel-body">
-        <a href="{{ gitlabLink() }}" target="diff" style="word-wrap: break-word;"><h3>{{ commit.title }}</h3></a>
+        <a v-on:click="abrirRevisao" href="#" target="diff" style="word-wrap: break-word;"><h3>{{ commit.title }}</h3></a>
 
         <committer :committer-email="committer().email"></committer>
 
