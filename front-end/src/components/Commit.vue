@@ -9,7 +9,12 @@
         <button v-if="usuarioLogadoNuncaRevisouCommit()" class="btn btn-info" style="float: right" v-on:click="abrirRevisao">Revisar</button>
         <button v-else=""                                class="btn btn-default" style="float: right" v-on:click="abrirRevisao">Ver</button>
 
-        <p style="margin: 10px 5px 0 0">
+        <div class="pull-right">
+            <a v-if="this.committerLogado().canOpenCouch" style="width: 20px; padding-left: 0" href="http://{{ couchdbHost() }}:5984/_utils/fauxton/#/database/sesol2/{{ commit.sha }}" target="_blank" class="btn btn-default pull-right">&nbsp;<span style="display: inline-block; margin-left: -1px;" class="glyphicon glyphicon-cog"></span></a>
+            <a v-if="this.committerLogado().canRemoveReview" style="width: 20px; padding-left: 0" v-on:click="marcarComoNaoSerahRevisado" class="btn btn-default pull-right" title="Marcar commit como sem necessidade de revisão." :disabled="commitJahMarcadoComoNaoSerahRevisado()">&nbsp;<span style="display: inline-block; margin-left: -1px;" class="glyphicon glyphicon-eye-close"></span></a>
+        </div>
+
+          <p style="margin: 10px 5px 0 0">
           Criado {{ timeAgo(commit.created_at) }}.
           &nbsp;
           <span v-for="bolinha in bolinhas">
@@ -67,6 +72,12 @@ export default {
   },
 
   methods: {
+    committerLogado() {
+        if (!committers.committerLogado) {
+            console.log('Não há committer logado! -> ', committers.committerLogado);
+        }
+        return committers.committerLogado;
+    },
     committer () {
       return committers.get(this.commit.author_email)
     },
@@ -114,6 +125,15 @@ export default {
     abrirRevisao () {
         utils.atualizarDiff(this.commit.sha);
         this.$router.go('/commit/' + this.commit.sha)
+    },
+    couchdbHost() {
+        return window.env.COUCHDB_HOST
+    },
+    marcarComoNaoSerahRevisado() {
+        CommitService.marcarComoNaoSerahRevisado(this.commit);
+    },
+    commitJahMarcadoComoNaoSerahRevisado() {
+        return CommitService.commitJahMarcadoComoNaoSerahRevisado(this.commit);
     }
   }
 }

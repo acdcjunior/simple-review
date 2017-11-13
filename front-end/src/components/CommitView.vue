@@ -88,8 +88,8 @@
 
 
     <div class="col-md-12">
-      <a href="http://{{ couchdbHost() }}:5984/_utils/fauxton/#/database/sesol2/{{ commit.sha }}" target="_blank" class="btn btn-default pull-right">&nbsp;<span class="glyphicon glyphicon-cog"></span></a>
-      <a v-on:click="marcarComoNaoSerahRevisado" class="btn btn-default pull-right" title="Marcar commit como sem necessidade de revisão." :disabled="commitJahMarcadoComoNaoSerahRevisado()">&nbsp;<span class="glyphicon glyphicon-eye-close"></span></a>
+      <a v-if="committerLogado().canOpenCouch" href="http://{{ couchdbHost() }}:5984/_utils/fauxton/#/database/sesol2/{{ commit.sha }}" target="_blank" class="btn btn-default pull-right">&nbsp;<span class="glyphicon glyphicon-cog"></span></a>
+      <a v-if="committerLogado().canRemoveReview" v-on:click="marcarComoNaoSerahRevisado" class="btn btn-default pull-right" title="Marcar commit como sem necessidade de revisão." :disabled="commitJahMarcadoComoNaoSerahRevisado()">&nbsp;<span class="glyphicon glyphicon-eye-close"></span></a>
     </div>
 
     <div class="col-md-12"><br>&nbsp;<br>&nbsp;<br></div>
