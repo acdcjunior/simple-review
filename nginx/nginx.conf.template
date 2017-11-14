@@ -23,28 +23,28 @@ http {
     location /code-review {
       proxy_pass http://front-end-app;
       proxy_http_version 1.1;
-      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Upgrade ${DOLLAR}http_upgrade;
       proxy_set_header Connection 'upgrade';
-      proxy_set_header Host $host;
-      proxy_cache_bypass $http_upgrade;
+      proxy_set_header Host ${DOLLAR}host;
+      proxy_cache_bypass ${DOLLAR}http_upgrade;
     }
 
     location /static {
       proxy_pass http://front-end-app;
       proxy_http_version 1.1;
-      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Upgrade ${DOLLAR}http_upgrade;
       proxy_set_header Connection 'upgrade';
-      proxy_set_header Host $host;
-      proxy_cache_bypass $http_upgrade;
+      proxy_set_header Host ${DOLLAR}host;
+      proxy_cache_bypass ${DOLLAR}http_upgrade;
     }
 
     location /back-end-review {
       proxy_pass http://back-end-app;
       proxy_http_version 1.1;
-      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Upgrade ${DOLLAR}http_upgrade;
       proxy_set_header Connection 'upgrade';
-      proxy_set_header Host $host;
-      proxy_cache_bypass $http_upgrade;
+      proxy_set_header Host ${DOLLAR}host;
+      proxy_cache_bypass ${DOLLAR}http_upgrade;
     }
 
     location / {
@@ -57,10 +57,10 @@ http {
 
       proxy_pass http://gitlab-app;
       proxy_http_version 1.1;
-      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Upgrade ${DOLLAR}http_upgrade;
       proxy_set_header Connection 'upgrade';
-      proxy_set_header Host $host;
-      proxy_cache_bypass $http_upgrade;
+      proxy_set_header Host ${DOLLAR}host;
+      proxy_cache_bypass ${DOLLAR}http_upgrade;
 
       proxy_hide_header X-Frame-Options;
     }
