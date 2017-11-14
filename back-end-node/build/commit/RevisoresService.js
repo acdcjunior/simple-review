@@ -96,10 +96,10 @@ function incluirRevisoresMencionadosNaMensagem(commitSemRevisor) {
 }
 class TabelaProporcoesDeCadaRevisor {
     constructor(committers) {
-        this.committersHash = {};
+        this.committersMap = new Map();
         this.contagemRevisoesAtribuidas = {};
         committers.forEach(committer => {
-            this.committersHash[committer.email] = committer;
+            this.committersMap.set(committer.email, committer);
         });
     }
     atualizarContagemComRevisoresDosCommits(commits) {
@@ -109,7 +109,7 @@ class TabelaProporcoesDeCadaRevisor {
     }
     atualizarContagemComRevisoresDoCommit(commit) {
         commit.revisores.forEach((emailRevisor) => {
-            const committer = this.committersHash[emailRevisor];
+            const committer = this.committersMap.get(emailRevisor);
             if (!committer) {
                 console.log(`\t\tRevisoresService: Commiter do email ${emailRevisor} nao encontrado: `, committer);
             }
@@ -129,16 +129,27 @@ class TabelaProporcoesDeCadaRevisor {
         return this.contagemRevisoesAtribuidas[email] || 0;
     }
     percentualDeOcupacaoDoRevisor(email) {
-        return this.contagemRevisoesAtribuidasA(email) / this.committersHash[email].quota;
+        return this.contagemRevisoesAtribuidasA(email) / this.committersMap.get(email).quota;
     }
     calcularRevisorMaisVago(funcaoFiltragemPossiveisRevisores) {
         debug.log('--- calcularRevisorMaisVago ---');
-        const possiveisRevisores = ArrayUtils_1.ArrayUtils.arrayShuffle(Object.keys(this.committersHash)
+        const possiveisRevisores = ArrayUtils_1.ArrayUtils.arrayShuffle(Array.from(this.committersMap.keys())
             .filter(funcaoFiltragemPossiveisRevisores)
-            .filter(email => this.committersHash[email].quota > 0));
+            .filter(email => this.committersMap.get(email).quota > 0));
         debug.dir(this.contagemRevisoesAtribuidas);
         let emailComMenorPercentualOcupado = possiveisRevisores[0];
         let ocupacaoMenorOcupado = 999999;
+        let posicoes = [];
+        possiveisRevisores.forEach((emailPossivelRevisor) => {
+            const committer = this.committersMap.get(emailPossivelRevisor);
+            for (let i = 0; i < committer.quota; i++) {
+                posicoes.push(committer);
+            }
+        });
+        let randomCommitter = posicoes[Math.floor(Math.random() * posicoes.length)];
+        if ("x" !== randomCommitter) {
+            return randomCommitter;
+        }
         possiveisRevisores.forEach(email => {
             let percentualDeOcupacao = this.percentualDeOcupacaoDoRevisor(email);
             debug.log(`Percentual de ocupacao de ${email}: ${percentualDeOcupacao}     \t\t---- menor atual: ${emailComMenorPercentualOcupado}: ${ocupacaoMenorOcupado}`);
@@ -148,6 +159,6 @@ class TabelaProporcoesDeCadaRevisor {
             }
         });
         debug.log(`Mais vago é ${emailComMenorPercentualOcupado}`);
-        return this.committersHash[emailComMenorPercentualOcupado];
+        return this.committersMap.get(emailComMenorPercentualOcupado);
     }
 }
