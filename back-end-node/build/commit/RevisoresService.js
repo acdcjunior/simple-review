@@ -1,4 +1,12 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const Sesol2Repository_1 = require("../geral/Sesol2Repository");
 const ArrayUtils_1 = require("../geral/ArrayUtils");
@@ -13,73 +21,76 @@ let debug = {
 };
 class RevisoresService {
     static atribuirRevisores() {
-        return CommitterRepository_1.CommitterRepository.findAllCommitters().then((committers) => {
+        return __awaiter(this, void 0, void 0, function* () {
+            let committers = yield CommitterRepository_1.CommitterRepository.findAllCommitters();
             console.log(`\n\n\tRevisoresService: Atribuindo Revisores...`);
             const tabelaProporcoesDeCadaRevisor = new TabelaProporcoesDeCadaRevisor(committers);
             console.log(`\t\tRevisoresService: TabelaProporcoesDeCadaRevisor construida`);
-            return CommitRepository_1.CommitRepository.findAllCommits().then((commits) => {
-                console.log(`\t\tRevisoresService: Commits encontrados: ${commits.length}`);
-                tabelaProporcoesDeCadaRevisor.atualizarContagemComRevisoresDosCommits(commits);
-                const commitsSemRevisores = commits.filter(commit => commit.revisores.length === 0);
-                console.log(`\t\tRevisoresService: Commits sem revisores encontrados: ${commitsSemRevisores.length}`);
-                return atribuirRevisoresAosCommits(commitsSemRevisores, tabelaProporcoesDeCadaRevisor).then(() => {
-                    console.log('\tRevisoresService: Revisores atribuídos!');
-                });
-            });
+            let commits = yield CommitRepository_1.CommitRepository.findAllCommits();
+            console.log(`\t\tRevisoresService: Commits encontrados: ${commits.length}`);
+            tabelaProporcoesDeCadaRevisor.atualizarContagemComRevisoresDosCommits(commits);
+            const commitsSemRevisores = commits.filter(commit => commit.revisores.length === 0);
+            console.log(`\t\tRevisoresService: Commits sem revisores encontrados: ${commitsSemRevisores.length}`);
+            yield atribuirRevisoresAosCommits(commitsSemRevisores, tabelaProporcoesDeCadaRevisor);
+            console.log('\tRevisoresService: Revisores atribuídos!');
         });
     }
 }
 exports.RevisoresService = RevisoresService;
 function atribuirRevisoresAosCommits(commitsSemRevisor, tabelaProporcoesDeCadaRevisor) {
-    if (commitsSemRevisor.length === 0) {
-        return Promise.resolve();
-    }
-    const commitSemRevisor = commitsSemRevisor[0];
-    const commitsSemRevisorRestantes = commitsSemRevisor.slice(1);
-    return atribuirRevisoresAoCommit(commitSemRevisor, tabelaProporcoesDeCadaRevisor).then(() => {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (commitsSemRevisor.length === 0) {
+            return Promise.resolve();
+        }
+        const commitSemRevisor = commitsSemRevisor[0];
+        const commitsSemRevisorRestantes = commitsSemRevisor.slice(1);
+        yield atribuirRevisoresAoCommit(commitSemRevisor, tabelaProporcoesDeCadaRevisor);
         Sesol2Repository_1.sesol2Repository.insert(commitSemRevisor);
         return atribuirRevisoresAosCommits(commitsSemRevisorRestantes, tabelaProporcoesDeCadaRevisor);
     });
 }
 function atribuirRevisoresAoCommit(commitSemRevisor, tabelaProporcoesDeCadaRevisor) {
-    if (commitSemRevisor.isCommitDeMergeSemConflito()) {
-        return commitSemRevisor.indicarCommitNaoTerahRevisor('commit de merge sem conflito');
-    }
-    if (commitSemRevisor.isCommitNaoDeveSerRevisado()) {
-        return commitSemRevisor.indicarCommitNaoTerahRevisor('commit indicado para não ter revisão');
-    }
-    return incluirRevisoresMencionadosNaMensagem(commitSemRevisor).then(() => {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (commitSemRevisor.isCommitDeMergeSemConflito()) {
+            return commitSemRevisor.indicarCommitNaoTerahRevisor('commit de merge sem conflito');
+        }
+        if (commitSemRevisor.isCommitNaoDeveSerRevisado()) {
+            return commitSemRevisor.indicarCommitNaoTerahRevisor('commit indicado para não ter revisão');
+        }
+        yield incluirRevisoresMencionadosNaMensagem(commitSemRevisor);
         tabelaProporcoesDeCadaRevisor.atualizarContagemComRevisoresDoCommit(commitSemRevisor);
-        return incluirRevisorEstagiarioEmCommitDeEstagiario(commitSemRevisor, tabelaProporcoesDeCadaRevisor).then(() => {
-            return incluirRevisorServidorDoCommit(commitSemRevisor, tabelaProporcoesDeCadaRevisor);
-        });
+        yield incluirRevisorEstagiarioEmCommitDeEstagiario(commitSemRevisor, tabelaProporcoesDeCadaRevisor);
+        return incluirRevisorServidorDoCommit(commitSemRevisor, tabelaProporcoesDeCadaRevisor);
     });
 }
 function incluirRevisorEstagiarioEmCommitDeEstagiario(commitSemRevisor, tabelaProporcoesDeCadaRevisor) {
-    // se for commit de estagiario
-    if (commitSemRevisor.isCommitDeEstagiario()) {
-        // --> verificar se tem pelo menos um revisor estagiario, se nao, add
-        if (commitSemRevisor.naoTemNenhumRevisorEstagiario()) {
-            const estagiarioMaisVago = tabelaProporcoesDeCadaRevisor.calcularEstagiarioMaisVago(commitSemRevisor);
-            return commitSemRevisor.indicarRevisorViaSistema(estagiarioMaisVago).then(() => {
+    return __awaiter(this, void 0, void 0, function* () {
+        // se for commit de estagiario
+        if (commitSemRevisor.isCommitDeEstagiario()) {
+            // --> verificar se tem pelo menos um revisor estagiario, se nao, add
+            if (commitSemRevisor.naoTemNenhumRevisorEstagiario()) {
+                const estagiarioMaisVago = tabelaProporcoesDeCadaRevisor.calcularEstagiarioMaisVago(commitSemRevisor);
+                yield commitSemRevisor.indicarRevisorViaSistema(estagiarioMaisVago);
                 tabelaProporcoesDeCadaRevisor.incrementarContagemDoRevisor(estagiarioMaisVago);
-            });
+            }
         }
-    }
-    return Promise.resolve();
+        return Promise.resolve();
+    });
 }
 function incluirRevisorServidorDoCommit(commit, tabelaProporcoesDeCadaRevisor) {
-    // todos os commits devem ter pelo menos um revisor servidor
-    if (commit.todosOsRevisoresSaoEstagiarios()) {
-        const servidorMaisVago = tabelaProporcoesDeCadaRevisor.calcularServidorMaisVago(commit);
-        return commit.indicarRevisorViaSistema(servidorMaisVago).then(() => {
+    return __awaiter(this, void 0, void 0, function* () {
+        // todos os commits devem ter pelo menos um revisor servidor
+        if (commit.todosOsRevisoresSaoEstagiarios()) {
+            const servidorMaisVago = tabelaProporcoesDeCadaRevisor.calcularServidorMaisVago(commit);
+            yield commit.indicarRevisorViaSistema(servidorMaisVago);
             tabelaProporcoesDeCadaRevisor.incrementarContagemDoRevisor(servidorMaisVago);
-        });
-    }
-    return Promise.resolve();
+        }
+        return Promise.resolve();
+    });
 }
 function incluirRevisoresMencionadosNaMensagem(commitSemRevisor) {
-    return MencoesExtractor_1.MencoesExtractor.extrairCommittersMencionadosNaMensagemDoCommit(commitSemRevisor).then((revisoresIndicados) => {
+    return __awaiter(this, void 0, void 0, function* () {
+        let revisoresIndicados = yield MencoesExtractor_1.MencoesExtractor.extrairCommittersMencionadosNaMensagemDoCommit(commitSemRevisor);
         return commitSemRevisor.indicarRevisoresViaMencao(revisoresIndicados);
     });
 }

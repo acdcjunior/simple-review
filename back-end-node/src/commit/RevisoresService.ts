@@ -15,41 +15,38 @@ let debug = {
 
 export class RevisoresService {
 
-    static atribuirRevisores() {
-        return CommitterRepository.findAllCommitters().then((committers: Committer[]) => {
-            console.log(`\n\n\tRevisoresService: Atribuindo Revisores...`);
-            const tabelaProporcoesDeCadaRevisor = new TabelaProporcoesDeCadaRevisor(committers);
+    static async atribuirRevisores() {
+        let committers: Committer[] = await CommitterRepository.findAllCommitters();
+        console.log(`\n\n\tRevisoresService: Atribuindo Revisores...`);
+        const tabelaProporcoesDeCadaRevisor = new TabelaProporcoesDeCadaRevisor(committers);
 
-            console.log(`\t\tRevisoresService: TabelaProporcoesDeCadaRevisor construida`);
-            return CommitRepository.findAllCommits().then((commits: Commit[]) => {
-                console.log(`\t\tRevisoresService: Commits encontrados: ${commits.length}`);
-                tabelaProporcoesDeCadaRevisor.atualizarContagemComRevisoresDosCommits(commits);
+        console.log(`\t\tRevisoresService: TabelaProporcoesDeCadaRevisor construida`);
+        let commits: Commit[] = await CommitRepository.findAllCommits();
 
-                const commitsSemRevisores = commits.filter(commit => commit.revisores.length === 0);
-                console.log(`\t\tRevisoresService: Commits sem revisores encontrados: ${commitsSemRevisores.length}`);
+        console.log(`\t\tRevisoresService: Commits encontrados: ${commits.length}`);
+        tabelaProporcoesDeCadaRevisor.atualizarContagemComRevisoresDosCommits(commits);
 
-                return atribuirRevisoresAosCommits(commitsSemRevisores, tabelaProporcoesDeCadaRevisor).then(() => {
-                    console.log('\tRevisoresService: Revisores atribuídos!');
-                });
-            });
-        });
+        const commitsSemRevisores = commits.filter(commit => commit.revisores.length === 0);
+        console.log(`\t\tRevisoresService: Commits sem revisores encontrados: ${commitsSemRevisores.length}`);
+
+        await atribuirRevisoresAosCommits(commitsSemRevisores, tabelaProporcoesDeCadaRevisor);
+        console.log('\tRevisoresService: Revisores atribuídos!');
     }
 
 }
 
-function atribuirRevisoresAosCommits(commitsSemRevisor: Commit[], tabelaProporcoesDeCadaRevisor: TabelaProporcoesDeCadaRevisor) {
+async function atribuirRevisoresAosCommits(commitsSemRevisor: Commit[], tabelaProporcoesDeCadaRevisor: TabelaProporcoesDeCadaRevisor): Promise<any> {
     if (commitsSemRevisor.length === 0) {
         return Promise.resolve();
     }
     const commitSemRevisor = commitsSemRevisor[0];
     const commitsSemRevisorRestantes = commitsSemRevisor.slice(1);
-    return atribuirRevisoresAoCommit(commitSemRevisor, tabelaProporcoesDeCadaRevisor).then(() => {
-        sesol2Repository.insert(commitSemRevisor);
-        return atribuirRevisoresAosCommits(commitsSemRevisorRestantes, tabelaProporcoesDeCadaRevisor);
-    });
+    await atribuirRevisoresAoCommit(commitSemRevisor, tabelaProporcoesDeCadaRevisor);
+    sesol2Repository.insert(commitSemRevisor);
+    return atribuirRevisoresAosCommits(commitsSemRevisorRestantes, tabelaProporcoesDeCadaRevisor);
 }
 
-function atribuirRevisoresAoCommit(commitSemRevisor: Commit, tabelaProporcoesDeCadaRevisor: TabelaProporcoesDeCadaRevisor): Promise<any> {
+async function atribuirRevisoresAoCommit(commitSemRevisor: Commit, tabelaProporcoesDeCadaRevisor: TabelaProporcoesDeCadaRevisor): Promise<any> {
 
     if (commitSemRevisor.isCommitDeMergeSemConflito()) {
         return commitSemRevisor.indicarCommitNaoTerahRevisor('commit de merge sem conflito');
@@ -59,47 +56,39 @@ function atribuirRevisoresAoCommit(commitSemRevisor: Commit, tabelaProporcoesDeC
         return commitSemRevisor.indicarCommitNaoTerahRevisor('commit indicado para não ter revisão');
     }
 
-    return incluirRevisoresMencionadosNaMensagem(commitSemRevisor).then(() => {
+    await incluirRevisoresMencionadosNaMensagem(commitSemRevisor);
+    tabelaProporcoesDeCadaRevisor.atualizarContagemComRevisoresDoCommit(commitSemRevisor);
 
-        tabelaProporcoesDeCadaRevisor.atualizarContagemComRevisoresDoCommit(commitSemRevisor);
-
-        return incluirRevisorEstagiarioEmCommitDeEstagiario(commitSemRevisor, tabelaProporcoesDeCadaRevisor).then(() => {
-
-            return incluirRevisorServidorDoCommit(commitSemRevisor, tabelaProporcoesDeCadaRevisor);
-
-        });
-    });
+    await incluirRevisorEstagiarioEmCommitDeEstagiario(commitSemRevisor, tabelaProporcoesDeCadaRevisor);
+    return incluirRevisorServidorDoCommit(commitSemRevisor, tabelaProporcoesDeCadaRevisor);
 }
 
-function incluirRevisorEstagiarioEmCommitDeEstagiario(commitSemRevisor: Commit, tabelaProporcoesDeCadaRevisor: TabelaProporcoesDeCadaRevisor): Promise<void> {
+async function incluirRevisorEstagiarioEmCommitDeEstagiario(commitSemRevisor: Commit, tabelaProporcoesDeCadaRevisor: TabelaProporcoesDeCadaRevisor): Promise<void> {
     // se for commit de estagiario
     if (commitSemRevisor.isCommitDeEstagiario()) {
         // --> verificar se tem pelo menos um revisor estagiario, se nao, add
         if (commitSemRevisor.naoTemNenhumRevisorEstagiario()) {
             const estagiarioMaisVago = tabelaProporcoesDeCadaRevisor.calcularEstagiarioMaisVago(commitSemRevisor);
-            return commitSemRevisor.indicarRevisorViaSistema(estagiarioMaisVago).then(() => {
-                tabelaProporcoesDeCadaRevisor.incrementarContagemDoRevisor(estagiarioMaisVago);
-            });
+            await commitSemRevisor.indicarRevisorViaSistema(estagiarioMaisVago);
+            tabelaProporcoesDeCadaRevisor.incrementarContagemDoRevisor(estagiarioMaisVago);
         }
     }
     return Promise.resolve();
 }
 
-function incluirRevisorServidorDoCommit(commit: Commit, tabelaProporcoesDeCadaRevisor: TabelaProporcoesDeCadaRevisor): Promise<void> {
+async function incluirRevisorServidorDoCommit(commit: Commit, tabelaProporcoesDeCadaRevisor: TabelaProporcoesDeCadaRevisor): Promise<void> {
     // todos os commits devem ter pelo menos um revisor servidor
     if (commit.todosOsRevisoresSaoEstagiarios()) {
         const servidorMaisVago: Committer = tabelaProporcoesDeCadaRevisor.calcularServidorMaisVago(commit);
-        return commit.indicarRevisorViaSistema(servidorMaisVago).then(() => {
-            tabelaProporcoesDeCadaRevisor.incrementarContagemDoRevisor(servidorMaisVago);
-        });
+        await commit.indicarRevisorViaSistema(servidorMaisVago);
+        tabelaProporcoesDeCadaRevisor.incrementarContagemDoRevisor(servidorMaisVago);
     }
     return Promise.resolve();
 }
 
-function incluirRevisoresMencionadosNaMensagem(commitSemRevisor: Commit): Promise<void> {
-    return MencoesExtractor.extrairCommittersMencionadosNaMensagemDoCommit(commitSemRevisor).then((revisoresIndicados: Committer[]) => {
-        return commitSemRevisor.indicarRevisoresViaMencao(revisoresIndicados);
-    });
+async function incluirRevisoresMencionadosNaMensagem(commitSemRevisor: Commit): Promise<void> {
+    let revisoresIndicados: Committer[] = await MencoesExtractor.extrairCommittersMencionadosNaMensagemDoCommit(commitSemRevisor);
+    return commitSemRevisor.indicarRevisoresViaMencao(revisoresIndicados);
 }
 
 class TabelaProporcoesDeCadaRevisor {
