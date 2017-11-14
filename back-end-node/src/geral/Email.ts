@@ -7,16 +7,24 @@ export class Email {
     }
 
     // torna nome@e-098571.tcu.gov.br em nome@tcu.gov.br
-    static corrigirEmail(email) {
+    static corrigirEmail(email: string): string {
         return email.replace(/@.*\.tcu\.gov\.br$/g, '@tcu.gov.br').toLowerCase();
     }
 
-    isEmailDeEstagiario() {
+    isEmailDeEstagiario(): boolean {
         return /[xX]\d{11}@tcu.gov.br$/.test(this.email);
     }
 
-    isEmailDeServidor() {
+    isEmailDeServidor(): boolean {
         return !this.isEmailDeEstagiario();
+    }
+
+    static ehEmailDeServidor(email: string): boolean {
+        return new Email(email).isEmailDeServidor();
+    }
+
+    static ehEmailDeEstagiario(email: string): boolean {
+        return new Email(email).isEmailDeEstagiario();
     }
 
 }

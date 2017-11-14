@@ -120,10 +120,10 @@ class TabelaProporcoesDeCadaRevisor {
         this.contagemRevisoesAtribuidas[revisor.email] = this.contagemRevisoesAtribuidasA(revisor.email) + 1;
     }
     calcularEstagiarioMaisVago(commit) {
-        return this.calcularRevisorMaisVago((email) => email !== commit.author_email && new Email_1.Email(email).isEmailDeEstagiario());
+        return this.calcularRevisorMaisVago((email) => email !== commit.author_email && Email_1.Email.ehEmailDeEstagiario(email));
     }
     calcularServidorMaisVago(commit) {
-        return this.calcularRevisorMaisVago((email) => email !== commit.author_email && new Email_1.Email(email).isEmailDeServidor());
+        return this.calcularRevisorMaisVago((email) => email !== commit.author_email && Email_1.Email.ehEmailDeServidor(email));
     }
     contagemRevisoesAtribuidasA(email) {
         return this.contagemRevisoesAtribuidas[email] || 0;

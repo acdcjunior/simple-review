@@ -15,5 +15,11 @@ class Email {
     isEmailDeServidor() {
         return !this.isEmailDeEstagiario();
     }
+    static ehEmailDeServidor(email) {
+        return new Email(email).isEmailDeServidor();
+    }
+    static ehEmailDeEstagiario(email) {
+        return new Email(email).isEmailDeEstagiario();
+    }
 }
 exports.Email = Email;

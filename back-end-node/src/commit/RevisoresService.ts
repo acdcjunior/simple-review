@@ -124,13 +124,13 @@ class TabelaProporcoesDeCadaRevisor {
 
     calcularEstagiarioMaisVago(commit: Commit): Committer {
         return this.calcularRevisorMaisVago(
-            (email: string) => email !== commit.author_email && new Email(email).isEmailDeEstagiario(),
+            (email: string) => email !== commit.author_email && Email.ehEmailDeEstagiario(email),
         );
     }
 
     calcularServidorMaisVago(commit: Commit): Committer {
         return this.calcularRevisorMaisVago(
-            (email: string) => email !== commit.author_email && new Email(email).isEmailDeServidor(),
+            (email: string) => email !== commit.author_email && Email.ehEmailDeServidor(email),
         );
     }
 
