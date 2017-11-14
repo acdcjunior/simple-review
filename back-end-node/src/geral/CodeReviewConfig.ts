@@ -45,7 +45,7 @@ export interface CodeReviewTrello {
     readonly idListEmTestes: string;
 }
 
-export const codeReviewConfig: CodeReviewConfig = require('/opt/simplereview-backend/config/codereview.config');
+export const codeReviewConfig: CodeReviewConfig = require(process.env.CODE_REVIEW_CONFIG || '/opt/simplereview-backend/config/codereview.config');
 
 console.log(`
     BACKEND --> CODEREVIEW CONFIG (codereview.config.js)
