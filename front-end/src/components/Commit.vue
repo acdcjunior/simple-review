@@ -2,7 +2,7 @@
   <div class="col-md-12" id="{{ commit.sha }}">
     <div class="panel panel-default">
       <div class="panel-body">
-        <a v-on:click="abrirRevisao" href="#" target="diff" style="word-wrap: break-word;"><h3>{{ commit.title }}</h3></a>
+        <a v-on:click="abrirRevisao" style="word-wrap: break-word; cursor: pointer"><h3>{{ commit.title }}</h3></a>
 
         <committer :committer-email="committer().email"></committer>
 
@@ -12,6 +12,7 @@
         <div class="pull-right">
             <a v-if="this.committerLogado().canOpenCouch" style="width: 20px; padding-left: 0" href="http://{{ couchdbHost() }}:5984/_utils/fauxton/#/database/sesol2/{{ commit.sha }}" target="_blank" class="btn btn-default pull-right">&nbsp;<span style="display: inline-block; margin-left: -1px;" class="glyphicon glyphicon-cog"></span></a>
             <a v-if="this.committerLogado().canRemoveReview" style="width: 20px; padding-left: 0" v-on:click="marcarComoNaoSerahRevisado" class="btn btn-default pull-right" title="Marcar commit como sem necessidade de revisão." :disabled="commitJahMarcadoComoNaoSerahRevisado()">&nbsp;<span style="display: inline-block; margin-left: -1px;" class="glyphicon glyphicon-eye-close"></span></a>
+            <a style="width: 20px; padding-left: 0" class="btn btn-default pull-right" title="Visualizar commit ao lado." v-on:click="previewDiff"                                                                      >&nbsp;<span style="display: inline-block; margin-left: -1px;" class="glyphicon glyphicon-eye-open"></span></a>
         </div>
 
           <p style="margin: 10px 5px 0 0">
@@ -122,9 +123,13 @@ export default {
         });
         return bolinhas;
     },
-    abrirRevisao () {
+    previewDiff() {
         utils.atualizarDiff(this.commit.sha);
-        this.$router.go('/commit/' + this.commit.sha)
+    },
+    abrirRevisao() {
+        utils.atualizarDiff(this.commit.sha);
+        this.$router.go('/commit/' + this.commit.sha);
+        return false;
     },
     couchdbHost() {
         return window.env.COUCHDB_HOST
