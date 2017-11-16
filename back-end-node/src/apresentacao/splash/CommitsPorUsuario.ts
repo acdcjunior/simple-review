@@ -58,7 +58,7 @@ export class CommitsPorUsuario {
                 commitsPorUsuarioSempreSemRevisao.push( {value: commitsDoRevisor.semrevisao,  meta: `Commits sem necessidade de revisão ${percent(commitsDoRevisor.semrevisao)}`});
             });
 
-            this.labels = JSON.stringify(commitsPorUsuarioSempreLabels);
+            this.labels = JSON.stringify(commitsPorUsuarioSempreLabels.map(u => u.replace(/@.*/g, '')));
             this.pendentes = JSON.stringify(commitsPorUsuarioSemprePendentes);
             this.par = JSON.stringify(commitsPorUsuarioSemprePar);
             this.comFollowUp = JSON.stringify(commitsPorUsuarioSempreComFollowUp);
