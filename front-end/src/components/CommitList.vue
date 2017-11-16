@@ -21,14 +21,14 @@
       <committer v-if="exibirUsuarioLogado" :committer-email="logado().email"></committer>
 
       <div style="margin-top: 5px;">
-        <div class="col-md-7">
-          Revisões Pendentes:
+        <div class="col-md-6">
+          Revisões:
           <a v-on:click="exibirMinhasRevisoesPendentes" href="#" title="Você tem {{ qtdCommitsPendentesDoUsuarioLogado }} indicações de revisão pendentes.">
             <span class="numero" v-bind:class="{'numero-vermelho': qtdCommitsPendentesDoUsuarioLogado > 5, 'numero-amarelo': qtdCommitsPendentesDoUsuarioLogado > 2}">{{ qtdCommitsPendentesDoUsuarioLogado }}</span>
           </a>
 
         </div>
-        <div class="col-md-5" style="font-size: 90%">
+        <div class="col-md-6" style="font-size: 90%">
           Menções:
           <a v-on:click="exibirMeusTodos" href="#" title="Exibir quem te MARCOU.">
             <span class="numero">{{ qtdTodosPendentesDoUsuarioLogado }}</span>
@@ -38,10 +38,15 @@
     </div>
 
     <div class="col-md-12">
-        <div class="col-md-12">
+        <div class="col-md-2">
             <hr v-if="painelBusca">
             <button title="Alterar busca" class="btn btn-sm text-right" v-bind:class="{'btn-default': buscaEstahComValoresPadrao(), 'btn-danger': !buscaEstahComValoresPadrao()}" v-on:click="togglePainelBusca">
                 <span class="center-block glyphicon" v-bind:class="{'glyphicon-menu-up': painelBusca, 'glyphicon-menu-down': !painelBusca}" style="margin-right: auto; margin-bottom: 3px;"></span>
+            </button>
+        </div>
+        <div class="col-md-10">
+            <button class="btn btn-danger" v-if="!buscaEstahComValoresPadrao()" v-on:click="exibirMinhasRevisoesPendentes">
+                Restaurar Busca Padrão
             </button>
         </div>
     </div>
@@ -71,12 +76,6 @@
 
         <div class="col-md-12">
             <label><input type="checkbox" v-model="exibirSomenteCommitsNaoRevisados" v-on:change="carregarCommits"> Somente commits não revisados</label>
-        </div>
-
-        <div class="col-md-12">
-            <button class="btn btn-default" :disabled="buscaEstahComValoresPadrao()" v-on:click="exibirMinhasRevisoesPendentes">
-                Restaurar Busca Padrão
-            </button>
         </div>
 
         <div class="col-md-10" style="padding-top: 10px">
