@@ -41,6 +41,7 @@ function inject() {
             // remove new sidebar
             $('body .nav-sidebar').remove();
             $('body .page-with-new-sidebar').removeClass('page-with-new-sidebar');
+            $('body .page-with-contextual-sidebar').removeClass('page-with-contextual-sidebar');
 
             // remove new nav
             $('body .page-with-new-nav .alert-wrapper').remove();
