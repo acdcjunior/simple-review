@@ -49,6 +49,9 @@ function inject() {
 
             // remove width limitation of diff
             $(".container-limited").css("max-width", "none")
+            
+            // remove floating/sticky file-changed bar on top
+            document.querySelectorAll('.diff-files-changed')[0].style.position = 'inherit';
         }
         parent.window.postMessage('hide-loading', '*');
     });
