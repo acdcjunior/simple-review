@@ -48,13 +48,14 @@ class Commit extends Sesol2_1.Sesol2 {
     }
     indicarRevisoresViaMencao(revisores) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (revisores.length === 0) {
-                return;
+            for (let revisor of revisores) {
+                try {
+                    yield this.indicarRevisorViaMencao(revisor);
+                }
+                catch (e) {
+                    console.log(`Problema ao indicar revisores via mencao!`, { revisor, revisores });
+                }
             }
-            const revisor = revisores[0];
-            const revisoresRestantes = revisores.slice(1);
-            yield this.indicarRevisorViaMencao(revisor);
-            return this.indicarRevisoresViaMencao(revisoresRestantes);
         });
     }
     indicarRevisorViaMencao(revisor) {

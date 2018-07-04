@@ -63,13 +63,13 @@ export class Commit extends Sesol2 {
     }
 
     public async indicarRevisoresViaMencao(revisores: Committer[]): Promise<void> {
-        if (revisores.length === 0) {
-            return;
+        for (let revisor of revisores) {
+            try {
+                await this.indicarRevisorViaMencao(revisor);
+            } catch (e) {
+                console.log(`Problema ao indicar revisores via mencao!`, {revisor, revisores})
+            }
         }
-        const revisor = revisores[0];
-        const revisoresRestantes = revisores.slice(1);
-        await this.indicarRevisorViaMencao(revisor);
-        return this.indicarRevisoresViaMencao(revisoresRestantes);
     }
 
     private indicarRevisorViaMencao(revisor: Committer): Promise<void> {
