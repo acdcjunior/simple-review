@@ -48,19 +48,23 @@ async function atribuirRevisoresAosCommits(commitsSemRevisor: Commit[], tabelaPr
 
 async function atribuirRevisoresAoCommit(commitSemRevisor: Commit, tabelaProporcoesDeCadaRevisor: TabelaProporcoesDeCadaRevisor): Promise<any> {
 
-    if (commitSemRevisor.isCommitDeMergeSemConflito()) {
-        return commitSemRevisor.indicarCommitNaoTerahRevisor('commit de merge sem conflito');
+    try {
+        if (commitSemRevisor.isCommitDeMergeSemConflito()) {
+            return commitSemRevisor.indicarCommitNaoTerahRevisor('commit de merge sem conflito');
+        }
+
+        if (commitSemRevisor.isCommitNaoDeveSerRevisado()) {
+            return commitSemRevisor.indicarCommitNaoTerahRevisor('commit indicado para não ter revisão');
+        }
+
+        await incluirRevisoresMencionadosNaMensagem(commitSemRevisor);
+        tabelaProporcoesDeCadaRevisor.atualizarContagemComRevisoresDoCommit(commitSemRevisor);
+
+        await incluirRevisorEstagiarioEmCommitDeEstagiario(commitSemRevisor, tabelaProporcoesDeCadaRevisor);
+        return incluirRevisorServidorDoCommit(commitSemRevisor, tabelaProporcoesDeCadaRevisor);
+    } catch (e) {
+        console.log(`Erro ao atribuir revisores ao commit.`, {commitSemRevisor, e});
     }
-
-    if (commitSemRevisor.isCommitNaoDeveSerRevisado()) {
-        return commitSemRevisor.indicarCommitNaoTerahRevisor('commit indicado para não ter revisão');
-    }
-
-    await incluirRevisoresMencionadosNaMensagem(commitSemRevisor);
-    tabelaProporcoesDeCadaRevisor.atualizarContagemComRevisoresDoCommit(commitSemRevisor);
-
-    await incluirRevisorEstagiarioEmCommitDeEstagiario(commitSemRevisor, tabelaProporcoesDeCadaRevisor);
-    return incluirRevisorServidorDoCommit(commitSemRevisor, tabelaProporcoesDeCadaRevisor);
 }
 
 async function incluirRevisorEstagiarioEmCommitDeEstagiario(commitSemRevisor: Commit, tabelaProporcoesDeCadaRevisor: TabelaProporcoesDeCadaRevisor): Promise<void> {
@@ -73,7 +77,6 @@ async function incluirRevisorEstagiarioEmCommitDeEstagiario(commitSemRevisor: Co
             tabelaProporcoesDeCadaRevisor.incrementarContagemDoRevisor(estagiarioMaisVago);
         }
     }
-    return Promise.resolve();
 }
 
 async function incluirRevisorServidorDoCommit(commit: Commit, tabelaProporcoesDeCadaRevisor: TabelaProporcoesDeCadaRevisor): Promise<void> {
@@ -83,7 +86,6 @@ async function incluirRevisorServidorDoCommit(commit: Commit, tabelaProporcoesDe
         await commit.indicarRevisorViaSistema(servidorMaisVago);
         tabelaProporcoesDeCadaRevisor.incrementarContagemDoRevisor(servidorMaisVago);
     }
-    return Promise.resolve();
 }
 
 async function incluirRevisoresMencionadosNaMensagem(commitSemRevisor: Commit): Promise<void> {

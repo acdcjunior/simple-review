@@ -62,15 +62,14 @@ export class Commit extends Sesol2 {
         this.historico = [];
     }
 
-    public indicarRevisoresViaMencao(revisores: Committer[]): Promise<void> {
+    public async indicarRevisoresViaMencao(revisores: Committer[]): Promise<void> {
         if (revisores.length === 0) {
-            return Promise.resolve();
+            return;
         }
         const revisor = revisores[0];
         const revisoresRestantes = revisores.slice(1);
-        return this.indicarRevisorViaMencao(revisor).then(() => {
-            return this.indicarRevisoresViaMencao(revisoresRestantes);
-        });
+        await this.indicarRevisorViaMencao(revisor);
+        return this.indicarRevisoresViaMencao(revisoresRestantes);
     }
 
     private indicarRevisorViaMencao(revisor: Committer): Promise<void> {

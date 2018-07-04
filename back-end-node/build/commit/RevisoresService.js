@@ -51,16 +51,21 @@ function atribuirRevisoresAosCommits(commitsSemRevisor, tabelaProporcoesDeCadaRe
 }
 function atribuirRevisoresAoCommit(commitSemRevisor, tabelaProporcoesDeCadaRevisor) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (commitSemRevisor.isCommitDeMergeSemConflito()) {
-            return commitSemRevisor.indicarCommitNaoTerahRevisor('commit de merge sem conflito');
+        try {
+            if (commitSemRevisor.isCommitDeMergeSemConflito()) {
+                return commitSemRevisor.indicarCommitNaoTerahRevisor('commit de merge sem conflito');
+            }
+            if (commitSemRevisor.isCommitNaoDeveSerRevisado()) {
+                return commitSemRevisor.indicarCommitNaoTerahRevisor('commit indicado para não ter revisão');
+            }
+            yield incluirRevisoresMencionadosNaMensagem(commitSemRevisor);
+            tabelaProporcoesDeCadaRevisor.atualizarContagemComRevisoresDoCommit(commitSemRevisor);
+            yield incluirRevisorEstagiarioEmCommitDeEstagiario(commitSemRevisor, tabelaProporcoesDeCadaRevisor);
+            return incluirRevisorServidorDoCommit(commitSemRevisor, tabelaProporcoesDeCadaRevisor);
         }
-        if (commitSemRevisor.isCommitNaoDeveSerRevisado()) {
-            return commitSemRevisor.indicarCommitNaoTerahRevisor('commit indicado para não ter revisão');
+        catch (e) {
+            console.log(`Erro ao atribuir revisores ao commit.`, { commitSemRevisor, e });
         }
-        yield incluirRevisoresMencionadosNaMensagem(commitSemRevisor);
-        tabelaProporcoesDeCadaRevisor.atualizarContagemComRevisoresDoCommit(commitSemRevisor);
-        yield incluirRevisorEstagiarioEmCommitDeEstagiario(commitSemRevisor, tabelaProporcoesDeCadaRevisor);
-        return incluirRevisorServidorDoCommit(commitSemRevisor, tabelaProporcoesDeCadaRevisor);
     });
 }
 function incluirRevisorEstagiarioEmCommitDeEstagiario(commitSemRevisor, tabelaProporcoesDeCadaRevisor) {
@@ -74,7 +79,6 @@ function incluirRevisorEstagiarioEmCommitDeEstagiario(commitSemRevisor, tabelaPr
                 tabelaProporcoesDeCadaRevisor.incrementarContagemDoRevisor(estagiarioMaisVago);
             }
         }
-        return Promise.resolve();
     });
 }
 function incluirRevisorServidorDoCommit(commit, tabelaProporcoesDeCadaRevisor) {
@@ -85,7 +89,6 @@ function incluirRevisorServidorDoCommit(commit, tabelaProporcoesDeCadaRevisor) {
             yield commit.indicarRevisorViaSistema(servidorMaisVago);
             tabelaProporcoesDeCadaRevisor.incrementarContagemDoRevisor(servidorMaisVago);
         }
-        return Promise.resolve();
     });
 }
 function incluirRevisoresMencionadosNaMensagem(commitSemRevisor) {
