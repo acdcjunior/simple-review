@@ -9,8 +9,8 @@ import {MencoesExtractor} from "../geral/MencoesExtractor";
 
 //noinspection JSUnusedLocalSymbols
 let debug = {
-    log: ((x) => {}) || console.log,
-    dir: ((x) => {}) || console.dir,
+    log: /*((x) => {}) ||*/ console.log,
+    dir: /*((x) => {}) ||*/ console.dir,
 };
 
 export class RevisoresService {

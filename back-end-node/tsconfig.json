@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
+        "target": "esnext",
         "module": "commonjs",
-        "target": "ES6",
 //		"allowJs": true,
         "rootDir": "src",
         "outDir": "build"

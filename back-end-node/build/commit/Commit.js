@@ -1,12 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const Sesol2_1 = require("../geral/Sesol2");
 const Email_1 = require("../geral/Email");
@@ -46,17 +38,15 @@ class Commit extends Sesol2_1.Sesol2 {
         this.revisoes = [];
         this.historico = [];
     }
-    indicarRevisoresViaMencao(revisores) {
-        return __awaiter(this, void 0, void 0, function* () {
-            for (let revisor of revisores) {
-                try {
-                    yield this.indicarRevisorViaMencao(revisor);
-                }
-                catch (e) {
-                    console.log(`Problema ao indicar revisores via mencao!`, { revisor, revisores });
-                }
+    async indicarRevisoresViaMencao(revisores) {
+        for (let revisor of revisores) {
+            try {
+                await this.indicarRevisorViaMencao(revisor);
             }
-        });
+            catch (e) {
+                console.log(`Problema ao indicar revisores via mencao!`, { revisor, revisores });
+            }
+        }
     }
     indicarRevisorViaMencao(revisor) {
         if (revisor.isInvalido()) {
